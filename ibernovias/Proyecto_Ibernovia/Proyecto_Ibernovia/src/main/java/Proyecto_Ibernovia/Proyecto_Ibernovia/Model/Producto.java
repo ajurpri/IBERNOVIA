@@ -2,20 +2,45 @@ package Proyecto_Ibernovia.Proyecto_Ibernovia.Model;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "productos")
-@Data // Esto genera getters y setters automáticamente con Lombok
+@Data
+@NoArgsConstructor
 public class Producto {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String nombre;    // Ej: "liga-novia-encaje-blanco"
-    private String categoria; // Ej: "Ligas", "Pendientes", "Gemelos"
+    private String nombre;
+    private String categoria;
     private Double precio;
-    private String imagen;    // Nombre del archivo: "Página1.jpg"
-
+    private String imagen;
+    
     @Column(length = 500)
     private String descripcion;
+    
+    private Integer stock;
+    private Boolean activo;
+    
+    @Column(name = "created_at")
+    private LocalDateTime createdAt;
+    
+    @Column(name = "updated_at")
+    private LocalDateTime updatedAt;
+
+    @PrePersist
+    protected void onCreate() {
+        createdAt = LocalDateTime.now();
+        updatedAt = LocalDateTime.now();
+        activo = true;
+        stock = 0;
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
+        updatedAt = LocalDateTime.now();
+    }
 }
