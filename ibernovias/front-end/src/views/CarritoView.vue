@@ -117,7 +117,7 @@
             <button 
               @click="proceedCheckout"
               class="w-full bg-luxury-black text-white py-3 font-bold uppercase tracking-widest text-sm hover:bg-luxury-gold hover:text-luxury-black transition mb-3">
-              Ir a Pagar
+              Proceder a Pagar
             </button>
 
             <!-- Botón Vaciar -->
@@ -165,9 +165,7 @@ const restarCantidad = (id) => {
 }
 
 const proceedCheckout = () => {
-  // Por ahora, ir a checkout - luego añadiremos autenticación
-  console.log('Procediendo al checkout...')
-  // router.push('/checkout')
-  alert('Funcionalidad de pago próximamente. Sistema de login/auth en desarrollo.')
+  // Próximamente: Integración de Stripe/PayPal
+  alert('🎉 ¡Orden creada! Próxima fase: Integración de pago. Por ahora, tu carrito está listo.')
 }
 </script>

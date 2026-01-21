@@ -38,8 +38,9 @@
           </div>
         </div>
 
-        <!-- Carrito -->
+        <!-- Carrito + Usuario -->
         <div class="flex items-center space-x-4">
+          <!-- Carrito -->
           <router-link to="/carrito" class="relative p-2 hover:text-luxury-gold transition group">
             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
@@ -48,6 +49,50 @@
               {{ cartStore.totalItems }}
             </span>
           </router-link>
+
+          <!-- Menú Usuario -->
+          <div class="relative">
+            <button 
+              @click="showUserMenu = !showUserMenu"
+              class="flex items-center gap-2 p-2 hover:text-luxury-gold transition group">
+              <svg v-if="!authStore.isAuthenticated" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+              </svg>
+              <span v-else class="text-sm font-semibold truncate max-w-[150px]">{{ authStore.user?.nombre }}</span>
+            </button>
+
+            <!-- Dropdown Menu -->
+            <div v-if="showUserMenu" class="absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded shadow-lg z-50">
+              <div v-if="!authStore.isAuthenticated" class="p-4 space-y-2">
+                <router-link 
+                  to="/auth" 
+                  @click="showUserMenu = false"
+                  class="block w-full text-center bg-luxury-black text-white py-2 font-bold uppercase tracking-widest text-sm hover:bg-luxury-gold hover:text-luxury-black transition rounded">
+                  Iniciar Sesión
+                </router-link>
+              </div>
+              <div v-else class="p-4 space-y-2 border-b border-gray-200">
+                <p class="text-sm font-semibold text-gray-900">{{ authStore.user?.nombre }} {{ authStore.user?.apellido }}</p>
+                <p class="text-xs text-gray-500">{{ authStore.user?.email }}</p>
+              </div>
+              <nav v-if="authStore.isAuthenticated" class="p-2 space-y-1">
+                <router-link to="/carrito" @click="showUserMenu = false" class="block px-4 py-2 text-sm hover:bg-gray-100 transition">
+                  Mi Carrito
+                </router-link>
+                <router-link to="/" @click="showUserMenu = false" class="block px-4 py-2 text-sm hover:bg-gray-100 transition">
+                  Mis Órdenes
+                </router-link>
+                <a href="#" class="block px-4 py-2 text-sm hover:bg-gray-100 transition">
+                  Mi Perfil
+                </a>
+                <button 
+                  @click="handleLogout"
+                  class="w-full text-left px-4 py-2 text-sm text-red-500 hover:bg-red-50 transition font-semibold">
+                  Cerrar Sesión
+                </button>
+              </nav>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -65,13 +110,19 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref } from 'vue'
+import { useRouter } from 'vue-router'
 import { useCartStore } from '../stores/cart'
+import { useAuthStore } from '../stores/auth'
 import axios from 'axios'
 
+const router = useRouter()
 const cartStore = useCartStore()
+const authStore = useAuthStore()
+
 const searchQuery = ref('')
 const searchResults = ref([])
+const showUserMenu = ref(false)
 const logoError = ref(false)
 
 const handleSearch = async () => {
@@ -87,6 +138,12 @@ const handleSearch = async () => {
     console.error('Error buscando:', e)
     searchResults.value = []
   }
+}
+
+const handleLogout = () => {
+  authStore.logout()
+  showUserMenu.value = false
+  router.push('/')
 }
 </script>
 

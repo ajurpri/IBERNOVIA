@@ -35,8 +35,10 @@ public class Producto {
     protected void onCreate() {
         createdAt = LocalDateTime.now();
         updatedAt = LocalDateTime.now();
-        activo = true;
-        stock = 0;
+        if (activo == null) {
+            activo = true;
+        }
+        // El stock se genera en el controller, no aquí
     }
 
     @PreUpdate

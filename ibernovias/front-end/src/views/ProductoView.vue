@@ -105,14 +105,10 @@
 
           <!-- Botón Agregar al Carrito -->
           <button 
-            v-if="producto.stock > 0"
             @click="agregarAlCarrito"
             :disabled="agregando"
             class="w-full bg-luxury-black text-white py-4 font-bold uppercase tracking-widest text-lg hover:bg-luxury-gold hover:text-luxury-black transition disabled:opacity-50 mb-3">
-            {{ agregando ? 'Agregando...' : 'Agregar al Carrito' }}
-          </button>
-          <button v-else disabled class="w-full bg-gray-300 text-gray-500 py-4 font-bold uppercase tracking-widest text-lg cursor-not-allowed">
-            Producto Agotado
+            {{ agregando ? 'Agregando...' : (producto.stock <= 0 ? 'Reservar Producto' : 'Agregar al Carrito') }}
           </button>
 
           <!-- Link a Carrito -->
