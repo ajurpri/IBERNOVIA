@@ -1,7 +1,7 @@
 <template>
   <div class="group h-full flex flex-col">
     <!-- Imagen y Botones -->
-    <router-link :to="`/producto/${producto.id}`" class="relative overflow-hidden bg-gradient-to-br from-gray-50 to-gray-100 aspect-[3/4] mb-3 shadow-sm hover:shadow-md transition cursor-pointer flex-1">
+    <router-link :to="`/producto/${producto.id}`" class="relative overflow-hidden bg-gradient-to-br from-gray-50 to-gray-100 aspect-[3/4] mb-3 shadow-sm group-hover:shadow-xl group-hover:-translate-y-1 transition-all duration-500 ease-out cursor-pointer flex-1 rounded-sm">
       <!-- Imagen del producto -->
       <img :src="producto.imagen" 
            :alt="producto.nombre"
@@ -28,10 +28,17 @@
         </span>
       </div>
 
-      <!-- Logo en la esquina -->
-      <div class="absolute top-3 right-3 bg-white shadow-md p-1.5 rounded-full opacity-90 group-hover:opacity-100 transition">
-        <svg class="h-6 w-6 text-luxury-gold" fill="currentColor" viewBox="0 0 24 24">
-          <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/>
+      <!-- Badge de Oferta (Nuevo) -->
+      <div v-if="producto.precio < 30" class="absolute top-3 left-3 bg-red-600 text-white text-[10px] font-bold px-2 py-1 uppercase tracking-wider shadow-sm animate-pulse">
+        Oferta
+      </div>
+
+      <!-- Botón Favoritos (Corazón) -->
+      <div 
+        @click.prevent="toggleFavorite"
+        class="absolute top-3 right-3 bg-white shadow-md p-2 rounded-full opacity-90 hover:opacity-100 transition cursor-pointer z-10 hover:scale-110">
+        <svg :class="['h-5 w-5 transition', isFavorite ? 'text-red-500 fill-current' : 'text-gray-400']" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
         </svg>
       </div>
     </router-link>
@@ -71,6 +78,7 @@ const props = defineProps({
 
 const imageError = ref(false)
 const agregando = ref(false)
+const isFavorite = ref(false)
 const cartStore = useCartStore()
 
 const agregarAlCarrito = async () => {
@@ -79,6 +87,11 @@ const agregarAlCarrito = async () => {
     cartStore.addItem(props.producto, 1)
     agregando.value = false
   }, 300)
+}
+
+const toggleFavorite = () => {
+  isFavorite.value = !isFavorite.value
+  // Aquí podrías conectar con un store de Pinia para guardar favoritos
 }
 </script>
 

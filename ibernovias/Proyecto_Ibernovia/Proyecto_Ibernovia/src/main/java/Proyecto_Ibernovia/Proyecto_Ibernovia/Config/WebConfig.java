@@ -11,7 +11,7 @@ public class WebConfig implements WebMvcConfigurer {
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         // Servir imágenes desde la carpeta public/images del frontend
-        String imagePath = Paths.get("../../../front-end/public/images/").toAbsolutePath().toString();
+        String imagePath = Paths.get("../../front-end/public/images/").toAbsolutePath().toString();
         
         registry.addResourceHandler("/images/**")
                 .addResourceLocations("file:///" + imagePath.replace("\\", "/") + "/");

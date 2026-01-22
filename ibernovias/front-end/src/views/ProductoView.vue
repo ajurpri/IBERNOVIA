@@ -142,12 +142,32 @@
           </div>
         </div>
       </div>
+
+      <!-- Productos Relacionados -->
+      <div v-if="relatedProducts.length > 0" class="mt-20 border-t border-gray-100 pt-16">
+        <div class="text-center mb-12">
+          <h2 class="font-serif text-2xl md:text-3xl text-luxury-black mb-2">También te podría gustar</h2>
+          <div class="h-0.5 w-12 bg-luxury-gold mx-auto"></div>
+        </div>
+        
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+          <div v-for="rel in relatedProducts" :key="rel.id" class="group cursor-pointer">
+            <router-link :to="`/producto/${rel.id}`" class="block">
+              <div class="aspect-[3/4] bg-gray-100 mb-3 overflow-hidden">
+                <img :src="rel.imagen" :alt="rel.nombre" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+              </div>
+              <h3 class="text-sm font-medium text-gray-900 truncate">{{ rel.nombre }}</h3>
+              <p class="text-sm text-luxury-gold font-bold">{{ rel.precio }}€</p>
+            </router-link>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import axios from 'axios'
 import { useCartStore } from '../stores/cart'
@@ -156,6 +176,7 @@ const route = useRoute()
 const cartStore = useCartStore()
 
 const producto = ref(null)
+const relatedProducts = ref([])
 const loading = ref(true)
 const error = ref(false)
 const imagenError = ref(false)
@@ -163,16 +184,35 @@ const cantidad = ref(1)
 const agregando = ref(false)
 const productoAgregado = ref(false)
 
-onMounted(async () => {
+const loadProductData = async (id) => {
+  loading.value = true
+  error.value = false
   try {
-    const res = await axios.get(`http://localhost:8080/api/productos/${route.params.id}`)
+    // 1. Cargar producto principal
+    const res = await axios.get(`http://localhost:8080/api/productos/${id}`)
     producto.value = res.data
-    loading.value = false
+    
+    // 2. Cargar relacionados (misma categoría)
+    if (producto.value.categoria) {
+      const resRel = await axios.get(`http://localhost:8080/api/productos/categoria/${producto.value.categoria}`)
+      // Filtramos para no mostrar el mismo producto y tomamos solo 4
+      relatedProducts.value = resRel.data
+        .filter(p => p.id !== producto.value.id)
+        .slice(0, 4)
+    }
   } catch (e) {
-    console.error('Error cargando producto:', e)
+    console.error('Error:', e)
     error.value = true
+  } finally {
     loading.value = false
   }
+}
+
+onMounted(() => loadProductData(route.params.id))
+
+// Recargar si cambia la URL (al hacer clic en un relacionado)
+watch(() => route.params.id, (newId) => {
+  if (newId) loadProductData(newId)
 })
 
 const agregarAlCarrito = async () => {
