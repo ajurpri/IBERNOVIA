@@ -60,7 +60,14 @@ router.beforeEach((to, from, next) => {
     if (authStore.isAuthenticated) {
       next()
     } else {
-      // Redirigir a login
+      next('/auth')
+    }
+  } else {
+    next()
+  }
+})
+
+export default router
       next('/auth')
     }
   } else {
