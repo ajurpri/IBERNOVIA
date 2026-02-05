@@ -123,10 +123,6 @@
             {{ cat }}
           </button>
         </div>
-            class="px-4 md:px-6 py-2 md:py-3 transition duration-300 rounded-sm whitespace-nowrap">
-            {{ cat }}
-          </button>
-        </div>
 
         <!-- Grid de Productos - Responsive -->
         <div class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-6 lg:gap-8">

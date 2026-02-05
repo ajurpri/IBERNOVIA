@@ -106,8 +106,6 @@ body {
   transform: translateY(-5px);
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
 }
-</style>
-}
 
 .text-luxury-gold { color: var(--luxury-gold); }
 .bg-luxury-gold { background-color: var(--luxury-gold); }
