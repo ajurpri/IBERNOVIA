@@ -3,6 +3,9 @@ import HelloWorld from '../components/HelloWorld.vue'
 import ProductoView from '../views/ProductoView.vue'
 import CarritoView from '../views/CarritoView.vue'
 import AuthView from '../views/AuthView.vue'
+import TiendaView from '../views/TiendaView.vue'
+import CuentaView from '../views/CuentaView.vue'
+import ContactoView from '../views/ContactoView.vue'
 import { useAuthStore } from '../stores/auth'
 
 const routes = [
@@ -12,9 +15,9 @@ const routes = [
     component: HelloWorld
   },
   {
-    path: '/productos',
-    name: 'Productos',
-    component: HelloWorld
+    path: '/tienda',
+    name: 'Tienda',
+    component: TiendaView
   },
   {
     path: '/producto/:id',
@@ -29,8 +32,18 @@ const routes = [
   {
     path: '/carrito',
     name: 'Carrito',
-    component: CarritoView,
+    component: CarritoView
+  },
+  {
+    path: '/cuenta',
+    name: 'Cuenta',
+    component: CuentaView,
     meta: { requiresAuth: true }
+  },
+  {
+    path: '/contacto',
+    name: 'Contacto',
+    component: ContactoView
   }
 ]
 
