@@ -68,11 +68,3 @@ router.beforeEach((to, from, next) => {
 })
 
 export default router
-      next('/auth')
-    }
-  } else {
-    next()
-  }
-})
-
-export default router
