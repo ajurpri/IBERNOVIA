@@ -97,7 +97,11 @@ onMounted(async () => {
   try {
     loading.value = true
     const res = await axios.get('http://localhost:8080/api/productos')
-    productos.value = res.data
+    if (Array.isArray(res.data)) {
+      productos.value = res.data
+    } else {
+      throw new Error('Formato de datos inválido')
+    }
     loading.value = false
   } catch (e) {
     console.error('Error cargando productos:', e)
