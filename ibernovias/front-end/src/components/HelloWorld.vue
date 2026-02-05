@@ -14,6 +14,9 @@
     <!-- Content -->
     <div class="relative h-full flex flex-col items-center justify-center text-white text-center px-4 z-10">
       <div class="animate-fade-in-up">
+        <div class="flex items-center justify-center mb-6">
+          <img src="/logo/logo.png" alt="IBERNOVIA" class="h-14 md:h-16 w-auto drop-shadow-xl" />
+        </div>
         <div class="mb-4 inline-block">
           <span class="text-luxury-gold text-xs md:text-sm font-bold tracking-[0.3em] uppercase border-t border-b border-luxury-gold py-2 px-6">Desde 2015</span>
         </div>
@@ -75,6 +78,37 @@
           <h3 class="font-serif text-xl mb-2">Atención Personalizada</h3>
           <p class="text-gray-600 text-sm">Asesoramiento experto para tu día especial</p>
         </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Experiencia en tienda -->
+  <div class="py-16 bg-white">
+    <div class="max-w-7xl mx-auto px-4 grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
+      <div>
+        <span class="text-luxury-gold text-xs font-bold tracking-[0.3em] uppercase block mb-3">Andújar · Jaén</span>
+        <h2 class="font-serif text-4xl md:text-5xl text-luxury-black mb-6">Atelier y asesoramiento en tienda</h2>
+        <p class="text-gray-600 text-lg mb-6">
+          Te acompañamos en cada detalle con una selección exclusiva de complementos nupciales. Visítanos en Plaza de Abastos y descubre piezas únicas.
+        </p>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
+          <div class="p-4 border rounded-lg">
+            <p class="font-bold text-luxury-black">Ubicación</p>
+            <p class="text-gray-600">C. Ollerías, 48, 23740 Andújar, Jaén</p>
+          </div>
+          <div class="p-4 border rounded-lg">
+            <p class="font-bold text-luxury-black">Horario</p>
+            <p class="text-gray-600">Closes soon · 8 pm · Opens 9 am Fri</p>
+          </div>
+        </div>
+      </div>
+      <div class="relative">
+        <div class="absolute -inset-4 bg-luxury-gold/10 rounded-3xl"></div>
+        <img
+          src="https://images.unsplash.com/photo-1524504388940-b1c1722653e1?q=80&w=1974&auto=format&fit=crop"
+          alt="Atelier Ibernovia"
+          class="relative rounded-3xl shadow-xl w-full object-cover h-[360px]"
+        />
       </div>
     </div>
   </div>
@@ -145,6 +179,42 @@
         <div class="text-center mt-6 md:mt-8 text-gray-400 text-xs tracking-widest">
           Mostrando {{ productosVisibles.length }} de {{ productosFiltrados.length }} productos
         </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Testimonios -->
+  <div class="py-16 bg-white">
+    <div class="max-w-7xl mx-auto px-4">
+      <div class="text-center mb-12">
+        <span class="text-luxury-gold text-xs font-bold tracking-[0.3em] uppercase block mb-3">Reseñas</span>
+        <h2 class="font-serif text-4xl md:text-5xl text-luxury-black">Amor a primera vista</h2>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="p-6 border rounded-2xl shadow-sm">
+          <p class="text-gray-600">“Calidad impecable y trato cercano. Encontré el complemento perfecto para mi boda.”</p>
+          <p class="mt-4 font-semibold text-luxury-black">Laura M.</p>
+        </div>
+        <div class="p-6 border rounded-2xl shadow-sm">
+          <p class="text-gray-600">“Diseños elegantes y asesoramiento excepcional. Repetiría sin duda.”</p>
+          <p class="mt-4 font-semibold text-luxury-black">María C.</p>
+        </div>
+        <div class="p-6 border rounded-2xl shadow-sm">
+          <p class="text-gray-600">“El envío fue rápido y el packaging precioso. Todo cuidado al detalle.”</p>
+          <p class="mt-4 font-semibold text-luxury-black">Patricia G.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CTA final -->
+  <div class="py-16 bg-luxury-black text-white">
+    <div class="max-w-7xl mx-auto px-4 text-center">
+      <h2 class="font-serif text-4xl md:text-5xl mb-4">Tu día merece algo único</h2>
+      <p class="text-white/80 max-w-2xl mx-auto mb-8">Explora nuestra colección o visítanos en tienda para un asesoramiento personalizado.</p>
+      <div class="flex flex-col sm:flex-row gap-4 justify-center">
+        <router-link to="/tienda" class="bg-luxury-gold text-luxury-black px-8 py-3 font-bold uppercase tracking-widest text-sm hover:bg-white transition">Ver Tienda</router-link>
+        <router-link to="/contacto" class="border border-white px-8 py-3 font-bold uppercase tracking-widest text-sm hover:bg-white hover:text-luxury-black transition">Contacto</router-link>
       </div>
     </div>
   </div>

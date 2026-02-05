@@ -1,8 +1,18 @@
 import { defineStore } from 'pinia'
-import { ref, computed } from 'vue'
+import { ref, computed, watch } from 'vue'
 
 export const useCartStore = defineStore('cart', () => {
-  const items = ref([])
+  const storedItems = (() => {
+    if (typeof window === 'undefined') return []
+    try {
+      const raw = localStorage.getItem('cart_items')
+      return raw ? JSON.parse(raw) : []
+    } catch (e) {
+      return []
+    }
+  })()
+
+  const items = ref(Array.isArray(storedItems) ? storedItems : [])
 
   const addItem = (producto, cantidad = 1) => {
     const existente = items.value.find(item => item.id === producto.id)
@@ -38,6 +48,15 @@ export const useCartStore = defineStore('cart', () => {
   const clear = () => {
     items.value = []
   }
+
+  watch(
+    items,
+    (value) => {
+      if (typeof window === 'undefined') return
+      localStorage.setItem('cart_items', JSON.stringify(value))
+    },
+    { deep: true }
+  )
 
   return {
     items,

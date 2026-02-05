@@ -4,8 +4,9 @@
       <!-- Top Row: Logo + Search + Cart + User -->
       <div class="flex justify-between items-center h-20 gap-4">
         <!-- Logo -->
-        <router-link to="/" class="flex-shrink-0 font-serif font-bold text-2xl text-luxury-black hover:text-luxury-gold transition">
-          IBERNOVIA
+        <router-link to="/" class="flex items-center gap-3 flex-shrink-0">
+          <img src="/logo/logo.png" alt="IBERNOVIA" class="h-10 w-auto" />
+          <span class="font-serif font-bold text-2xl text-luxury-black hover:text-luxury-gold transition">IBERNOVIA</span>
         </router-link>
 
         <!-- Búsqueda -->
