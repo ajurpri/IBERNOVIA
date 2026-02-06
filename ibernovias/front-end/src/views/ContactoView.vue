@@ -11,7 +11,7 @@
       </div>
 
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-10 mb-12">
-        <div class="bg-white ib-surface rounded-2xl shadow-md border border-gray-100 p-8">
+        <div class="bg-white rounded-2xl p-8 ib-surface">
           <div class="flex items-center justify-between gap-3 mb-6">
             <h2 class="font-serif text-2xl font-bold text-luxury-black">Información de Contacto</h2>
             <span class="text-xs px-3 py-1 rounded-full bg-luxury-gold/10 text-luxury-gold uppercase tracking-widest">Google</span>
@@ -58,7 +58,7 @@
           </div>
         </div>
 
-        <form @submit.prevent="submitForm" class="bg-white ib-surface rounded-2xl shadow-md border border-gray-100 p-8">
+        <form @submit.prevent="submitForm" class="bg-white rounded-2xl p-8 ib-surface">
           <div class="mb-4">
             <label class="block text-sm font-bold text-gray-700 mb-2">Nombre</label>
             <input 
