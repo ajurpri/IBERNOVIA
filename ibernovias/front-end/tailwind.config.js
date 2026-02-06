@@ -9,9 +9,11 @@ export default {
       colors: {
         'luxury-gold': '#d4af37',
         'luxury-black': '#1a1a1a',
+        'luxury-gray': '#f9f9f9',
       },
       fontFamily: {
-        serif: ['Georgia', 'serif'],
+        serif: ['"Playfair Display"', 'Georgia', 'serif'],
+        sans: ['Lato', 'Inter', 'system-ui', '-apple-system', 'Segoe UI', 'Roboto', 'sans-serif'],
       }
     },
   },

@@ -1,6 +1,6 @@
 <template>
   <!-- Hero Section: Portada Impactante -->
-  <div class="relative h-screen w-full bg-luxury-black overflow-hidden">
+  <div class="relative min-h-[100svh] w-full bg-luxury-black overflow-hidden">
     <!-- Video/Image Background -->
     <div class="absolute inset-0">
       <img src="https://images.unsplash.com/photo-1519741497674-611481863552?q=80&w=2070&auto=format&fit=crop" 
@@ -12,15 +12,15 @@
     <div class="absolute inset-0 bg-gradient-to-b from-black/70 via-black/50 to-black/80"></div>
     
     <!-- Content -->
-    <div class="relative h-full flex flex-col items-center justify-center text-white text-center px-4 z-10">
-      <div class="animate-fade-in-up">
+    <div class="relative min-h-[100svh] flex flex-col items-center justify-center text-white text-center px-4 py-20 z-10">
+      <div class="animate-fade-in-up w-full max-w-5xl mx-auto">
         <div class="flex items-center justify-center mb-6">
           <img :src="logoSrc" alt="IBERNOVIA" class="h-14 md:h-16 w-auto drop-shadow-xl" />
         </div>
         <div class="mb-4 inline-block">
           <span class="text-luxury-gold text-xs md:text-sm font-bold tracking-[0.3em] uppercase border-t border-b border-luxury-gold py-2 px-6">Desde 2015</span>
         </div>
-        <h1 class="font-serif text-4xl md:text-6xl lg:text-8xl mb-6 tracking-tight leading-tight">
+        <h1 class="font-serif text-4xl md:text-6xl lg:text-8xl mb-6 tracking-tight leading-[1.05]">
           Elegancia<br/>
           <span class="text-luxury-gold">Atemporal</span>
         </h1>
@@ -28,11 +28,15 @@
           Complementos Nupciales de Alta Costura
         </p>
         <div class="flex flex-col sm:flex-row gap-4 justify-center items-center">
-          <router-link to="/tienda" class="group relative bg-luxury-gold text-luxury-black px-10 py-4 font-bold uppercase tracking-widest text-sm hover:bg-white transition-all duration-300 overflow-hidden">
+          <router-link
+            to="/tienda"
+            class="group relative bg-luxury-gold text-luxury-black px-10 py-4 font-bold uppercase tracking-widest text-sm hover:bg-white transition-all duration-300 overflow-hidden rounded focus:outline-none focus-visible:ring-2 focus-visible:ring-luxury-gold focus-visible:ring-offset-2 focus-visible:ring-offset-black">
             <span class="relative z-10">Explorar Colección</span>
             <div class="absolute inset-0 bg-white transform -translate-x-full group-hover:translate-x-0 transition-transform duration-300"></div>
           </router-link>
-          <a href="#categorias" class="border-2 border-white px-10 py-4 hover:bg-white hover:text-luxury-black transition-all duration-300 uppercase tracking-widest text-sm font-bold">
+          <a
+            href="#categorias"
+            class="border-2 border-white px-10 py-4 hover:bg-white hover:text-luxury-black transition-all duration-300 uppercase tracking-widest text-sm font-bold rounded focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-black">
             Nuestras Categorías
           </a>
         </div>
@@ -51,7 +55,7 @@
   <div class="py-16 bg-white border-b">
     <div class="max-w-7xl mx-auto px-4">
       <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-        <div class="text-center group cursor-pointer">
+        <div class="text-center group cursor-pointer hover-lift rounded-2xl p-6 border border-transparent hover:border-gray-100">
           <div class="inline-flex items-center justify-center w-16 h-16 mb-4 border-2 border-luxury-gold rounded-full group-hover:bg-luxury-gold transition-all duration-300">
             <svg class="w-8 h-8 text-luxury-gold group-hover:text-white transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
@@ -60,7 +64,7 @@
           <h3 class="font-serif text-xl mb-2">Calidad Premium</h3>
           <p class="text-gray-600 text-sm">Materiales de la más alta calidad seleccionados cuidadosamente</p>
         </div>
-        <div class="text-center group cursor-pointer">
+        <div class="text-center group cursor-pointer hover-lift rounded-2xl p-6 border border-transparent hover:border-gray-100">
           <div class="inline-flex items-center justify-center w-16 h-16 mb-4 border-2 border-luxury-gold rounded-full group-hover:bg-luxury-gold transition-all duration-300">
             <svg class="w-8 h-8 text-luxury-gold group-hover:text-white transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
@@ -69,7 +73,7 @@
           <h3 class="font-serif text-xl mb-2">Envío 24-48h</h3>
           <p class="text-gray-600 text-sm">Entrega rápida y segura en toda España</p>
         </div>
-        <div class="text-center group cursor-pointer">
+        <div class="text-center group cursor-pointer hover-lift rounded-2xl p-6 border border-transparent hover:border-gray-100">
           <div class="inline-flex items-center justify-center w-16 h-16 mb-4 border-2 border-luxury-gold rounded-full group-hover:bg-luxury-gold transition-all duration-300">
             <svg class="w-8 h-8 text-luxury-gold group-hover:text-white transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
@@ -117,7 +121,7 @@
     <div class="max-w-7xl mx-auto">
       <div class="text-center mb-16">
         <span class="text-luxury-gold text-xs font-bold tracking-[0.3em] uppercase block mb-3">Catálogo 2026</span>
-        <h2 class="font-serif text-4xl md:text-5xl lg:text-6xl text-luxury-black mb-6">Nuestros Complementos</h2>
+        <h2 class="ib-title font-serif text-4xl md:text-5xl lg:text-6xl text-luxury-black mb-6">Nuestros Complementos</h2>
         <div class="h-1 w-24 bg-luxury-gold mx-auto"></div>
         <p class="mt-6 text-gray-600 max-w-2xl mx-auto text-lg">
           Cada pieza está cuidadosamente diseñada para añadir ese toque de distinción que hará de tu día algo inolvidable
@@ -144,16 +148,18 @@
         <div id="categorias" class="flex flex-wrap justify-center gap-3 md:gap-4 mb-16 text-xs uppercase tracking-[0.2em] font-bold">
           <button 
             @click="cambiarCategoria('Todos')"
+            :aria-pressed="categoriaSeleccionada === 'Todos' ? 'true' : 'false'"
             :class="categoriaSeleccionada === 'Todos' ? 'bg-luxury-gold text-luxury-black shadow-lg scale-105' : 'bg-white text-gray-700 hover:bg-gray-100 hover:shadow-md'"
-            class="px-6 py-3 transition-all duration-300 rounded shadow whitespace-nowrap transform hover:scale-105">
+            class="px-6 py-3 transition-all duration-300 rounded-full shadow whitespace-nowrap transform hover:scale-105 focus:outline-none focus-visible:ring-2 focus-visible:ring-luxury-gold focus-visible:ring-offset-2 focus-visible:ring-offset-white">
             Todos
           </button>
           <button 
             v-for="cat in categorias" 
             :key="cat"
             @click="cambiarCategoria(cat)"
+            :aria-pressed="categoriaSeleccionada === cat ? 'true' : 'false'"
             :class="categoriaSeleccionada === cat ? 'bg-luxury-gold text-luxury-black shadow-lg scale-105' : 'bg-white text-gray-700 hover:bg-gray-100 hover:shadow-md'"
-            class="px-6 py-3 transition-all duration-300 rounded shadow whitespace-nowrap transform hover:scale-105">
+            class="px-6 py-3 transition-all duration-300 rounded-full shadow whitespace-nowrap transform hover:scale-105 focus:outline-none focus-visible:ring-2 focus-visible:ring-luxury-gold focus-visible:ring-offset-2 focus-visible:ring-offset-white">
             {{ cat }}
           </button>
         </div>

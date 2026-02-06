@@ -1,7 +1,9 @@
 <template>
-  <div class="group h-full flex flex-col bg-white rounded-lg overflow-hidden shadow-md hover:shadow-2xl transition-all duration-500 hover-lift">
+  <div class="group h-full flex flex-col bg-white rounded-2xl overflow-hidden border border-gray-100 shadow-sm hover:shadow-xl transition-all duration-500 hover-lift">
     <!-- Imagen y Botones -->
-    <router-link :to="`/producto/${producto.id}`" class="relative overflow-hidden bg-gradient-to-br from-gray-50 to-gray-100 aspect-[3/4] cursor-pointer">
+    <router-link
+      :to="`/producto/${producto.id}`"
+      class="relative overflow-hidden bg-gradient-to-br from-gray-50 to-gray-100 aspect-[3/4] cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-luxury-gold focus-visible:ring-offset-2">
       <!-- Imagen del producto -->
       <img :src="producto.imagen" 
            :alt="producto.nombre"
@@ -42,13 +44,16 @@
       </div>
 
       <!-- Botón Favoritos (Corazón) -->
-      <div 
+      <button
+        type="button"
         @click.prevent="toggleFavorite"
-        class="absolute top-3 right-3 bg-white/90 backdrop-blur-sm shadow-lg p-2.5 rounded-full hover:bg-luxury-gold transition-all duration-300 cursor-pointer z-10 hover:scale-110 transform">
+        :aria-pressed="isFavorite ? 'true' : 'false'"
+        aria-label="Marcar como favorito"
+        class="absolute top-3 right-3 bg-white/90 backdrop-blur-sm shadow-lg p-2.5 rounded-full hover:bg-luxury-gold transition-all duration-300 cursor-pointer z-10 hover:scale-110 transform focus:outline-none focus-visible:ring-2 focus-visible:ring-luxury-gold focus-visible:ring-offset-2">
         <svg :class="['h-5 w-5 transition-colors duration-300', isFavorite ? 'text-red-500 fill-current' : 'text-gray-600']" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
         </svg>
-      </div>
+      </button>
     </router-link>
 
     <!-- Info del producto -->
@@ -75,7 +80,7 @@
         <button 
           @click.stop="agregarAlCarrito"
           :disabled="agregando"
-          class="w-full bg-luxury-black text-white text-xs py-3 font-bold uppercase tracking-wider hover:bg-luxury-gold hover:text-luxury-black transition-all duration-300 disabled:opacity-50 shadow-md hover:shadow-lg transform hover:-translate-y-0.5">
+          class="w-full bg-luxury-black text-white text-xs py-3 font-bold uppercase tracking-wider hover:bg-luxury-gold hover:text-luxury-black transition-all duration-300 disabled:opacity-50 shadow-md hover:shadow-lg transform hover:-translate-y-0.5 rounded focus:outline-none focus-visible:ring-2 focus-visible:ring-luxury-gold focus-visible:ring-offset-2">
           {{ agregando ? 'Agregando...' : '+ Añadir al Carrito' }}
         </button>
       </div>

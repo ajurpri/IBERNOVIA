@@ -1,8 +1,70 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Lato:wght@300;400;700&display=swap');
+
 @import './base.css';
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+::selection {
+  background: rgb(var(--luxury-gold-rgb) / 0.25);
+}
+
+:where(a, button, input, textarea, select, summary):focus-visible {
+  outline: 2px solid rgb(var(--luxury-gold-rgb) / 0.85);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 1ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 1ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Ibernovia signature primitives (original, not based on third parties) */
+.ib-title {
+  position: relative;
+  display: inline-block;
+  padding-bottom: 0.65rem;
+}
+
+.ib-title::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0.2rem;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgb(var(--luxury-gold-rgb) / 0.7), transparent);
+}
+
+.ib-title::before {
+  content: '';
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  width: 10px;
+  height: 10px;
+  transform: translateX(-50%) rotate(45deg);
+  border: 1px solid rgb(var(--luxury-gold-rgb) / 0.9);
+  background: rgb(255 255 255 / 0.85);
+  box-shadow: 0 2px 10px rgb(var(--luxury-black-rgb) / 0.12);
+}
+
+.ib-surface {
+  border: 1px solid rgb(var(--luxury-gold-rgb) / 0.12);
+  box-shadow:
+    0 0 0 1px rgb(255 255 255 / 0.8) inset,
+    0 18px 60px rgb(var(--luxury-black-rgb) / 0.08);
+  background-image:
+    radial-gradient(circle at 0% 0%, rgb(var(--luxury-gold-rgb) / 0.06), transparent 30%),
+    radial-gradient(circle at 100% 0%, rgb(var(--luxury-gold-rgb) / 0.05), transparent 30%),
+    radial-gradient(circle at 0% 100%, rgb(var(--luxury-gold-rgb) / 0.04), transparent 30%),
+    radial-gradient(circle at 100% 100%, rgb(var(--luxury-gold-rgb) / 0.04), transparent 30%);
+}
 
 #app {
   width: 100%;
@@ -15,12 +77,4 @@ a {
   text-decoration: none;
   color: inherit;
   transition: color 0.2s ease, text-decoration-color 0.2s ease;
-}
-
-@media (hover: hover) {
-  a:hover {
-    text-decoration: underline;
-    text-decoration-thickness: 1px;
-    text-underline-offset: 3px;
-  }
 }

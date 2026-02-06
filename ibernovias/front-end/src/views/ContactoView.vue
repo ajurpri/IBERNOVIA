@@ -6,12 +6,12 @@
           <img :src="logoSrc" alt="IBERNOVIA" class="h-8 w-auto" />
           <span class="text-xs uppercase tracking-[0.3em] text-gray-500">Atención personalizada</span>
         </div>
-        <h1 class="font-serif text-4xl md:text-5xl font-bold text-luxury-black mb-3">Contacto</h1>
+        <h1 class="ib-title font-serif text-4xl md:text-5xl font-bold text-luxury-black mb-3">Contacto</h1>
         <p class="text-gray-600">Nos encantaría saber de ti. Envíanos un mensaje y te respondemos lo antes posible.</p>
       </div>
 
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-10 mb-12">
-        <div class="bg-white rounded-2xl shadow-md border border-gray-100 p-8">
+        <div class="bg-white ib-surface rounded-2xl shadow-md border border-gray-100 p-8">
           <div class="flex items-center justify-between gap-3 mb-6">
             <h2 class="font-serif text-2xl font-bold text-luxury-black">Información de Contacto</h2>
             <span class="text-xs px-3 py-1 rounded-full bg-luxury-gold/10 text-luxury-gold uppercase tracking-widest">Google</span>
@@ -58,7 +58,7 @@
           </div>
         </div>
 
-        <form @submit.prevent="submitForm" class="bg-white rounded-2xl shadow-md border border-gray-100 p-8">
+        <form @submit.prevent="submitForm" class="bg-white ib-surface rounded-2xl shadow-md border border-gray-100 p-8">
           <div class="mb-4">
             <label class="block text-sm font-bold text-gray-700 mb-2">Nombre</label>
             <input 
