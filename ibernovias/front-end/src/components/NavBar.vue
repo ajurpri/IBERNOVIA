@@ -5,7 +5,7 @@
       <div class="flex justify-between items-center h-20 gap-4">
         <!-- Logo -->
         <router-link to="/" class="flex items-center gap-3 flex-shrink-0">
-          <img src="/logo/logo.png" alt="IBERNOVIA" class="h-10 w-auto" />
+          <img :src="logoSrc" alt="IBERNOVIA" class="h-10 w-auto" />
           <span class="font-serif font-bold text-2xl text-luxury-black hover:text-luxury-gold transition">IBERNOVIA</span>
         </router-link>
 
@@ -103,6 +103,8 @@ import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useCartStore } from '../stores/cart'
 import { useAuthStore } from '../stores/auth'
+
+const logoSrc = import.meta.env.BASE_URL + 'logo/logo.jpg'
 
 const router = useRouter()
 const cartStore = useCartStore()

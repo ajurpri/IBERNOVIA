@@ -3,7 +3,7 @@
     <div class="max-w-6xl mx-auto">
       <div class="text-center mb-12">
         <div class="inline-flex items-center gap-3 px-5 py-2 rounded-full bg-white shadow-sm border border-gray-100 mb-6">
-          <img src="/logo/logo.png" alt="IBERNOVIA" class="h-8 w-auto" />
+          <img :src="logoSrc" alt="IBERNOVIA" class="h-8 w-auto" />
           <span class="text-xs uppercase tracking-[0.3em] text-gray-500">Atención personalizada</span>
         </div>
         <h1 class="font-serif text-4xl md:text-5xl font-bold text-luxury-black mb-3">Contacto</h1>
@@ -20,7 +20,7 @@
             <div class="flex items-start gap-3">
               <div class="w-10 h-10 rounded-full bg-luxury-gold/10 text-luxury-gold flex items-center justify-center">📍</div>
               <div>
-                <p class="font-bold text-luxury-black">Located in</p>
+                <p class="font-bold text-luxury-black">Horario</p>
                 <p class="text-gray-700">Plaza de Abastos</p>
                 <p class="text-gray-600 mt-2">Dirección</p>
                 <p class="text-gray-700">C. Ollerías, 48, 23740 Andújar, Jaén</p>
@@ -44,8 +44,9 @@
             <div class="flex items-start gap-3">
               <div class="w-10 h-10 rounded-full bg-luxury-gold/10 text-luxury-gold flex items-center justify-center">⏰</div>
               <div>
-                <p class="font-bold text-luxury-black">Hours</p>
-                <p class="text-gray-700">Closes soon · 8 pm · Opens 9 am Fri</p>
+                <p class="font-bold text-luxury-black">Horario</p>
+                <p class="text-gray-700">De lunes a viernes: 9:00 - 14:00 y 17:00 - 20:00</p>
+                <p class="text-gray-700">Sábado y domingo: Cerrado</p>
               </div>
             </div>
           </div>
@@ -106,7 +107,7 @@
             {{ enviando ? 'Enviando...' : 'Enviar Mensaje' }}
           </button>
 
-          <p v-if="mensaje" :class="{ 'text-green-600': exito, 'text-red-600': !exito }" class="mt-4 text-center text-sm">
+          <p v-if="mensaje" :class="{ 'text-luxury-gold': exito, 'text-red-600': !exito }" class="mt-4 text-center text-sm">
             {{ mensaje }}
           </p>
         </form>
@@ -117,6 +118,8 @@
 
 <script setup>
 import { ref } from 'vue'
+
+const logoSrc = import.meta.env.BASE_URL + 'logo/logo.jpg'
 
 const form = ref({
   nombre: '',

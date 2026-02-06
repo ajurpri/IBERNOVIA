@@ -48,7 +48,7 @@
             <span class="inline-block bg-luxury-gold text-luxury-black px-4 py-2 text-xs font-bold uppercase tracking-widest">
               {{ producto.categoria }}
             </span>
-            <span v-if="producto.stock > 0" class="inline-block bg-green-100 text-green-700 px-4 py-2 text-xs font-bold uppercase tracking-widest">
+            <span v-if="producto.stock > 0" class="inline-block bg-luxury-gold/10 text-luxury-black px-4 py-2 text-xs font-bold uppercase tracking-widest border border-luxury-gold/30">
               En Stock ({{ producto.stock }})
             </span>
             <span v-else class="inline-block bg-red-100 text-red-700 px-4 py-2 text-xs font-bold uppercase tracking-widest">

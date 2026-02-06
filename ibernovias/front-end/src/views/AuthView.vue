@@ -41,7 +41,7 @@
           </div>
 
           <!-- Mensaje de Éxito -->
-          <div v-if="successMessage" class="mb-6 p-4 bg-green-50 border border-green-200 rounded text-green-600 text-sm">
+          <div v-if="successMessage" class="mb-6 p-4 bg-luxury-gold/10 border border-luxury-gold/30 rounded text-luxury-black text-sm">
             {{ successMessage }}
           </div>
 

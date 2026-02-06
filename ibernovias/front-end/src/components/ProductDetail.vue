@@ -45,7 +45,7 @@
         </div>
 
         <div class="mb-8 grid grid-cols-2 gap-4">
-          <div v-if="producto.stock" class="text-sm text-green-600 font-semibold">
+          <div v-if="producto.stock" class="text-sm text-luxury-black font-semibold">
             ✓ En stock ({{ producto.stock }})
           </div>
           <div v-else class="text-sm text-red-600 font-semibold">
@@ -75,7 +75,7 @@
           </button>
         </div>
 
-        <div v-if="agregado" class="mt-4 p-4 bg-green-50 border border-green-200 text-green-700 text-sm rounded">
+        <div v-if="agregado" class="mt-4 p-4 bg-luxury-gold/10 border border-luxury-gold/30 text-luxury-black text-sm rounded">
           ✓ Producto agregado al carrito
         </div>
       </div>

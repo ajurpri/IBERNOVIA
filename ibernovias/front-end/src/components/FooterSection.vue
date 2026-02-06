@@ -5,7 +5,7 @@
         <!-- Sobre -->
         <div>
           <div class="flex items-center gap-3 mb-4">
-            <img src="/logo/logo.png" alt="IBERNOVIA" class="h-10 w-auto" />
+            <img :src="logoSrc" alt="IBERNOVIA" class="h-10 w-auto" />
             <h3 class="font-serif text-2xl text-luxury-gold">IBERNOVIA</h3>
           </div>
           <p class="text-gray-400 text-sm leading-relaxed mb-4">
@@ -100,6 +100,7 @@
 </template>
 
 <script setup>
+const logoSrc = import.meta.env.BASE_URL + 'logo/logo.jpg'
 </script>
 
 <style scoped>

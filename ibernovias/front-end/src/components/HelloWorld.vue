@@ -15,7 +15,7 @@
     <div class="relative h-full flex flex-col items-center justify-center text-white text-center px-4 z-10">
       <div class="animate-fade-in-up">
         <div class="flex items-center justify-center mb-6">
-          <img src="/logo/logo.png" alt="IBERNOVIA" class="h-14 md:h-16 w-auto drop-shadow-xl" />
+          <img :src="logoSrc" alt="IBERNOVIA" class="h-14 md:h-16 w-auto drop-shadow-xl" />
         </div>
         <div class="mb-4 inline-block">
           <span class="text-luxury-gold text-xs md:text-sm font-bold tracking-[0.3em] uppercase border-t border-b border-luxury-gold py-2 px-6">Desde 2015</span>
@@ -98,7 +98,7 @@
           </div>
           <div class="p-4 border rounded-lg">
             <p class="font-bold text-luxury-black">Horario</p>
-            <p class="text-gray-600">Closes soon · 8 pm · Opens 9 am Fri</p>
+            <p class="text-gray-600">De lunes a viernes de 9 a 14 y 17 a 20</p>
           </div>
         </div>
       </div>
@@ -224,6 +224,8 @@
 import { ref, onMounted, computed } from 'vue'
 import axios from 'axios'
 import ProductCard from '../components/ProductCard.vue'
+
+const logoSrc = import.meta.env.BASE_URL + 'logo/logo.jpg'
 
 const productos = ref([])
 const loading = ref(true)

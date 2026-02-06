@@ -1,14 +1,21 @@
-import mysql.connector
+import pymysql
 from datetime import datetime
+from pathlib import Path
 
 # Conexión a MySQL
-conn = mysql.connector.connect(
-    host='localhost',
+conn = pymysql.connect(
+    host='127.0.0.1',
+    port=3306,
     user='root',
     password='toor',
-    database='ibernovia'
+    database='ibernovia',
+    charset='utf8mb4',
+    cursorclass=pymysql.cursors.DictCursor
 )
 cursor = conn.cursor()
+
+# Ruta de las imágenes
+imagenes_dir = Path(r'c:\Users\alvar\Documents\IBERNOVIA\FOTOS WEB')
 
 # Limpiar tabla
 cursor.execute("DELETE FROM productos")
