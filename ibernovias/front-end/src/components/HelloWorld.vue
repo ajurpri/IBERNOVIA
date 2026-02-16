@@ -1,94 +1,142 @@
 <template>
-  <!-- Hero Section: Portada Impactante -->
-  <div class="relative min-h-[100svh] w-full bg-luxury-black overflow-hidden">
-    <!-- Video/Image Background -->
-    <div class="absolute inset-0">
-      <img src="https://images.unsplash.com/photo-1519741497674-611481863552?q=80&w=2070&auto=format&fit=crop" 
-           alt="Novia Ibernovia" 
-           class="w-full h-full object-cover opacity-50 transform scale-105 animate-subtle-zoom">
-    </div>
-    
-    <!-- Gradient Overlay -->
-    <div class="absolute inset-0 bg-gradient-to-b from-black/70 via-black/50 to-black/80"></div>
-    
-    <!-- Content -->
-    <div class="relative min-h-[100svh] flex flex-col items-center justify-center text-white text-center px-4 py-20 z-10">
-      <div class="animate-fade-in-up w-full max-w-5xl mx-auto">
-        <div class="flex items-center justify-center mb-6">
-          <img :src="logoSrc" alt="IBERNOVIA" class="h-14 md:h-16 w-auto drop-shadow-xl" />
+  <!-- Hero Section: Minimal Modern -->
+  <section class="hero-shell relative w-full overflow-hidden">
+    <div class="relative max-w-7xl mx-auto px-6 sm:px-8 py-20 sm:py-24 lg:py-28">
+      <div class="grid grid-cols-1 lg:grid-cols-[1.05fr_0.95fr] gap-10 lg:gap-12 items-center">
+        <div class="animate-fade-in-up">
+          <div class="inline-flex items-center gap-3 mb-6">
+            <span class="h-px w-10 bg-luxury-gold"></span>
+            <span class="text-xs uppercase tracking-[0.35em] text-luxury-gold font-semibold">Andujar · Jaen</span>
+          </div>
+          <h1 class="font-serif text-5xl sm:text-6xl lg:text-7xl leading-[1.05] text-luxury-black mb-6">
+            Atelier y asesoramiento
+            <span class="text-luxury-gold">en tienda</span>
+          </h1>
+          <p class="text-base sm:text-xl text-gray-600 max-w-xl mb-8 sm:mb-10">
+            Seleccion de complementos de alta costura, pruebas en atelier y un trato cercano para cada novia.
+          </p>
+
+          <div class="flex flex-col sm:flex-row gap-3 sm:gap-4 items-start sm:items-center">
+            <router-link
+              to="/tienda"
+              class="group relative bg-luxury-black text-white px-8 sm:px-9 py-4 font-semibold uppercase tracking-[0.2em] text-xs sm:text-sm hover:bg-luxury-gold hover:text-luxury-black transition-all duration-300 overflow-hidden rounded focus:outline-none focus-visible:ring-2 focus-visible:ring-luxury-gold focus-visible:ring-offset-2 focus-visible:ring-offset-white"
+            >
+              <span class="relative z-10">Explorar coleccion</span>
+              <div class="absolute inset-0 bg-luxury-gold/30 transform -translate-x-full group-hover:translate-x-0 transition-transform duration-300"></div>
+            </router-link>
+            <router-link
+              to="/contacto"
+              class="border border-luxury-black/20 text-luxury-black px-8 sm:px-9 py-4 uppercase tracking-[0.2em] text-xs sm:text-sm font-semibold rounded hover:border-luxury-black hover:bg-luxury-black hover:text-white transition-all duration-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-luxury-gold focus-visible:ring-offset-2 focus-visible:ring-offset-white"
+            >
+              Reservar cita
+            </router-link>
+          </div>
+
+          <div class="mt-8 sm:mt-10 grid grid-cols-2 sm:grid-cols-3 gap-4 text-[11px] sm:text-xs uppercase tracking-[0.2em] text-gray-500">
+            <div class="rounded-2xl border border-white/70 bg-white/80 px-5 py-4 shadow-sm">
+              <p class="text-luxury-black font-semibold">Atelier local</p>
+              <p class="mt-1">Andujar · Jaen</p>
+            </div>
+            <div class="rounded-2xl border border-white/70 bg-white/80 px-5 py-4 shadow-sm">
+              <p class="text-luxury-black font-semibold">Curado premium</p>
+              <p class="mt-1">Detalles a medida</p>
+            </div>
+            <div class="rounded-2xl border border-white/70 bg-white/80 px-5 py-4 shadow-sm">
+              <p class="text-luxury-black font-semibold">Envio 24-48h</p>
+              <p class="mt-1">Packaging cuidado</p>
+            </div>
+          </div>
         </div>
-        <div class="mb-4 inline-block">
-          <span class="text-luxury-gold text-xs md:text-sm font-bold tracking-[0.3em] uppercase border-t border-b border-luxury-gold py-2 px-6">Desde 2015</span>
-        </div>
-        <h1 class="font-serif text-4xl md:text-6xl lg:text-8xl mb-6 tracking-tight leading-[1.05]">
-          Elegancia<br/>
-          <span class="text-luxury-gold">Atemporal</span>
-        </h1>
-        <p class="text-base md:text-xl lg:text-2xl tracking-[0.2em] uppercase mb-10 font-light max-w-3xl mx-auto opacity-90">
-          Complementos Nupciales de Alta Costura
-        </p>
-        <div class="flex flex-col sm:flex-row gap-4 justify-center items-center">
-          <router-link
-            to="/tienda"
-            class="group relative bg-luxury-gold text-luxury-black px-10 py-4 font-bold uppercase tracking-widest text-sm hover:bg-white transition-all duration-300 overflow-hidden rounded focus:outline-none focus-visible:ring-2 focus-visible:ring-luxury-gold focus-visible:ring-offset-2 focus-visible:ring-offset-black">
-            <span class="relative z-10">Explorar Colección</span>
-            <div class="absolute inset-0 bg-white transform -translate-x-full group-hover:translate-x-0 transition-transform duration-300"></div>
-          </router-link>
-          <a
-            href="#categorias"
-            class="border-2 border-white px-10 py-4 hover:bg-white hover:text-luxury-black transition-all duration-300 uppercase tracking-widest text-sm font-bold rounded focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-black">
-            Nuestras Categorías
-          </a>
+
+        <div class="relative">
+          <div class="absolute -inset-6 rounded-[32px] bg-luxury-gold/15 blur-2xl"></div>
+          <div class="relative rounded-[28px] border border-white/70 bg-white/90 p-4 sm:p-6 shadow-2xl">
+            <img
+              src="https://images.unsplash.com/photo-1519741497674-611481863552?q=80&w=2070&auto=format&fit=crop"
+              alt="Novia Ibernovia"
+              class="h-[320px] sm:h-[380px] w-full rounded-[22px] object-cover"
+              loading="eager"
+              decoding="async"
+              fetchpriority="high"
+              width="2070"
+              height="1380"
+            />
+            <div class="mt-5 flex items-center justify-between gap-4 text-xs uppercase tracking-[0.25em] text-gray-500">
+              <span>Plaza de Abastos</span>
+              <span class="text-luxury-gold">Desde 2015</span>
+            </div>
+            <div class="absolute -left-6 top-8 hidden sm:block">
+              <div class="rounded-full border border-luxury-gold/40 bg-white/90 px-4 py-2 text-[10px] uppercase tracking-[0.35em] text-luxury-black shadow-lg">
+                Atelier
+              </div>
+            </div>
+          </div>
         </div>
       </div>
-      
-      <!-- Scroll Indicator -->
-      <div class="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce">
-        <svg class="w-6 h-6 text-luxury-gold" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>
-        </svg>
+    </div>
+
+    <div class="hidden md:block">
+      <div class="max-w-6xl mx-auto px-6 pb-10">
+        <div class="grid grid-cols-3 gap-4 bg-white/70 backdrop-blur border border-white/70 rounded-2xl px-6 py-5 text-luxury-black text-sm shadow-sm">
+          <div class="flex items-center gap-3">
+            <span class="text-luxury-gold text-lg">★</span>
+            <span>Envio 24-48h en toda Espana</span>
+          </div>
+          <div class="flex items-center gap-3">
+            <span class="text-luxury-gold text-lg">◆</span>
+            <span>Diseno artesanal y curado premium</span>
+          </div>
+          <div class="flex items-center gap-3">
+            <span class="text-luxury-gold text-lg">●</span>
+            <span>Pago seguro y devolucion 30 dias</span>
+          </div>
+        </div>
       </div>
     </div>
-  </div>
-  
-  <!-- Características Destacadas -->
-  <div class="py-16 bg-white border-b">
-    <div class="max-w-7xl mx-auto px-4">
+  </section>
+
+  <!-- Caracteristicas Destacadas -->
+  <section class="py-16 sm:py-20 bg-white border-b">
+    <div class="max-w-7xl mx-auto px-6">
+      <div class="text-center mb-10 sm:mb-12">
+        <span class="text-luxury-gold text-xs font-bold tracking-[0.3em] uppercase block mb-3">Experiencia Ibernovia</span>
+        <h2 class="font-serif text-3xl sm:text-4xl md:text-5xl text-luxury-black">Lujo cercano, detalle perfecto</h2>
+      </div>
       <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-        <div class="text-center group cursor-pointer hover-lift rounded-2xl p-6 border border-transparent hover:border-gray-100">
-          <div class="inline-flex items-center justify-center w-16 h-16 mb-4 border-2 border-luxury-gold rounded-full group-hover:bg-luxury-gold transition-all duration-300">
-            <svg class="w-8 h-8 text-luxury-gold group-hover:text-white transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <div class="group hover-lift rounded-3xl p-7 border border-gray-100 bg-gradient-to-b from-white to-gray-50">
+          <div class="inline-flex items-center justify-center w-14 h-14 mb-5 border-2 border-luxury-gold rounded-full group-hover:bg-luxury-gold transition-all duration-300">
+            <svg class="w-7 h-7 text-luxury-gold group-hover:text-white transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
             </svg>
           </div>
-          <h3 class="font-serif text-xl mb-2">Calidad Premium</h3>
-          <p class="text-gray-600 text-sm">Materiales de la más alta calidad seleccionados cuidadosamente</p>
+          <h3 class="font-serif text-xl mb-2">Seleccion premium</h3>
+          <p class="text-gray-600 text-sm">Materiales nobles y acabados artesanales para un toque inolvidable.</p>
         </div>
-        <div class="text-center group cursor-pointer hover-lift rounded-2xl p-6 border border-transparent hover:border-gray-100">
-          <div class="inline-flex items-center justify-center w-16 h-16 mb-4 border-2 border-luxury-gold rounded-full group-hover:bg-luxury-gold transition-all duration-300">
-            <svg class="w-8 h-8 text-luxury-gold group-hover:text-white transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <div class="group hover-lift rounded-3xl p-7 border border-gray-100 bg-gradient-to-b from-white to-gray-50">
+          <div class="inline-flex items-center justify-center w-14 h-14 mb-5 border-2 border-luxury-gold rounded-full group-hover:bg-luxury-gold transition-all duration-300">
+            <svg class="w-7 h-7 text-luxury-gold group-hover:text-white transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
             </svg>
           </div>
-          <h3 class="font-serif text-xl mb-2">Envío 24-48h</h3>
-          <p class="text-gray-600 text-sm">Entrega rápida y segura en toda España</p>
+          <h3 class="font-serif text-xl mb-2">Entrega rapida</h3>
+          <p class="text-gray-600 text-sm">Envio 24-48h con packaging premium listo para regalar.</p>
         </div>
-        <div class="text-center group cursor-pointer hover-lift rounded-2xl p-6 border border-transparent hover:border-gray-100">
-          <div class="inline-flex items-center justify-center w-16 h-16 mb-4 border-2 border-luxury-gold rounded-full group-hover:bg-luxury-gold transition-all duration-300">
-            <svg class="w-8 h-8 text-luxury-gold group-hover:text-white transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <div class="group hover-lift rounded-3xl p-7 border border-gray-100 bg-gradient-to-b from-white to-gray-50">
+          <div class="inline-flex items-center justify-center w-14 h-14 mb-5 border-2 border-luxury-gold rounded-full group-hover:bg-luxury-gold transition-all duration-300">
+            <svg class="w-7 h-7 text-luxury-gold group-hover:text-white transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
             </svg>
           </div>
-          <h3 class="font-serif text-xl mb-2">Atención Personalizada</h3>
-          <p class="text-gray-600 text-sm">Asesoramiento experto para tu día especial</p>
+          <h3 class="font-serif text-xl mb-2">Atencion curada</h3>
+          <p class="text-gray-600 text-sm">Asesoramiento personalizado en tienda o por WhatsApp.</p>
         </div>
       </div>
     </div>
-  </div>
+  </section>
 
   <!-- Experiencia en tienda -->
-  <div class="py-16 bg-white">
-    <div class="max-w-7xl mx-auto px-4 grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
+  <section class="py-16 sm:py-20 bg-white">
+    <div class="max-w-7xl mx-auto px-6 grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-12 items-center">
       <div>
         <span class="text-luxury-gold text-xs font-bold tracking-[0.3em] uppercase block mb-3">Andújar · Jaén</span>
         <h2 class="font-serif text-4xl md:text-5xl text-luxury-black mb-6">Atelier y asesoramiento en tienda</h2>
@@ -111,20 +159,87 @@
         <img
           src="https://images.unsplash.com/photo-1524504388940-b1c1722653e1?q=80&w=1974&auto=format&fit=crop"
           alt="Atelier Ibernovia"
-          class="relative rounded-3xl shadow-xl w-full object-cover h-[360px]"
+          class="relative rounded-3xl shadow-xl w-full object-cover h-[280px] sm:h-[320px] lg:h-[360px]"
+          loading="lazy"
+          decoding="async"
         />
       </div>
     </div>
-  </div>
+  </section>
 
-  <div id="coleccion" class="w-full px-4 sm:px-6 lg:px-8 py-20 bg-luxury-gray">
+  <!-- Lookbook -->
+  <section class="py-16 sm:py-20 bg-luxury-gray">
+    <div class="max-w-7xl mx-auto px-6">
+      <div class="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6 mb-8 sm:mb-10">
+        <div>
+          <span class="text-luxury-gold text-xs font-bold tracking-[0.3em] uppercase block mb-3">Lookbook 2026</span>
+          <h2 class="font-serif text-3xl sm:text-4xl md:text-5xl text-luxury-black">Inspiracion para tu dia</h2>
+          <p class="text-gray-600 mt-3 max-w-xl">Piezas que capturan luz, textura y movimiento con un equilibrio entre tradicion y modernidad.</p>
+        </div>
+        <router-link to="/tienda" class="uppercase tracking-widest text-[11px] font-bold text-luxury-black border border-luxury-black px-6 py-3 hover:bg-luxury-black hover:text-white transition">Ver catalogo</router-link>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="relative overflow-hidden rounded-3xl shadow-lg">
+          <img
+            src="/images/optimized/complemento-12-960.jpg"
+            srcset="/images/optimized/complemento-12-480.jpg 480w, /images/optimized/complemento-12-960.jpg 960w, /images/optimized/complemento-12-1440.jpg 1440w"
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+            alt="Complementos Ibernovia"
+            class="h-64 sm:h-72 lg:h-80 w-full object-cover"
+            loading="lazy"
+            decoding="async"
+            width="1200"
+            height="800"
+          />
+          <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+          <p class="absolute bottom-4 left-4 text-white text-sm uppercase tracking-[0.3em]">Complementos</p>
+        </div>
+        <div class="relative overflow-hidden rounded-3xl shadow-lg hidden sm:block">
+          <img
+            src="/images/optimized/complemento-45-960.jpg"
+            srcset="/images/optimized/complemento-45-480.jpg 480w, /images/optimized/complemento-45-960.jpg 960w, /images/optimized/complemento-45-1440.jpg 1440w"
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+            alt="Detalles Ibernovia"
+            class="h-64 sm:h-72 lg:h-80 w-full object-cover"
+            loading="lazy"
+            decoding="async"
+            width="1200"
+            height="800"
+          />
+          <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+          <p class="absolute bottom-4 left-4 text-white text-sm uppercase tracking-[0.3em]">Detalles</p>
+        </div>
+        <div class="relative overflow-hidden rounded-3xl shadow-lg hidden md:block">
+          <img
+            src="/images/optimized/complemento-90-960.jpg"
+            srcset="/images/optimized/complemento-90-480.jpg 480w, /images/optimized/complemento-90-960.jpg 960w, /images/optimized/complemento-90-1440.jpg 1440w"
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+            alt="Acabados Ibernovia"
+            class="h-64 sm:h-72 lg:h-80 w-full object-cover"
+            loading="lazy"
+            decoding="async"
+            width="1200"
+            height="800"
+          />
+          <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+          <p class="absolute bottom-4 left-4 text-white text-sm uppercase tracking-[0.3em]">Acabados</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="coleccion" class="catalog-shell w-full px-6 sm:px-8 lg:px-10 py-20 sm:py-24">
     <div class="max-w-7xl mx-auto">
-      <div class="text-center mb-16">
-        <span class="text-luxury-gold text-xs font-bold tracking-[0.3em] uppercase block mb-3">Catálogo 2026</span>
-        <h2 class="ib-title font-serif text-4xl md:text-5xl lg:text-6xl text-luxury-black mb-6">Nuestros Complementos</h2>
-        <div class="h-1 w-24 bg-luxury-gold mx-auto"></div>
-        <p class="mt-6 text-gray-600 max-w-2xl mx-auto text-lg">
-          Cada pieza está cuidadosamente diseñada para añadir ese toque de distinción que hará de tu día algo inolvidable
+      <div class="text-center mb-12 sm:mb-16">
+        <span class="text-luxury-gold text-xs font-semibold tracking-[0.35em] uppercase block mb-3">Catalogo 2026</span>
+        <h2 class="font-serif text-4xl sm:text-5xl md:text-6xl lg:text-7xl text-luxury-black">Nuestros complementos</h2>
+        <div class="mt-5 flex items-center justify-center gap-4">
+          <span class="h-px w-14 bg-luxury-gold/60"></span>
+          <span class="h-2 w-2 rounded-full bg-luxury-gold"></span>
+          <span class="h-px w-14 bg-luxury-gold/60"></span>
+        </div>
+        <p class="mt-6 text-gray-600 max-w-2xl mx-auto text-xl">
+          Cada pieza esta cuidadosamente diseñada para añadir ese toque de distincion que hara de tu dia algo inolvidable.
         </p>
       </div>
 
@@ -145,12 +260,12 @@
       <!-- Contenido Principal -->
       <div v-else>
         <!-- Filtros de Categoría -->
-        <div id="categorias" class="flex flex-wrap justify-center gap-3 md:gap-4 mb-16 text-xs uppercase tracking-[0.2em] font-bold">
+        <div id="categorias" class="flex flex-wrap justify-center gap-3 md:gap-4 mb-16 text-xs uppercase tracking-[0.25em] font-semibold">
           <button 
             @click="cambiarCategoria('Todos')"
             :aria-pressed="categoriaSeleccionada === 'Todos' ? 'true' : 'false'"
-            :class="categoriaSeleccionada === 'Todos' ? 'bg-luxury-gold text-luxury-black shadow-lg scale-105' : 'bg-white text-gray-700 hover:bg-gray-100 hover:shadow-md'"
-            class="px-6 py-3 transition-all duration-300 rounded-full shadow whitespace-nowrap transform hover:scale-105 focus:outline-none focus-visible:ring-2 focus-visible:ring-luxury-gold focus-visible:ring-offset-2 focus-visible:ring-offset-white">
+            :class="categoriaSeleccionada === 'Todos' ? 'bg-luxury-black text-white shadow-lg' : 'bg-white/90 text-gray-700 hover:text-luxury-black hover:bg-white'"
+            class="px-6 py-3 transition-all duration-300 rounded-full border border-white/80 shadow-sm whitespace-nowrap focus:outline-none focus-visible:ring-2 focus-visible:ring-luxury-gold focus-visible:ring-offset-2 focus-visible:ring-offset-white">
             Todos
           </button>
           <button 
@@ -158,8 +273,8 @@
             :key="cat"
             @click="cambiarCategoria(cat)"
             :aria-pressed="categoriaSeleccionada === cat ? 'true' : 'false'"
-            :class="categoriaSeleccionada === cat ? 'bg-luxury-gold text-luxury-black shadow-lg scale-105' : 'bg-white text-gray-700 hover:bg-gray-100 hover:shadow-md'"
-            class="px-6 py-3 transition-all duration-300 rounded-full shadow whitespace-nowrap transform hover:scale-105 focus:outline-none focus-visible:ring-2 focus-visible:ring-luxury-gold focus-visible:ring-offset-2 focus-visible:ring-offset-white">
+            :class="categoriaSeleccionada === cat ? 'bg-luxury-black text-white shadow-lg' : 'bg-white/90 text-gray-700 hover:text-luxury-black hover:bg-white'"
+            class="px-6 py-3 transition-all duration-300 rounded-full border border-white/80 shadow-sm whitespace-nowrap focus:outline-none focus-visible:ring-2 focus-visible:ring-luxury-gold focus-visible:ring-offset-2 focus-visible:ring-offset-white">
             {{ cat }}
           </button>
         </div>
@@ -187,51 +302,53 @@
         </div>
       </div>
     </div>
-  </div>
+  </section>
 
-  <!-- Testimonios -->
-  <div class="py-16 bg-white">
-    <div class="max-w-7xl mx-auto px-4">
-      <div class="text-center mb-12">
-        <span class="text-luxury-gold text-xs font-bold tracking-[0.3em] uppercase block mb-3">Reseñas</span>
-        <h2 class="font-serif text-4xl md:text-5xl text-luxury-black">Amor a primera vista</h2>
+  <!-- Garantias -->
+  <section class="py-16 sm:py-20 bg-white">
+    <div class="max-w-7xl mx-auto px-6">
+      <div class="text-center mb-10 sm:mb-12">
+        <span class="text-luxury-gold text-xs font-bold tracking-[0.3em] uppercase block mb-3">Garantias</span>
+        <h2 class="font-serif text-3xl sm:text-4xl md:text-5xl text-luxury-black">Cuidado en cada detalle</h2>
       </div>
       <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div class="p-6 border rounded-2xl shadow-sm">
-          <p class="text-gray-600">“Calidad impecable y trato cercano. Encontré el complemento perfecto para mi boda.”</p>
-          <p class="mt-4 font-semibold text-luxury-black">Laura M.</p>
+        <div class="p-7 border rounded-3xl shadow-sm bg-gradient-to-b from-white to-gray-50">
+          <p class="text-gray-600">Packaging premium pensado para regalo y presentacion impecable.</p>
+          <p class="mt-6 font-semibold text-luxury-black">Empaquetado especial</p>
         </div>
-        <div class="p-6 border rounded-2xl shadow-sm">
-          <p class="text-gray-600">“Diseños elegantes y asesoramiento excepcional. Repetiría sin duda.”</p>
-          <p class="mt-4 font-semibold text-luxury-black">María C.</p>
+        <div class="p-7 border rounded-3xl shadow-sm bg-gradient-to-b from-white to-gray-50">
+          <p class="text-gray-600">Envio rapido 24-48h con seguimiento y soporte en todo momento.</p>
+          <p class="mt-6 font-semibold text-luxury-black">Envio seguro</p>
         </div>
-        <div class="p-6 border rounded-2xl shadow-sm">
-          <p class="text-gray-600">“El envío fue rápido y el packaging precioso. Todo cuidado al detalle.”</p>
-          <p class="mt-4 font-semibold text-luxury-black">Patricia G.</p>
+        <div class="p-7 border rounded-3xl shadow-sm bg-gradient-to-b from-white to-gray-50">
+          <p class="text-gray-600">Devoluciones sencillas en 30 dias para que compres con confianza.</p>
+          <p class="mt-6 font-semibold text-luxury-black">Devolucion facil</p>
         </div>
       </div>
     </div>
-  </div>
+  </section>
 
   <!-- CTA final -->
-  <div class="py-16 bg-luxury-black text-white">
-    <div class="max-w-7xl mx-auto px-4 text-center">
-      <h2 class="font-serif text-4xl md:text-5xl mb-4">Tu día merece algo único</h2>
-      <p class="text-white/80 max-w-2xl mx-auto mb-8">Explora nuestra colección o visítanos en tienda para un asesoramiento personalizado.</p>
+  <section class="py-16 sm:py-20 bg-luxury-black text-white">
+    <div class="max-w-7xl mx-auto px-6 text-center">
+      <h2 class="font-serif text-3xl sm:text-4xl md:text-5xl mb-4">Tu dia merece algo unico</h2>
+      <p class="text-white/80 max-w-2xl mx-auto mb-8">Explora la coleccion o visitanos en tienda para un asesoramiento personalizado.</p>
       <div class="flex flex-col sm:flex-row gap-4 justify-center">
-        <router-link to="/tienda" class="bg-luxury-gold text-luxury-black px-8 py-3 font-bold uppercase tracking-widest text-sm hover:bg-white transition">Ver Tienda</router-link>
+        <router-link to="/tienda" class="bg-luxury-gold text-luxury-black px-8 py-3 font-bold uppercase tracking-widest text-sm hover:bg-white transition">Ver tienda</router-link>
         <router-link to="/contacto" class="border border-white px-8 py-3 font-bold uppercase tracking-widest text-sm hover:bg-white hover:text-luxury-black transition">Contacto</router-link>
       </div>
     </div>
-  </div>
+  </section>
 </template>
 
 <script setup>
 import { ref, onMounted, computed } from 'vue'
-import axios from 'axios'
+import { apiClient } from '../lib/api'
 import ProductCard from '../components/ProductCard.vue'
 
-const logoSrc = import.meta.env.BASE_URL + 'logo/logo.jpg'
+const logoBase = import.meta.env.BASE_URL + 'logo/optimized/'
+const logoSrc = `${logoBase}logo-140.jpg`
+const logoSrcSet = `${logoBase}logo-80.jpg 80w, ${logoBase}logo-140.jpg 140w, ${logoBase}logo-280.jpg 280w`
 
 const productos = ref([])
 const loading = ref(true)
@@ -245,7 +362,7 @@ const productosPorPagina = 12
 onMounted(async () => {
   try {
     loading.value = true
-    const res = await axios.get('http://localhost:8080/api/productos')
+    const res = await apiClient.get('/api/productos')
     if (Array.isArray(res.data)) {
       productos.value = res.data
     } else {
@@ -290,3 +407,32 @@ const cargarMas = () => {
   paginaActual.value++
 }
 </script>
+
+<style scoped>
+.hero-shell::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle at 18% 18%, rgba(196, 160, 106, 0.2), transparent 45%),
+    radial-gradient(circle at 85% 12%, rgba(255, 255, 255, 0.6), transparent 35%),
+    linear-gradient(135deg, rgba(196, 160, 106, 0.12) 0%, transparent 40%, rgba(196, 160, 106, 0.08) 100%);
+  pointer-events: none;
+  mix-blend-mode: normal;
+}
+
+.catalog-shell {
+  position: relative;
+  background: linear-gradient(180deg, rgba(251, 248, 242, 0.9), rgba(246, 242, 237, 0.75));
+}
+
+.catalog-shell::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle at 12% 20%, rgba(196, 160, 106, 0.12), transparent 40%),
+    radial-gradient(circle at 90% 30%, rgba(196, 160, 106, 0.08), transparent 40%);
+  pointer-events: none;
+}
+</style>

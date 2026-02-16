@@ -17,6 +17,8 @@
               :src="item.imagen || 'https://placehold.co/100x100'" 
               :alt="item.nombre"
               class="w-24 h-24 object-cover rounded"
+              loading="lazy"
+              decoding="async"
             >
 
             <!-- Info -->

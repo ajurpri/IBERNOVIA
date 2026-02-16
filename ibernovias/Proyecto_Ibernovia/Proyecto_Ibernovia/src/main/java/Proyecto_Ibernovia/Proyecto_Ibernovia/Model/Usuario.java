@@ -44,6 +44,9 @@ public class Usuario {
     @Column(nullable = false)
     private Boolean activo = true;
 
+    @Column(name = "is_admin", nullable = false)
+    private Boolean isAdmin = false;
+
     // Constructores
     public Usuario() {}
 
@@ -163,5 +166,13 @@ public class Usuario {
 
     public void setActivo(Boolean activo) {
         this.activo = activo;
+    }
+
+    public Boolean getIsAdmin() {
+        return isAdmin;
+    }
+
+    public void setIsAdmin(Boolean isAdmin) {
+        this.isAdmin = isAdmin;
     }
 }

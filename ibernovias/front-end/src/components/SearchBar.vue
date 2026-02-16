@@ -7,9 +7,9 @@
         placeholder="Buscar productos..."
         class="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:border-luxury-gold transition"
       >
-      <button v-if="query" @click="query = ''" class="absolute right-3 top-2.5 text-gray-400 hover:text-gray-600">✕</button>
+      <button v-if="query" type="button" @click="query = ''" class="absolute right-3 top-2.5 text-gray-400 hover:text-gray-600" aria-label="Borrar búsqueda">✕</button>
     </div>
-    <button type="submit" class="px-4 py-2 bg-luxury-gold text-white rounded hover:bg-opacity-80 transition">
+    <button type="submit" class="px-4 py-2 bg-luxury-gold text-white rounded hover:bg-opacity-80 transition" aria-label="Buscar">
       🔍
     </button>
   </form>
@@ -25,7 +25,7 @@
           @click="query = ''"
           class="text-center hover:bg-gray-50 p-2 rounded transition"
         >
-          <img :src="prod.imagen || 'https://placehold.co/100x100'" :alt="prod.nombre" class="w-full aspect-square object-cover rounded mb-2">
+          <img :src="prod.imagen || 'https://placehold.co/100x100'" :alt="prod.nombre" class="w-full aspect-square object-cover rounded mb-2" loading="lazy" decoding="async">
           <p class="text-xs font-semibold truncate">{{ prod.nombre }}</p>
           <p class="text-xs text-luxury-gold">{{ prod.precio }}€</p>
         </router-link>
@@ -36,7 +36,7 @@
 
 <script setup>
 import { ref } from 'vue'
-import axios from 'axios'
+import { apiClient } from '../lib/api'
 
 const query = ref('')
 const resultados = ref([])
@@ -45,7 +45,7 @@ const buscar = async () => {
   if (query.value.trim().length < 2) return
   
   try {
-    const res = await axios.get(`http://localhost:8080/api/productos/buscar/${query.value}`)
+    const res = await apiClient.get(`/api/productos/buscar/${encodeURIComponent(query.value)}`)
     resultados.value = res.data
   } catch (e) {
     console.error('Error buscando:', e)

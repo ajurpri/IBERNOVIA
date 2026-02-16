@@ -1,8 +1,8 @@
 <template>
-  <div class="min-h-screen bg-white py-8 md:py-12">
+  <div class="min-h-screen bg-white py-6 sm:py-8 md:py-12">
     <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
       <!-- Breadcrumb -->
-      <div class="mb-8 text-sm text-gray-500">
+      <div class="mb-6 sm:mb-8 text-xs sm:text-sm text-gray-500">
         <router-link to="/" class="hover:text-luxury-gold transition">Inicio</router-link> /
         <span class="ml-2">{{ producto?.nombre }}</span>
       </div>
@@ -21,18 +21,21 @@
       </div>
 
       <!-- Contenido del Producto -->
-      <div v-else-if="producto" class="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-12">
+      <div v-else-if="producto" class="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8 lg:gap-12">
         <!-- Galería de Imágenes -->
         <div class="flex flex-col gap-4">
           <!-- Imagen Principal -->
           <div class="bg-gray-50 aspect-[3/4] overflow-hidden">
-            <img :src="producto.imagen" 
-                 :alt="producto.nombre"
-                 @error="imagenError = true"
-                 :class="[
-                   'w-full h-full object-cover transition duration-500',
-                   !imagenError ? '' : 'hidden'
-                 ]">
+              <img
+                :src="producto.imagen"
+                :alt="producto.nombre"
+                @error="imagenError = true"
+                loading="lazy"
+                decoding="async"
+                width="900"
+                height="1200"
+                :class="mainImageClass"
+              >
             <div v-if="imagenError" class="w-full h-full flex items-center justify-center">
               <div class="text-center">
                 <svg class="w-20 h-20 mx-auto text-gray-300 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -44,14 +47,14 @@
           </div>
 
           <!-- Botón Badge -->
-          <div class="flex gap-2">
-            <span class="inline-block bg-luxury-gold text-luxury-black px-4 py-2 text-xs font-bold uppercase tracking-widest">
+          <div class="flex flex-wrap gap-2">
+            <span class="inline-block bg-luxury-gold text-luxury-black px-3 sm:px-4 py-2 text-[11px] sm:text-xs font-bold uppercase tracking-widest">
               {{ producto.categoria }}
             </span>
-            <span v-if="producto.stock > 0" class="inline-block bg-luxury-gold/10 text-luxury-black px-4 py-2 text-xs font-bold uppercase tracking-widest border border-luxury-gold/30">
+            <span v-if="producto.stock > 0" class="inline-block bg-luxury-gold/10 text-luxury-black px-3 sm:px-4 py-2 text-[11px] sm:text-xs font-bold uppercase tracking-widest border border-luxury-gold/30">
               En Stock ({{ producto.stock }})
             </span>
-            <span v-else class="inline-block bg-red-100 text-red-700 px-4 py-2 text-xs font-bold uppercase tracking-widest">
+            <span v-else class="inline-block bg-red-100 text-red-700 px-3 sm:px-4 py-2 text-[11px] sm:text-xs font-bold uppercase tracking-widest">
               Agotado
             </span>
           </div>
@@ -60,16 +63,16 @@
         <!-- Información del Producto -->
         <div class="flex flex-col">
           <!-- Nombre y Precio -->
-          <div class="mb-6 pb-6 border-b border-gray-200">
-            <h1 class="font-serif text-3xl md:text-4xl text-luxury-black mb-3">
+          <div class="mb-5 sm:mb-6 pb-5 sm:pb-6 border-b border-gray-200">
+            <h1 class="font-serif text-2xl sm:text-3xl md:text-4xl text-luxury-black mb-3">
               {{ producto.nombre }}
             </h1>
-            <p class="text-gray-500 text-sm mb-6 leading-relaxed">
+            <p class="text-gray-500 text-sm mb-5 sm:mb-6 leading-relaxed">
               {{ producto.descripcion }}
             </p>
             <div class="flex items-baseline gap-3">
-              <span class="text-4xl font-bold text-luxury-gold">{{ producto.precio }}€</span>
-              <span class="text-lg text-gray-400 line-through">{{ (producto.precio * 1.1).toFixed(2) }}€</span>
+              <span class="text-3xl sm:text-4xl font-bold text-luxury-gold">{{ producto.precio }}€</span>
+              <span class="text-base sm:text-lg text-gray-400 line-through">{{ (producto.precio * 1.1).toFixed(2) }}€</span>
             </div>
           </div>
 
@@ -86,19 +89,19 @@
           </div>
 
           <!-- Selector de Cantidad y Agregar al Carrito -->
-          <div class="mb-8">
-            <label class="block text-sm font-bold uppercase tracking-widest text-gray-700 mb-3">Cantidad</label>
+          <div class="mb-6 sm:mb-8">
+            <label class="block text-xs sm:text-sm font-bold uppercase tracking-widest text-gray-700 mb-3">Cantidad</label>
             <div class="flex gap-4 items-end">
               <div class="flex items-center border border-gray-300 rounded">
-                <button @click="cantidad > 1 && cantidad--" class="px-4 py-2 text-gray-600 hover:bg-gray-100 text-lg">−</button>
+                <button @click="cantidad > 1 && cantidad--" class="px-3 sm:px-4 py-2 text-gray-600 hover:bg-gray-100 text-lg">−</button>
                 <input 
                   v-model.number="cantidad" 
                   type="number" 
                   min="1" 
                   :max="producto.stock"
-                  class="w-16 text-center border-0 focus:outline-none text-lg font-semibold"
+                  class="w-14 sm:w-16 text-center border-0 focus:outline-none text-base sm:text-lg font-semibold"
                 >
-                <button @click="cantidad < producto.stock && cantidad++" class="px-4 py-2 text-gray-600 hover:bg-gray-100 text-lg">+</button>
+                <button @click="cantidad < producto.stock && cantidad++" class="px-3 sm:px-4 py-2 text-gray-600 hover:bg-gray-100 text-lg">+</button>
               </div>
             </div>
           </div>
@@ -107,7 +110,7 @@
           <button 
             @click="agregarAlCarrito"
             :disabled="agregando"
-            class="w-full bg-luxury-black text-white py-4 font-bold uppercase tracking-widest text-lg hover:bg-luxury-gold hover:text-luxury-black transition disabled:opacity-50 mb-3">
+            class="w-full bg-luxury-black text-white py-3.5 sm:py-4 font-bold uppercase tracking-widest text-sm sm:text-lg hover:bg-luxury-gold hover:text-luxury-black transition disabled:opacity-50 mb-3">
             {{ agregando ? 'Agregando...' : (producto.stock <= 0 ? 'Reservar Producto' : 'Agregar al Carrito') }}
           </button>
 
@@ -144,17 +147,25 @@
       </div>
 
       <!-- Productos Relacionados -->
-      <div v-if="relatedProducts.length > 0" class="mt-20 border-t border-gray-100 pt-16">
-        <div class="text-center mb-12">
-          <h2 class="font-serif text-2xl md:text-3xl text-luxury-black mb-2">También te podría gustar</h2>
+      <div v-if="relatedProducts.length > 0" class="mt-14 sm:mt-20 border-t border-gray-100 pt-12 sm:pt-16">
+        <div class="text-center mb-8 sm:mb-12">
+          <h2 class="font-serif text-xl sm:text-2xl md:text-3xl text-luxury-black mb-2">También te podría gustar</h2>
           <div class="h-0.5 w-12 bg-luxury-gold mx-auto"></div>
         </div>
         
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6">
           <div v-for="rel in relatedProducts" :key="rel.id" class="group cursor-pointer">
             <router-link :to="`/producto/${rel.id}`" class="block">
               <div class="aspect-[3/4] bg-gray-100 mb-3 overflow-hidden">
-                <img :src="rel.imagen" :alt="rel.nombre" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+                <img
+                  :src="rel.imagen"
+                  :alt="rel.nombre"
+                  class="w-full h-full object-cover group-hover:scale-105 transition duration-500"
+                  loading="lazy"
+                  decoding="async"
+                  width="400"
+                  height="533"
+                >
               </div>
               <h3 class="text-sm font-medium text-gray-900 truncate">{{ rel.nombre }}</h3>
               <p class="text-sm text-luxury-gold font-bold">{{ rel.precio }}€</p>
@@ -167,9 +178,9 @@
 </template>
 
 <script setup>
-import { ref, onMounted, watch } from 'vue'
+import { ref, onMounted, watch, computed } from 'vue'
 import { useRoute } from 'vue-router'
-import axios from 'axios'
+import { apiClient } from '../lib/api'
 import { useCartStore } from '../stores/cart'
 
 const route = useRoute()
@@ -184,17 +195,22 @@ const cantidad = ref(1)
 const agregando = ref(false)
 const productoAgregado = ref(false)
 
+const mainImageClass = computed(() => [
+  'w-full h-full object-cover transition duration-500',
+  !imagenError.value ? '' : 'hidden'
+])
+
 const loadProductData = async (id) => {
   loading.value = true
   error.value = false
   try {
     // 1. Cargar producto principal
-    const res = await axios.get(`http://localhost:8080/api/productos/${id}`)
+    const res = await apiClient.get(`/api/productos/${id}`)
     producto.value = res.data
     
     // 2. Cargar relacionados (misma categoría)
     if (producto.value.categoria) {
-      const resRel = await axios.get(`http://localhost:8080/api/productos/categoria/${producto.value.categoria}`)
+      const resRel = await apiClient.get(`/api/productos/categoria/${producto.value.categoria}`)
       // Filtramos para no mostrar el mismo producto y tomamos solo 4
       relatedProducts.value = resRel.data
         .filter(p => p.id !== producto.value.id)

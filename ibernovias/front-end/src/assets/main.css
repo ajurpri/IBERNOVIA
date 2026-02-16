@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Lato:wght@300;400;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,600;9..144,700&family=Manrope:wght@300;400;500;600;700&display=swap');
 
 @import './base.css';
 
@@ -28,42 +28,47 @@
 .ib-title {
   position: relative;
   display: inline-block;
-  padding-bottom: 0.65rem;
+  padding-bottom: 0.5rem;
+  letter-spacing: -0.01em;
 }
 
 .ib-title::after {
   content: '';
   position: absolute;
   left: 0;
-  right: 0;
-  bottom: 0.2rem;
-  height: 1px;
-  background: linear-gradient(90deg, transparent, rgb(var(--luxury-gold-rgb) / 0.7), transparent);
+  right: 35%;
+  bottom: 0.15rem;
+  height: 2px;
+  background: linear-gradient(90deg, rgb(var(--luxury-gold-rgb) / 0.8), transparent);
 }
 
 .ib-title::before {
   content: '';
   position: absolute;
-  left: 50%;
+  left: 0;
   bottom: 0;
-  width: 10px;
-  height: 10px;
-  transform: translateX(-50%) rotate(45deg);
-  border: 1px solid rgb(var(--luxury-gold-rgb) / 0.9);
-  background: rgb(255 255 255 / 0.85);
-  box-shadow: 0 2px 10px rgb(var(--luxury-black-rgb) / 0.12);
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  background: rgb(var(--luxury-gold-rgb) / 0.9);
+  box-shadow: 0 6px 18px rgb(var(--luxury-black-rgb) / 0.12);
 }
 
 .ib-surface {
-  border: 1px solid rgb(var(--luxury-gold-rgb) / 0.12);
+  border: 1px solid rgb(var(--luxury-gold-rgb) / 0.08);
   box-shadow:
-    0 0 0 1px rgb(255 255 255 / 0.8) inset,
-    0 18px 60px rgb(var(--luxury-black-rgb) / 0.08);
+    0 1px 2px rgb(var(--luxury-black-rgb) / 0.05),
+    0 18px 50px rgb(var(--luxury-black-rgb) / 0.08);
   background-image:
-    radial-gradient(circle at 0% 0%, rgb(var(--luxury-gold-rgb) / 0.06), transparent 30%),
-    radial-gradient(circle at 100% 0%, rgb(var(--luxury-gold-rgb) / 0.05), transparent 30%),
-    radial-gradient(circle at 0% 100%, rgb(var(--luxury-gold-rgb) / 0.04), transparent 30%),
-    radial-gradient(circle at 100% 100%, rgb(var(--luxury-gold-rgb) / 0.04), transparent 30%);
+    linear-gradient(180deg, rgb(255 255 255 / 0.96), rgb(255 255 255 / 0.92));
+}
+
+.font-serif {
+  font-family: 'Fraunces', 'Times New Roman', serif;
+}
+
+.font-sans {
+  font-family: 'Manrope', 'Segoe UI', sans-serif;
 }
 
 #app {

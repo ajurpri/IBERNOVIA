@@ -54,6 +54,7 @@
                 v-model="loginForm.email"
                 type="email" 
                 required
+                autocomplete="email"
                 class="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:border-luxury-gold transition"
                 placeholder="tu@email.com"
               >
@@ -66,6 +67,7 @@
                 v-model="loginForm.password"
                 type="password" 
                 required
+                autocomplete="current-password"
                 class="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:border-luxury-gold transition"
                 placeholder="••••••••"
               >
@@ -101,6 +103,7 @@
                 v-model="registerForm.nombre"
                 type="text" 
                 required
+                autocomplete="given-name"
                 class="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:border-luxury-gold transition"
                 placeholder="Tu nombre"
               >
@@ -113,6 +116,7 @@
                 v-model="registerForm.apellido"
                 type="text" 
                 required
+                autocomplete="family-name"
                 class="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:border-luxury-gold transition"
                 placeholder="Tu apellido"
               >
@@ -125,6 +129,7 @@
                 v-model="registerForm.email"
                 type="email" 
                 required
+                autocomplete="email"
                 class="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:border-luxury-gold transition"
                 placeholder="tu@email.com"
               >
@@ -138,6 +143,7 @@
                 type="password" 
                 required
                 minlength="6"
+                autocomplete="new-password"
                 class="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:border-luxury-gold transition"
                 placeholder="Mínimo 6 caracteres"
               >
@@ -151,6 +157,7 @@
                 v-model="registerForm.confirmPassword"
                 type="password" 
                 required
+                autocomplete="new-password"
                 class="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:border-luxury-gold transition"
                 placeholder="Repite tu contraseña"
               >
@@ -197,7 +204,7 @@
 <script setup>
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
-import axios from 'axios'
+import { apiClient } from '../lib/api'
 import { useAuthStore } from '../stores/auth'
 
 const router = useRouter()
@@ -234,7 +241,7 @@ const handleLogin = async () => {
   loadingLogin.value = true
 
   try {
-    const response = await axios.post('http://localhost:8080/api/auth/login', {
+    const response = await apiClient.post('/api/auth/login', {
       email: loginForm.value.email,
       password: loginForm.value.password
     })
@@ -284,7 +291,7 @@ const handleRegister = async () => {
   loadingRegister.value = true
 
   try {
-    const response = await axios.post('http://localhost:8080/api/auth/register', {
+    const response = await apiClient.post('/api/auth/register', {
       email: registerForm.value.email,
       nombre: registerForm.value.nombre,
       apellido: registerForm.value.apellido,

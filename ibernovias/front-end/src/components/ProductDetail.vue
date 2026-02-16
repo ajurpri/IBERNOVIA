@@ -20,6 +20,8 @@
           :src="producto.imagen" 
           :alt="producto.nombre"
           class="w-full h-full object-cover hover:scale-105 transition duration-500"
+          loading="lazy"
+          decoding="async"
         >
         <div v-else class="text-gray-400 text-center">
           <p>Sin imagen disponible</p>
@@ -87,7 +89,7 @@
 import { ref, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 import { useCartStore } from '../stores/cart'
-import axios from 'axios'
+import { apiClient } from '../lib/api'
 
 const route = useRoute()
 const cartStore = useCartStore()
@@ -100,7 +102,7 @@ const agregado = ref(false)
 onMounted(async () => {
   try {
     const id = route.params.id
-    const res = await axios.get(`http://localhost:8080/api/productos/${id}`)
+    const res = await apiClient.get(`/api/productos/${id}`)
     producto.value = res.data
   } catch (e) {
     console.error('Error cargando producto:', e)

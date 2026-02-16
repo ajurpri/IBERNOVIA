@@ -163,7 +163,7 @@
 
 <script setup>
 import { ref, computed, onMounted, watch } from 'vue'
-import axios from 'axios'
+import { apiClient } from '../lib/api'
 import ProductCard from '../components/ProductCard.vue'
 
 const products = ref([])
@@ -183,7 +183,7 @@ const categories = ["Ligas", "Pendientes", "Abanicos", "Gemelos", "Cruces", "Toc
 const fetchProducts = async () => {
   loading.value = true
   try {
-    const response = await axios.get('http://localhost:8080/api/productos')
+    const response = await apiClient.get('/api/productos')
     products.value = response.data
   } catch (error) {
     console.error('Error:', error)

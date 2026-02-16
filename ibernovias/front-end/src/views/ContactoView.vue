@@ -1,9 +1,19 @@
 <template>
-  <div class="min-h-screen bg-gradient-to-b from-white via-gray-50 to-white py-12 px-4">
+  <div class="min-h-screen bg-gradient-to-b from-luxury-cream via-white to-luxury-gray py-12 px-4">
     <div class="max-w-6xl mx-auto">
       <div class="text-center mb-12">
-        <div class="inline-flex items-center gap-3 px-5 py-2 rounded-full bg-white shadow-sm border border-gray-100 mb-6">
-          <img :src="logoSrc" alt="IBERNOVIA" class="h-8 w-auto" />
+        <div class="inline-flex items-center gap-3 px-5 py-2 rounded-full bg-white/90 shadow-sm border border-white/70 mb-6">
+          <img
+            :src="logoSrc"
+            :srcset="logoSrcSet"
+            sizes="(max-width: 640px) 100px, 120px"
+            alt="IBERNOVIA"
+            class="h-8 w-auto"
+            loading="lazy"
+            decoding="async"
+            width="120"
+            height="48"
+          />
           <span class="text-xs uppercase tracking-[0.3em] text-gray-500">Atención personalizada</span>
         </div>
         <h1 class="ib-title font-serif text-4xl md:text-5xl font-bold text-luxury-black mb-3">Contacto</h1>
@@ -11,7 +21,7 @@
       </div>
 
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-10 mb-12">
-        <div class="bg-white rounded-2xl p-8 ib-surface">
+        <div class="bg-white/90 rounded-2xl p-8 ib-surface">
           <div class="flex items-center justify-between gap-3 mb-6">
             <h2 class="font-serif text-2xl font-bold text-luxury-black">Información de Contacto</h2>
             <span class="text-xs px-3 py-1 rounded-full bg-luxury-gold/10 text-luxury-gold uppercase tracking-widest">Google</span>
@@ -58,14 +68,15 @@
           </div>
         </div>
 
-        <form @submit.prevent="submitForm" class="bg-white rounded-2xl p-8 ib-surface">
+        <form @submit.prevent="submitForm" class="bg-white/90 rounded-2xl p-8 ib-surface">
           <div class="mb-4">
             <label class="block text-sm font-bold text-gray-700 mb-2">Nombre</label>
             <input 
               v-model="form.nombre"
               type="text"
               required
-              class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-luxury-gold"
+              autocomplete="name"
+              class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:border-luxury-gold focus:ring-1 focus:ring-luxury-gold"
             >
           </div>
 
@@ -75,7 +86,8 @@
               v-model="form.email"
               type="email"
               required
-              class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-luxury-gold"
+              autocomplete="email"
+              class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:border-luxury-gold focus:ring-1 focus:ring-luxury-gold"
             >
           </div>
 
@@ -85,7 +97,8 @@
               v-model="form.asunto"
               type="text"
               required
-              class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-luxury-gold"
+              autocomplete="off"
+              class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:border-luxury-gold focus:ring-1 focus:ring-luxury-gold"
             >
           </div>
 
@@ -95,7 +108,8 @@
               v-model="form.mensaje"
               required
               rows="5"
-              class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-luxury-gold"
+              autocomplete="off"
+              class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:border-luxury-gold focus:ring-1 focus:ring-luxury-gold"
             ></textarea>
           </div>
 
@@ -118,8 +132,11 @@
 
 <script setup>
 import { ref } from 'vue'
+import { apiFetch } from '../lib/api'
 
-const logoSrc = import.meta.env.BASE_URL + 'logo/logo.jpg'
+const logoBase = import.meta.env.BASE_URL + 'logo/optimized/'
+const logoSrc = `${logoBase}logo-140.jpg`
+const logoSrcSet = `${logoBase}logo-80.jpg 80w, ${logoBase}logo-140.jpg 140w, ${logoBase}logo-280.jpg 280w`
 
 const form = ref({
   nombre: '',
@@ -136,7 +153,7 @@ const submitForm = async () => {
   enviando.value = true
   mensaje.value = ''
   try {
-    const response = await fetch('http://localhost:8080/api/contacto', {
+    const response = await apiFetch('/api/contacto', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'

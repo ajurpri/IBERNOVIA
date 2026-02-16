@@ -36,7 +36,7 @@
                 <!-- Imagen y Nombre -->
                 <div class="col-span-2 flex gap-4">
                   <div class="flex-shrink-0 w-20 h-24 bg-gray-100 rounded overflow-hidden">
-                    <img :src="item.imagen" :alt="item.nombre" class="w-full h-full object-cover" @error="e => e.target.style.display='none'">
+                    <img :src="item.imagen" :alt="item.nombre" class="w-full h-full object-cover" loading="lazy" decoding="async" @error="e => e.target.style.display='none'">
                   </div>
                   <div class="flex flex-col justify-between">
                     <router-link :to="`/producto/${item.id}`" class="text-sm font-semibold text-luxury-black hover:text-luxury-gold transition line-clamp-2">

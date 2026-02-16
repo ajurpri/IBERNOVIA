@@ -6,13 +6,15 @@ public class LoginResponse {
     private String email;
     private String nombre;
     private String apellido;
+    private Boolean isAdmin;
 
-    public LoginResponse(String token, Long userId, String email, String nombre, String apellido) {
+    public LoginResponse(String token, Long userId, String email, String nombre, String apellido, Boolean isAdmin) {
         this.token = token;
         this.userId = userId;
         this.email = email;
         this.nombre = nombre;
         this.apellido = apellido;
+        this.isAdmin = isAdmin;
     }
 
     public String getToken() {
@@ -53,5 +55,13 @@ public class LoginResponse {
 
     public void setApellido(String apellido) {
         this.apellido = apellido;
+    }
+
+    public Boolean getIsAdmin() {
+        return isAdmin;
+    }
+
+    public void setIsAdmin(Boolean isAdmin) {
+        this.isAdmin = isAdmin;
     }
 }

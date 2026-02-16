@@ -57,13 +57,14 @@ public class AuthController {
             // Generar token
             String token = jwtUtil.generateToken(savedUsuario.getId(), savedUsuario.getEmail());
 
-            LoginResponse response = new LoginResponse(
+                LoginResponse response = new LoginResponse(
                     token,
                     savedUsuario.getId(),
                     savedUsuario.getEmail(),
                     savedUsuario.getNombre(),
-                    savedUsuario.getApellido()
-            );
+                    savedUsuario.getApellido(),
+                    savedUsuario.getIsAdmin()
+                );
 
             return ResponseEntity.status(HttpStatus.CREATED).body(response);
 
@@ -100,13 +101,14 @@ public class AuthController {
             // Generar token
             String token = jwtUtil.generateToken(usuario.getId(), usuario.getEmail());
 
-            LoginResponse response = new LoginResponse(
+                LoginResponse response = new LoginResponse(
                     token,
                     usuario.getId(),
                     usuario.getEmail(),
                     usuario.getNombre(),
-                    usuario.getApellido()
-            );
+                    usuario.getApellido(),
+                    usuario.getIsAdmin()
+                );
 
             return ResponseEntity.ok(response);
 
@@ -144,11 +146,12 @@ public class AuthController {
         Usuario usuario = usuarioOptional.get();
 
         LoginResponse response = new LoginResponse(
-                token,
-                usuario.getId(),
-                usuario.getEmail(),
-                usuario.getNombre(),
-                usuario.getApellido()
+            token,
+            usuario.getId(),
+            usuario.getEmail(),
+            usuario.getNombre(),
+            usuario.getApellido(),
+            usuario.getIsAdmin()
         );
 
         return ResponseEntity.ok(response);
