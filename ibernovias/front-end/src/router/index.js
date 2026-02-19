@@ -1,16 +1,21 @@
 import { createRouter, createWebHistory } from 'vue-router'
+import { defineAsyncComponent } from 'vue'
 import HelloWorld from '../components/HelloWorld.vue'
 import ProductoView from '../views/ProductoView.vue'
-import CarritoView from '../views/CarritoView.vue'
-import AuthView from '../views/AuthView.vue'
-import TiendaView from '../views/TiendaView.vue'
-import CuentaView from '../views/CuentaView.vue'
-import ContactoView from '../views/ContactoView.vue'
-import PrivacidadView from '../views/PrivacidadView.vue'
-import CookiesView from '../views/CookiesView.vue'
-import LegalView from '../views/LegalView.vue'
-import AdminView from '../views/AdminView.vue'
 import { useAuthStore } from '../stores/auth'
+
+// Lazy load para vistas que se usan menos frecuentemente
+const CarritoView = defineAsyncComponent(() => import('../views/CarritoView.vue'))
+const CheckoutView = defineAsyncComponent(() => import('../views/CheckoutView.vue'))
+const ConfirmacionView = defineAsyncComponent(() => import('../views/ConfirmacionView.vue'))
+const AuthView = defineAsyncComponent(() => import('../views/AuthView.vue'))
+const TiendaView = defineAsyncComponent(() => import('../views/TiendaView.vue'))
+const CuentaView = defineAsyncComponent(() => import('../views/CuentaView.vue'))
+const ContactoView = defineAsyncComponent(() => import('../views/ContactoView.vue'))
+const PrivacidadView = defineAsyncComponent(() => import('../views/PrivacidadView.vue'))
+const CookiesView = defineAsyncComponent(() => import('../views/CookiesView.vue'))
+const LegalView = defineAsyncComponent(() => import('../views/LegalView.vue'))
+const AdminView = defineAsyncComponent(() => import('../views/AdminView.vue'))
 
 const routes = [
   {
@@ -53,6 +58,22 @@ const routes = [
     component: CarritoView,
     meta: {
       title: 'Carrito | IBERNOVIA'
+    }
+  },
+  {
+    path: '/checkout',
+    name: 'Checkout',
+    component: CheckoutView,
+    meta: {
+      title: 'Checkout | IBERNOVIA'
+    }
+  },
+  {
+    path: '/confirmacion',
+    name: 'Confirmacion',
+    component: ConfirmacionView,
+    meta: {
+      title: 'Confirmación de Compra | IBERNOVIA'
     }
   },
   {

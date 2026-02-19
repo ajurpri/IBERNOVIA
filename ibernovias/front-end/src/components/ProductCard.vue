@@ -77,7 +77,12 @@
           <span class="text-xs text-gray-500 ml-1">(4.5)</span>
         </div>
         
-        <p class="text-xl font-semibold text-luxury-black mb-3 text-center">€{{ producto.precio || '0' }}</p>
+        <!-- Precio o llamada a acción -->
+        <div v-if="authStore.isBusinessUser" class="text-xl font-semibold text-luxury-black mb-3 text-center">€{{ producto.precio || '0' }}</div>
+        <div v-else class="text-sm text-gray-500 mb-3 text-center italic">
+          <p>Contacta para precios</p>
+          <p class="text-xs text-luxury-gold font-semibold">Acceso empresarial</p>
+        </div>
         
         <!-- Botón Agregar al Carrito -->
         <button 
@@ -92,8 +97,9 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, inject } from 'vue'
 import { useCartStore } from '../stores/cart'
+import { useAuthStore } from '../stores/auth'
 
 const props = defineProps({
   producto: {
@@ -106,6 +112,8 @@ const imageError = ref(false)
 const agregando = ref(false)
 const isFavorite = ref(false)
 const cartStore = useCartStore()
+const authStore = useAuthStore()
+const toast = inject('toast')
 
 const imageClass = computed(() => [
   'object-cover w-full h-full transition duration-700 ease-out',
@@ -117,12 +125,16 @@ const agregarAlCarrito = async () => {
   setTimeout(() => {
     cartStore.addItem(props.producto, 1)
     agregando.value = false
+    if (toast) toast.show(`✓ "${props.producto.nombre}" añadido al carrito`, 'success', 2500)
   }, 300)
 }
 
 const toggleFavorite = () => {
   isFavorite.value = !isFavorite.value
-  // Aquí podrías conectar con un store de Pinia para guardar favoritos
+  if (toast) {
+    const msg = isFavorite.value ? `♥ "${props.producto.nombre}" añadido a favoritos` : `"${props.producto.nombre}" removido de favoritos`
+    toast.show(msg, isFavorite.value ? 'success' : 'info', 2000)
+  }
 }
 </script>
 

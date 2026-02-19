@@ -66,7 +66,7 @@
                 <div class="text-right">
                   <p class="text-sm font-bold text-gray-900 mb-2">{{ (item.precio * item.cantidad).toFixed(2) }}€</p>
                   <button 
-                    @click="cartStore.removeItem(item.id)"
+                    @click="removeItemWithToast(item)"
                     class="text-xs text-red-500 hover:text-red-700 uppercase tracking-widest font-bold transition">
                     Eliminar
                   </button>
@@ -122,7 +122,10 @@
 
             <!-- Botón Vaciar -->
             <button 
-              @click="cartStore.clear"
+              @click="() => {
+                cartStore.clear()
+                if (toast) toast.show('✓ Carrito vaciado', 'info', 2000)
+              }"
               class="w-full border border-red-300 text-red-500 py-2 font-bold uppercase tracking-widest text-xs hover:bg-red-50 transition">
               Vaciar Carrito
             </button>
@@ -150,22 +153,37 @@
 </template>
 
 <script setup>
+import { inject } from 'vue'
 import { useCartStore } from '../stores/cart'
 
 const cartStore = useCartStore()
+const toast = inject('toast')
 
 const sumarCantidad = (id) => {
   const item = cartStore.items.find(i => i.id === id)
-  if (item) cartStore.updateCantidad(id, item.cantidad + 1)
+  if (item) {
+    cartStore.updateCantidad(id, item.cantidad + 1)
+    if (toast) toast.show(`✓ Cantidad actualizada: ${item.cantidad + 1}`, 'success', 1500)
+  }
 }
 
 const restarCantidad = (id) => {
   const item = cartStore.items.find(i => i.id === id)
-  if (item && item.cantidad > 1) cartStore.updateCantidad(id, item.cantidad - 1)
+  if (item && item.cantidad > 1) {
+    cartStore.updateCantidad(id, item.cantidad - 1)
+    if (toast) toast.show(`✓ Cantidad actualizada: ${item.cantidad - 1}`, 'success', 1500)
+  }
+}
+
+const removeItemWithToast = (item) => {
+  const itemName = item.nombre
+  cartStore.removeItem(item.id)
+  if (toast) toast.show(`✓ "${itemName}" eliminado del carrito`, 'warning', 2000)
 }
 
 const proceedCheckout = () => {
-  // Próximamente: Integración de Stripe/PayPal
-  alert('🎉 ¡Orden creada! Próxima fase: Integración de pago. Por ahora, tu carrito está listo.')
+  if (toast) {
+    toast.show('🎉 ¡Procesando tu pedido! Próximamente: Integración de pago', 'info', 3000)
+  }
 }
 </script>

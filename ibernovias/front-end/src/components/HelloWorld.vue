@@ -339,6 +339,62 @@
       </div>
     </div>
   </section>
+
+  <!-- RESEÑAS -->
+  <section class="py-16 sm:py-20 bg-white">
+    <div class="max-w-7xl mx-auto px-6">
+      <div class="text-center mb-10 sm:mb-12">
+        <span class="text-luxury-gold text-xs font-bold tracking-[0.3em] uppercase block mb-3">Opiniones</span>
+        <h2 class="font-serif text-3xl sm:text-4xl md:text-5xl text-luxury-black">Lo que dicen nuestras novias</h2>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="p-7 border rounded-lg bg-gradient-to-b from-white to-gray-50 hover:shadow-lg transition">
+          <div class="flex gap-1 mb-4">
+            <span v-for="i in 5" :key="i" class="text-luxury-gold text-lg">★</span>
+          </div>
+          <p class="text-gray-600 mb-4 italic">"Ibernovia es el lugar perfecto para encontrar ese complemento especial. El asesoramiento fue increíble y el servicio impecable."</p>
+          <p class="font-bold text-luxury-black text-sm">María García</p>
+          <p class="text-gray-500 text-xs">Novia, Sevilla</p>
+        </div>
+        <div class="p-7 border rounded-lg bg-gradient-to-b from-white to-gray-50 hover:shadow-lg transition">
+          <div class="flex gap-1 mb-4">
+            <span v-for="i in 5" :key="i" class="text-luxury-gold text-lg">★</span>
+          </div>
+          <p class="text-gray-600 mb-4 italic">"La entrega fue rápida y el empaquetado fue tan bonito que parecía un regalo en sí mismo. Totalmente recomendado."</p>
+          <p class="font-bold text-luxury-black text-sm">Carmen López</p>
+          <p class="text-gray-500 text-xs">Novia, Madrid</p>
+        </div>
+        <div class="p-7 border rounded-lg bg-gradient-to-b from-white to-gray-50 hover:shadow-lg transition">
+          <div class="flex gap-1 mb-4">
+            <span v-for="i in 5" :key="i" class="text-luxury-gold text-lg">★</span>
+          </div>
+          <p class="text-gray-600 mb-4 italic">"Visitamos el atelier y fue una experiencia de lujo. Todo los detalles cuidados, piezas exclusivas. ¡Volveremos!"</p>
+          <p class="font-bold text-luxury-black text-sm">Isabel Martínez</p>
+          <p class="text-gray-500 text-xs">Novia, Jaén</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- OFERTA ESPECIAL -->
+  <section class="py-16 sm:py-20 bg-luxury-gold/5 border-y border-luxury-gold/20">
+    <div class="max-w-7xl mx-auto px-6">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+        <div>
+          <span class="text-luxury-gold text-xs font-bold tracking-[0.3em] uppercase block mb-3">Oferta Especial</span>
+          <h2 class="font-serif text-4xl md:text-5xl text-luxury-black mb-4">20% de descuento</h2>
+          <p class="text-xl text-luxury-gold font-bold mb-2">En tu primer pedido</p>
+          <p class="text-gray-600 mb-6">Registrate ahora y obtén un código de descuento exclusivo en toda la colección.</p>
+          <router-link to="/auth" class="inline-block bg-luxury-black text-white px-8 py-3 font-bold uppercase tracking-widest text-sm hover:bg-luxury-gold hover:text-luxury-black transition">Registrarse</router-link>
+        </div>
+        <div class="bg-white rounded-3xl p-8 shadow-lg border border-luxury-gold/20">
+          <p class="text-center text-6xl font-bold text-luxury-gold mb-2">20%</p>
+          <p class="text-center text-gray-600 text-sm mb-4">Código: <span class="font-mono font-bold text-luxury-black">IBERNOVIA20</span></p>
+          <p class="text-center text-gray-500 text-xs">Válido para clientes nuevos. No acumulable.</p>
+        </div>
+      </div>
+    </div>
+  </section>
 </template>
 
 <script setup>

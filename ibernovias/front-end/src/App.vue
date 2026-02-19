@@ -10,14 +10,28 @@
     <BackToTop />
     <FooterSection />
     <CookieBanner />
+    <Toast ref="toastRef" />
   </div>
 </template>
 
 <script setup>
+import { ref, provide } from 'vue'
 import NavBar from './components/NavBar.vue'
 import FooterSection from './components/FooterSection.vue'
 import CookieBanner from './components/CookieBanner.vue'
 import BackToTop from './components/BackToTop.vue'
+import Toast from './components/Toast.vue'
+import { useAuthStore } from './stores/auth'
+
+const authStore = useAuthStore()
+const toastRef = ref(null)
+
+// Proporcionar el toast globalmente
+const showToast = (message, type = 'info', duration = 3000) => {
+  toastRef.value?.show(message, type, duration)
+}
+
+provide('toast', { show: showToast })
 </script>
 
 <style>

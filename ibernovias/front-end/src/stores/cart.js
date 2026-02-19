@@ -65,6 +65,7 @@ export const useCartStore = defineStore('cart', () => {
     updateCantidad,
     total,
     totalItems,
-    clear
+    clear,
+    clearCart: clear
   }
 })

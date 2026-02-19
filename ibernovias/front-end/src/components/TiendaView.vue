@@ -112,8 +112,8 @@
           </div>
 
           <!-- Loading -->
-          <div v-if="loading" class="flex justify-center items-center h-96">
-            <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-luxury-gold"></div>
+          <div v-if="loading" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-10">
+            <ProductCardSkeleton v-for="i in 9" :key="i" />
           </div>
 
           <!-- Empty State -->
@@ -165,6 +165,7 @@
 import { ref, computed, onMounted, watch } from 'vue'
 import { apiClient } from '../lib/api'
 import ProductCard from '../components/ProductCard.vue'
+import ProductCardSkeleton from '../components/ProductCardSkeleton.vue'
 
 const products = ref([])
 const loading = ref(true)

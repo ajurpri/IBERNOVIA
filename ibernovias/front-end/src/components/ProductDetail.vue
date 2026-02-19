@@ -1,8 +1,19 @@
 <template>
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-    <router-link to="/" class="text-luxury-gold hover:underline mb-8 inline-block text-sm tracking-widest uppercase">
-      ← Volver a Colección
-    </router-link>
+    <!-- Breadcrumbs -->
+    <nav aria-label="Breadcrumb" class="mb-12">
+      <ol class="flex items-center gap-2 text-sm">
+        <li>
+          <router-link to="/" class="text-luxury-gold hover:text-luxury-black transition">Inicio</router-link>
+        </li>
+        <li className="text-gray-400">→</li>
+        <li>
+          <router-link to="/tienda" class="text-luxury-gold hover:text-luxury-black transition">Tienda</router-link>
+        </li>
+        <li className="text-gray-400">→</li>
+        <li v-if="producto" class="text-luxury-black font-semibold">{{ producto.nombre }}</li>
+      </ol>
+    </nav>
 
     <div v-if="loading" class="text-center py-20">
       <div class="inline-block animate-spin rounded-full h-12 w-12 border-4 border-luxury-gold border-t-transparent"></div>
@@ -69,35 +80,59 @@
           <button 
             @click="agregarCarrito"
             :disabled="!producto.stock"
-            class="flex-1 bg-luxury-gold text-white px-8 py-4 hover:bg-opacity-80 transition uppercase text-sm font-bold tracking-widest disabled:opacity-50">
-            {{ cartStore.items.find(i => i.id === producto.id) ? '✓ En carrito' : 'Agregar al Carrito' }}
+            class="flex-1 bg-luxury-gold text-white px-8 py-4 hover:bg-opacity-80 transition uppercase text-sm font-bold tracking-widest disabled:opacity-50 disabled:cursor-not-allowed shadow-lg hover:shadow-xl"
+            :aria-label="isInCart ? 'Producto ya en carrito' : 'Agregar al carrito'">
+            <span v-if="!agregando">{{ isInCart ? '✓ En carrito' : 'Agregar al Carrito' }}</span>
+            <span v-else class="inline-flex items-center gap-2">
+              <span class="inline-block animate-spin">⏳</span> Agregando...
+            </span>
           </button>
           <button class="flex-1 border border-luxury-gold text-luxury-gold px-8 py-4 hover:bg-luxury-gold hover:text-white transition uppercase text-sm font-bold tracking-widest">
             ❤️ Guardar
           </button>
         </div>
 
-        <div v-if="agregado" class="mt-4 p-4 bg-luxury-gold/10 border border-luxury-gold/30 text-luxury-black text-sm rounded">
-          ✓ Producto agregado al carrito
-        </div>
+        <!-- Notificación flotante mejorada -->
+        <transition
+          enter-active-class="transition duration-300 ease-out"
+          enter-from-class="opacity-0 translate-y-2"
+          enter-to-class="opacity-100 translate-y-0"
+          leave-active-class="transition duration-300 ease-in"
+          leave-from-class="opacity-100 translate-y-0"
+          leave-to-class="opacity-0 translate-y-2">
+          <div v-if="agregado" class="mt-6 p-4 bg-gradient-to-r from-luxury-gold/20 to-luxury-gold/10 border-2 border-luxury-gold text-luxury-black text-sm rounded-lg shadow-lg flex items-center gap-3">
+            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" /></svg>
+            <div>
+              <p class="font-bold">¡Producto agregado!</p>
+              <p class="text-xs text-gray-600">Cantidad: {{ cantidadAgregada }} • Ya en carrito: {{ cartStore.items.find(i => i.id === producto.id)?.cantidad || 0 }}</p>
+            </div>
+          </div>
+        </transition>
       </div>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, computed, onMounted, inject } from 'vue'
 import { useRoute } from 'vue-router'
 import { useCartStore } from '../stores/cart'
 import { apiClient } from '../lib/api'
 
 const route = useRoute()
 const cartStore = useCartStore()
+const toast = inject('toast')
 const producto = ref(null)
 const loading = ref(true)
 const error = ref(false)
 const cantidad = ref(1)
 const agregado = ref(false)
+const agregando = ref(false)
+const cantidadAgregada = ref(1)
+
+const isInCart = computed(() => {
+  return !!cartStore.items.find(i => i.id === producto.value?.id)
+})
 
 onMounted(async () => {
   try {
@@ -112,9 +147,23 @@ onMounted(async () => {
   }
 })
 
-const agregarCarrito = () => {
+const agregarCarrito = async () => {
+  if (agregando.value) return
+  agregando.value = true
+  cantidadAgregada.value = cantidad.value
+  
   cartStore.addItem(producto.value, cantidad.value)
   agregado.value = true
-  setTimeout(() => agregado.value = false, 2000)
+  
+  if (toast) {
+    const msg = `✓ ${cantidad.value}x "${producto.value.nombre}" añadido(s) al carrito`
+    toast.show(msg, 'success', 2500)
+  }
+  
+  setTimeout(() => {
+    agregando.value = false
+  }, 500)
+  
+  setTimeout(() => agregado.value = false, 4000)
 }
 </script>

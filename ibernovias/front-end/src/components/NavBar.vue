@@ -1,5 +1,8 @@
 <template>
   <nav class="w-full bg-white/88 backdrop-blur-md border-b border-white/70 sticky top-0 z-[60] shadow-sm overflow-visible">
+    <!-- Business Access Modal -->
+    <BusinessAccessModal ref="businessModalRef" />
+    
     <!-- Signature thread -->
     <div class="h-px bg-gradient-to-r from-transparent via-luxury-gold/70 to-transparent"></div>
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 overflow-visible">
@@ -82,20 +85,40 @@
 
         <!-- Carrito + Usuario -->
         <div class="flex items-center flex-wrap gap-4 sm:gap-7">
+          <!-- Botón Acceso Empresarial (si no es usuario empresarial) -->
+          <button
+            v-if="!authStore.isBusinessUser"
+            @click="openBusinessModal"
+            class="text-xs font-bold uppercase tracking-widest px-3 py-2 bg-blue-50 text-blue-600 rounded hover:bg-blue-100 transition border border-blue-200">
+            🏢 Acceso Empresarial
+          </button>
+          
+          <!-- Indicador de Acceso Empresarial -->
+          <div v-else class="text-xs font-bold uppercase tracking-widest px-3 py-2 bg-green-50 text-green-600 rounded border border-green-200">
+            ✓ Acceso Empresarial
+          </div>
+
           <!-- Carrito -->
           <router-link to="/carrito" class="relative p-2.5 hover:text-luxury-gold transition" aria-label="Ver carrito">
             <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
             </svg>
-            <span
-              v-if="cartStore.totalItems > 0"
-              class="absolute -top-2 -right-2 bg-luxury-gold text-white text-xs font-bold rounded-full w-6 h-6 flex items-center justify-center"
-              role="status"
-              aria-live="polite"
-              aria-label="Productos en carrito"
-            >
-              {{ cartStore.totalItems }}
-            </span>
+            <transition
+              enter-active-class="transition duration-200 ease-out"
+              enter-from-class="scale-150 opacity-0"
+              enter-to-class="scale-100 opacity-100"
+              leave-active-class="transition duration-200 ease-in">
+              <span
+                v-if="cartStore.totalItems > 0"
+                :key="cartStore.totalItems"
+                class="absolute -top-2 -right-2 bg-luxury-gold text-white text-xs font-bold rounded-full w-6 h-6 flex items-center justify-center shadow-lg"
+                role="status"
+                aria-live="polite"
+                aria-label="Productos en carrito"
+              >
+                {{ cartStore.totalItems }}
+              </span>
+            </transition>
           </router-link>
 
           <!-- Usuario -->
@@ -181,7 +204,7 @@ import { useRouter, useRoute } from 'vue-router'
 import { useCartStore } from '../stores/cart'
 import { useAuthStore } from '../stores/auth'
 import { apiFetch } from '../lib/api'
-
+import BusinessAccessModal from './BusinessAccessModal.vue'
 const logoBase = import.meta.env.BASE_URL + 'logo/optimized/'
 const logoSrc = `${logoBase}logo-140.jpg`
 const logoSrcSet = `${logoBase}logo-80.jpg 80w, ${logoBase}logo-140.jpg 140w, ${logoBase}logo-280.jpg 280w`
@@ -197,6 +220,8 @@ const isLoadingProducts = ref(false)
 const productLoadError = ref('')
 const showUserMenu = ref(false)
 const allProducts = ref([])
+const searchTimeout = ref(null)
+const businessModalRef = ref(null)
 
 const searchContainer = ref(null)
 const userMenuContainer = ref(null)
@@ -209,6 +234,13 @@ const searchResults = computed(() => {
   const query = searchQuery.value.toLowerCase()
   return allProducts.value.filter(p => p.nombre.toLowerCase().includes(query)).slice(0, 5)
 })
+
+const debounceSearch = () => {
+  clearTimeout(searchTimeout.value)
+  searchTimeout.value = setTimeout(() => {
+    loadAllProducts()
+  }, 300)
+}
 
 const navPillClass = (path) => {
   const isActive = route.path === path
@@ -266,9 +298,11 @@ const loadAllProducts = async () => {
   }
 }
 
-const handleSearch = async () => {
+const handleSearch = () => {
   showSearchDropdown.value = true
-  await loadAllProducts()
+  if (searchQuery.value.trim()) {
+    debounceSearch()
+  }
 }
 
 const handlePickProduct = () => {
@@ -280,6 +314,12 @@ const handleLogout = () => {
   authStore.logout()
   showUserMenu.value = false
   router.push('/')
+}
+
+const openBusinessModal = () => {
+  if (businessModalRef.value) {
+    businessModalRef.value.openModal()
+  }
 }
 
 const toggleUserMenu = async () => {
