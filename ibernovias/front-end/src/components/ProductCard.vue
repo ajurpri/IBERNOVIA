@@ -38,10 +38,10 @@
 
       <!-- Badge de Stock/Oferta -->
       <div class="absolute top-3 left-3 flex flex-col gap-2">
-        <div v-if="producto.precio < 50" class="bg-red-500 text-white text-xs font-bold px-3 py-1 uppercase tracking-wider shadow-lg">
+        <div v-if="authStore.isBusinessUser && producto.precio < 50" class="bg-red-500 text-white text-xs font-bold px-3 py-1 uppercase tracking-wider shadow-lg">
           Oferta
         </div>
-        <div v-if="producto.stock && producto.stock < 10" class="bg-orange-500 text-white text-xs font-bold px-3 py-1 uppercase tracking-wider shadow-lg">
+        <div v-if="authStore.isBusinessUser && producto.stock && producto.stock < 10" class="bg-orange-500 text-white text-xs font-bold px-3 py-1 uppercase tracking-wider shadow-lg">
           ¡Últimas {{ producto.stock }}!
         </div>
       </div>
@@ -85,12 +85,20 @@
         </div>
         
         <!-- Botón Agregar al Carrito -->
-        <button 
+        <button
+          v-if="authStore.isBusinessUser"
           @click.stop="agregarAlCarrito"
           :disabled="agregando"
           class="w-full border border-luxury-black/20 text-luxury-black text-xs py-3 font-semibold uppercase tracking-wider hover:bg-luxury-black hover:text-white transition-all duration-300 disabled:opacity-50 shadow-sm hover:shadow-md rounded focus:outline-none focus-visible:ring-2 focus-visible:ring-luxury-gold focus-visible:ring-offset-2">
           {{ agregando ? 'Agregando...' : '+ Añadir al Carrito' }}
         </button>
+        <router-link
+          v-else
+          to="/acceso-empresarial"
+          class="block w-full border border-luxury-black/20 text-luxury-black text-xs py-3 font-semibold uppercase tracking-wider text-center hover:bg-luxury-black hover:text-white transition-all duration-300 shadow-sm hover:shadow-md rounded focus:outline-none focus-visible:ring-2 focus-visible:ring-luxury-gold focus-visible:ring-offset-2"
+        >
+          Solicitar acceso empresarial
+        </router-link>
       </div>
     </div>
   </div>

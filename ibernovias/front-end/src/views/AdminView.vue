@@ -252,6 +252,162 @@
           </article>
         </div>
       </div>
+
+      <!-- MENSAJES DE CONTACTO -->
+      <div v-if="activeTab === 'messages'" class="grid grid-cols-1 lg:grid-cols-[2fr_1fr] gap-8">
+        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+          <div class="flex items-center justify-between mb-6">
+            <div>
+              <h2 class="font-bold text-lg text-luxury-black">Solicitudes de acceso empresarial</h2>
+              <p class="text-xs text-gray-500 mt-1">Total: {{ messages.length }} | Sin leer: {{ filteredMessages.filter(m => !m.leido).length }}</p>
+            </div>
+            <button
+              @click="loadMessages"
+              class="px-4 py-2 text-xs uppercase tracking-widest border border-luxury-gold/30 text-luxury-gold hover:bg-luxury-gold/5 rounded transition"
+            >
+              🔄 Actualizar
+            </button>
+          </div>
+
+          <div class="flex gap-2 mb-6">
+            <button
+              @click="messageFilter = 'all'"
+              :class="messageFilter === 'all' ? 'bg-luxury-black text-white' : 'border border-gray-200 text-gray-600 hover:bg-gray-50'"
+              class="px-4 py-2 text-xs uppercase tracking-widest rounded transition"
+            >
+              Todos
+            </button>
+            <button
+              @click="messageFilter = 'unread'"
+              :class="messageFilter === 'unread' ? 'bg-luxury-black text-white' : 'border border-gray-200 text-gray-600 hover:bg-gray-50'"
+              class="px-4 py-2 text-xs uppercase tracking-widest rounded transition"
+            >
+              Sin leer
+            </button>
+          </div>
+
+          <div v-if="loadingMessages" class="py-10 text-center text-gray-500">Cargando mensajes...</div>
+          <div v-else-if="filteredMessages.length === 0" class="py-10 text-center text-gray-500">Sin mensajes</div>
+
+          <div v-else class="space-y-3 max-h-[600px] overflow-y-auto">
+            <article
+              v-for="msg in filteredMessages"
+              :key="msg.id"
+              @click="selectedMessage = msg"
+              :class="selectedMessage?.id === msg.id ? 'bg-luxury-gold/5 border-luxury-gold' : 'hover:shadow-md'"
+              class="border border-gray-100 rounded-xl p-4 cursor-pointer transition flex items-start justify-between"
+            >
+              <div class="flex-1">
+                <div class="flex items-center gap-2 mb-1">
+                  <p class="font-semibold text-luxury-black">{{ msg.nombre }}</p>
+                  <span v-if="!msg.leido" class="w-2 h-2 bg-red-500 rounded-full"></span>
+                  <span v-if="msg.respondido" class="text-xs bg-green-50 text-green-600 px-2 py-0.5 rounded">✓ Respondido</span>
+                </div>
+                <p class="text-xs text-gray-500">{{ msg.email }}</p>
+                <p class="text-sm text-gray-700 mt-2">{{ msg.asunto }}</p>
+                <p class="text-xs text-gray-400 mt-2">{{ new Date(msg.fechaCreacion).toLocaleString('es-ES') }}</p>
+              </div>
+              <span v-if="msg.empresa" class="text-xs bg-blue-50 text-blue-600 px-2 py-1 rounded ml-2 flex-shrink-0">{{ msg.empresa }}</span>
+            </article>
+          </div>
+        </div>
+
+        <!-- Detalle del mensaje seleccionado -->
+        <div v-if="selectedMessage" class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 h-fit sticky top-6">
+          <div class="flex items-center justify-between mb-4">
+            <h2 class="font-serif text-xl text-luxury-black">Detalle</h2>
+            <button
+              @click="selectedMessage = null"
+              class="text-gray-400 hover:text-gray-600 text-xl"
+            >
+              ✕
+            </button>
+          </div>
+
+          <div class="space-y-4 pb-4 border-b border-gray-200">
+            <div>
+              <p class="text-xs uppercase tracking-widest text-gray-500 mb-1">Nombre</p>
+              <p class="font-semibold text-luxury-black">{{ selectedMessage.nombre }}</p>
+            </div>
+
+            <div>
+              <p class="text-xs uppercase tracking-widest text-gray-500 mb-1">Email</p>
+              <a :href="`mailto:${selectedMessage.email}`" class="text-luxury-gold hover:underline text-sm font-semibold">{{ selectedMessage.email }}</a>
+            </div>
+
+            <div v-if="selectedMessage.empresa">
+              <p class="text-xs uppercase tracking-widest text-gray-500 mb-1">Empresa</p>
+              <p class="text-sm">{{ selectedMessage.empresa }}</p>
+            </div>
+
+            <div v-if="selectedMessage.cif">
+              <p class="text-xs uppercase tracking-widest text-gray-500 mb-1">CIF</p>
+              <p class="font-mono text-sm">{{ selectedMessage.cif }}</p>
+            </div>
+
+            <div v-if="selectedMessage.telefono">
+              <p class="text-xs uppercase tracking-widest text-gray-500 mb-1">Teléfono</p>
+              <a :href="`tel:${selectedMessage.telefono}`" class="text-luxury-gold hover:underline text-sm font-semibold">{{ selectedMessage.telefono }}</a>
+            </div>
+
+            <div v-if="selectedMessage.provincia">
+              <p class="text-xs uppercase tracking-widest text-gray-500 mb-1">Provincia</p>
+              <p class="text-sm">{{ selectedMessage.provincia }}</p>
+            </div>
+
+            <div>
+              <p class="text-xs uppercase tracking-widest text-gray-500 mb-1">Asunto</p>
+              <p class="text-sm font-semibold">{{ selectedMessage.asunto }}</p>
+            </div>
+
+            <div>
+              <p class="text-xs uppercase tracking-widest text-gray-500 mb-1">Mensaje</p>
+              <p class="text-sm whitespace-pre-wrap text-gray-700 max-h-[200px] overflow-y-auto">{{ selectedMessage.mensaje }}</p>
+            </div>
+
+            <div>
+              <p class="text-xs uppercase tracking-widest text-gray-500 mb-1">Fecha</p>
+              <p class="text-xs text-gray-500">{{ new Date(selectedMessage.fechaCreacion).toLocaleString('es-ES') }}</p>
+            </div>
+          </div>
+
+          <div class="mt-4 space-y-3">
+            <button
+              v-if="!selectedMessage.leido"
+              @click="markAsRead(selectedMessage.id)"
+              class="w-full px-4 py-2 bg-luxury-gold/10 text-luxury-gold text-xs uppercase tracking-widest rounded hover:bg-luxury-gold/20 transition font-bold"
+            >
+              ✓ Marcar como leído
+            </button>
+
+            <div>
+              <label class="text-xs uppercase tracking-widest text-gray-500 block mb-2">Agregar nota interna</label>
+              <textarea
+                v-model="noteText"
+                placeholder="Escribir nota..."
+                rows="3"
+                class="w-full px-3 py-2 border border-gray-200 rounded text-sm focus:outline-none focus:border-luxury-gold resize-none"
+              ></textarea>
+              <button
+                @click="saveNote"
+                :disabled="!noteText.trim()"
+                class="w-full mt-2 px-4 py-2 bg-luxury-black text-white text-xs uppercase tracking-widest rounded disabled:opacity-50 hover:bg-luxury-gold hover:text-luxury-black transition font-bold"
+              >
+                💾 Guardar nota
+              </button>
+            </div>
+
+            <div v-if="selectedMessage.notas" class="bg-amber-50 border border-amber-200 rounded p-3">
+              <p class="text-xs uppercase tracking-widest text-amber-700 font-bold mb-2">Notas internas:</p>
+              <p class="text-sm text-amber-900 whitespace-pre-wrap">{{ selectedMessage.notas }}</p>
+            </div>
+          </div>
+        </div>
+
+        <div v-else class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 flex items-center justify-center text-gray-400 text-sm">
+          Selecciona un mensaje para ver detalles
+        </div>
+      </div>
     </div>
   </section>
 </template>
@@ -267,7 +423,8 @@ const toast = inject('toast')
 const tabs = [
   { id: 'dashboard', label: '📊 Dashboard' },
   { id: 'products', label: '📦 Productos' },
-  { id: 'users', label: '👥 Usuarios' }
+  { id: 'users', label: '👥 Usuarios' },
+  { id: 'messages', label: '💬 Mensajes' }
 ]
 
 const activeTab = ref('dashboard')
@@ -283,6 +440,12 @@ const users = ref([])
 const loadingUsers = ref(false)
 const userSearch = ref('')
 const userFilter = ref('all')
+
+const messages = ref([])
+const loadingMessages = ref(false)
+const messageFilter = ref('all')
+const selectedMessage = ref(null)
+const noteText = ref('')
 
 const form = ref({
   id: null,
@@ -453,5 +616,61 @@ const removeProduct = async (id) => {
   }
 }
 
-onMounted(loadProducts)
+const loadMessages = async () => {
+  loadingMessages.value = true
+  try {
+    const res = await apiClient.get('/api/contacto/admin/all')
+    messages.value = Array.isArray(res.data) ? res.data : []
+  } catch (e) {
+    messageOk.value = false
+    message.value = 'No se pudieron cargar los mensajes.'
+    if (toast) toast.show('✗ Error al cargar mensajes', 'error', 2500)
+  } finally {
+    loadingMessages.value = false
+  }
+}
+
+const filteredMessages = computed(() => {
+  if (messageFilter.value === 'unread') {
+    return messages.value.filter(m => !m.leido)
+  }
+  return messages.value
+})
+
+const markAsRead = async (messageId) => {
+  try {
+    await apiClient.put(`/api/contacto/admin/${messageId}/read`)
+    messages.value = messages.value.map(m => 
+      m.id === messageId ? { ...m, leido: true } : m
+    )
+    if (selectedMessage.value?.id === messageId) {
+      selectedMessage.value.leido = true
+    }
+    if (toast) toast.show('✓ Marcado como leído', 'success', 1500)
+  } catch (e) {
+    if (toast) toast.show('✗ Error al actualizar', 'error', 1500)
+  }
+}
+
+const saveNote = async () => {
+  if (!selectedMessage.value || !noteText.value.trim()) return
+  try {
+    const res = await apiClient.put(`/api/contacto/admin/${selectedMessage.value.id}/note`, {
+      nota: noteText.value
+    })
+    messages.value = messages.value.map(m => 
+      m.id === selectedMessage.value.id ? res.data : m
+    )
+    selectedMessage.value = res.data
+    noteText.value = ''
+    if (toast) toast.show('✓ Nota guardada', 'success', 1500)
+  } catch (e) {
+    if (toast) toast.show('✗ Error al guardar nota', 'error', 1500)
+  }
+}
+
+onMounted(() => {
+  loadProducts()
+  loadMessages()
+})
 </script>

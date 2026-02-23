@@ -4,6 +4,7 @@
       <!-- Breadcrumb -->
       <div class="mb-6 sm:mb-8 text-xs sm:text-sm text-gray-500">
         <router-link to="/" class="hover:text-luxury-gold transition">Inicio</router-link> /
+        <router-link to="/tienda" class="ml-2 hover:text-luxury-gold transition">Catálogo</router-link> /
         <span class="ml-2">{{ producto?.nombre }}</span>
       </div>
 
@@ -51,10 +52,10 @@
             <span class="inline-block bg-luxury-gold text-luxury-black px-3 sm:px-4 py-2 text-[11px] sm:text-xs font-bold uppercase tracking-widest">
               {{ producto.categoria }}
             </span>
-            <span v-if="producto.stock > 0" class="inline-block bg-luxury-gold/10 text-luxury-black px-3 sm:px-4 py-2 text-[11px] sm:text-xs font-bold uppercase tracking-widest border border-luxury-gold/30">
+            <span v-if="authStore.isBusinessUser && producto.stock > 0" class="inline-block bg-luxury-gold/10 text-luxury-black px-3 sm:px-4 py-2 text-[11px] sm:text-xs font-bold uppercase tracking-widest border border-luxury-gold/30">
               En Stock ({{ producto.stock }})
             </span>
-            <span v-else class="inline-block bg-red-100 text-red-700 px-3 sm:px-4 py-2 text-[11px] sm:text-xs font-bold uppercase tracking-widest">
+            <span v-else-if="authStore.isBusinessUser" class="inline-block bg-red-100 text-red-700 px-3 sm:px-4 py-2 text-[11px] sm:text-xs font-bold uppercase tracking-widest">
               Agotado
             </span>
           </div>
@@ -62,7 +63,7 @@
 
         <!-- Información del Producto -->
         <div class="flex flex-col">
-          <!-- Nombre y Precio -->
+          <!-- Nombre y precio -->
           <div class="mb-5 sm:mb-6 pb-5 sm:pb-6 border-b border-gray-200">
             <h1 class="font-serif text-2xl sm:text-3xl md:text-4xl text-luxury-black mb-3">
               {{ producto.nombre }}
@@ -70,9 +71,15 @@
             <p class="text-gray-500 text-sm mb-5 sm:mb-6 leading-relaxed">
               {{ producto.descripcion }}
             </p>
-            <div class="flex items-baseline gap-3">
+            <div v-if="authStore.isBusinessUser" class="flex items-baseline gap-3">
               <span class="text-3xl sm:text-4xl font-bold text-luxury-gold">{{ producto.precio }}€</span>
               <span class="text-base sm:text-lg text-gray-400 line-through">{{ (producto.precio * 1.1).toFixed(2) }}€</span>
+            </div>
+            <div v-else class="rounded-lg border border-luxury-gold/30 bg-luxury-gray/60 px-4 py-4">
+              <p class="text-sm text-gray-600">Catálogo público. Tarifas y pedidos disponibles solo para clientes profesionales.</p>
+              <router-link to="/acceso-empresarial" class="inline-block mt-2 text-xs uppercase tracking-widest font-semibold text-luxury-black hover:text-luxury-gold transition">
+                Solicitar acceso empresarial
+              </router-link>
             </div>
           </div>
 
@@ -82,14 +89,14 @@
               <span class="text-gray-500">Referencia:</span>
               <span class="font-mono text-gray-900 ml-2">#{{ producto.id }}</span>
             </div>
-            <div>
+            <div v-if="authStore.isBusinessUser">
               <span class="text-gray-500">Stock:</span>
               <span class="text-gray-900 ml-2">{{ producto.stock }} unidades</span>
             </div>
           </div>
 
           <!-- Selector de Cantidad y Agregar al Carrito -->
-          <div class="mb-6 sm:mb-8">
+          <div v-if="authStore.isBusinessUser" class="mb-6 sm:mb-8">
             <label class="block text-xs sm:text-sm font-bold uppercase tracking-widest text-gray-700 mb-3">Cantidad</label>
             <div class="flex gap-4 items-end">
               <div class="flex items-center border border-gray-300 rounded">
@@ -107,40 +114,49 @@
           </div>
 
           <!-- Botón Agregar al Carrito -->
-          <button 
+          <button
+            v-if="authStore.isBusinessUser"
             @click="agregarAlCarrito"
             :disabled="agregando"
             class="w-full bg-luxury-black text-white py-3.5 sm:py-4 font-bold uppercase tracking-widest text-sm sm:text-lg hover:bg-luxury-gold hover:text-luxury-black transition disabled:opacity-50 mb-3">
             {{ agregando ? 'Agregando...' : (producto.stock <= 0 ? 'Reservar Producto' : 'Agregar al Carrito') }}
           </button>
 
+          <router-link
+            v-else
+            to="/acceso-empresarial"
+            class="block w-full text-center bg-luxury-black text-white py-3.5 sm:py-4 font-bold uppercase tracking-widest text-sm sm:text-lg hover:bg-luxury-gold hover:text-luxury-black transition mb-3"
+          >
+            Solicitar condiciones comerciales
+          </router-link>
+
           <!-- Link a Carrito -->
-          <div v-if="productoAgregado" class="text-center">
+          <div v-if="productoAgregado && authStore.isBusinessUser" class="text-center">
             <router-link to="/carrito" class="inline-block text-luxury-gold hover:text-luxury-black font-bold uppercase tracking-widest text-sm transition border-b-2 border-luxury-gold hover:border-luxury-black">
               Ver Carrito →
             </router-link>
           </div>
 
-          <!-- Info de Envío -->
+          <!-- Info comercial -->
           <div class="mt-8 pt-8 border-t border-gray-200 space-y-3 text-sm text-gray-600">
             <div class="flex items-start gap-3">
               <svg class="w-5 h-5 text-luxury-gold mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
                 <path d="M8 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0zM15 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0z"/>
                 <path d="M3 4a1 1 0 00-1 1v10a1 1 0 001 1h1.05a2.5 2.5 0 014.9 0H10a1 1 0 001-1V5a1 1 0 00-1-1H3zM14 7a1 1 0 00-1 1v6.05A2.5 2.5 0 0015.95 16H17a1 1 0 001-1v-5a1 1 0 00-.293-.707l-2-2A1 1 0 0015 7h-1z"/>
               </svg>
-              <span>Envío gratis a partir de 50€</span>
+              <span>Venta al por mayor para clientes profesionales</span>
             </div>
             <div class="flex items-start gap-3">
               <svg class="w-5 h-5 text-luxury-gold mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
                 <path fill-rule="evenodd" d="M5 2a1 1 0 011 1v1h1a1 1 0 010 2H6v1a1 1 0 0-2 0V6H3a1 1 0 010-2h1V3a1 1 0 011-1zm0 10a1 1 0 011 1v1h1a1 1 0 110 2H6v1a1 1 0 11-2 0v-1H3a1 1 0 110-2h1v-1a1 1 0 011-1zM14 2a1 1 0 011 1v1h1a1 1 0 110 2h-1v1a1 1 0 11-2 0V6h-1a1 1 0 110-2h1V3a1 1 0 011-1z" clip-rule="evenodd"/>
               </svg>
-              <span>Devoluciones sin costo en 30 días</span>
+              <span>Asesoramiento y atención comercial personalizada</span>
             </div>
             <div class="flex items-start gap-3">
               <svg class="w-5 h-5 text-luxury-gold mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
                 <path fill-rule="evenodd" d="M5 2a1 1 0 011 1v1h1a1 1 0 010 2H6v1a1 1 0 0-2 0V6H3a1 1 0 010-2h1V3a1 1 0 011-1zm0 10a1 1 0 011 1v1h1a1 1 0 110 2H6v1a1 1 0 11-2 0v-1H3a1 1 0 110-2h1v-1a1 1 0 011-1zM14 2a1 1 0 011 1v1h1a1 1 0 110 2h-1v1a1 1 0 11-2 0V6h-1a1 1 0 110-2h1V3a1 1 0 011-1z" clip-rule="evenodd"/>
               </svg>
-              <span>Pago seguro 100% garantizado</span>
+              <span>Condiciones y tarifas visibles tras validación de empresa</span>
             </div>
           </div>
         </div>
@@ -168,7 +184,8 @@
                 >
               </div>
               <h3 class="text-sm font-medium text-gray-900 truncate">{{ rel.nombre }}</h3>
-              <p class="text-sm text-luxury-gold font-bold">{{ rel.precio }}€</p>
+              <p v-if="authStore.isBusinessUser" class="text-sm text-luxury-gold font-bold">{{ rel.precio }}€</p>
+              <p v-else class="text-xs text-gray-500">Solo empresas</p>
             </router-link>
           </div>
         </div>
@@ -182,9 +199,11 @@ import { ref, onMounted, watch, computed } from 'vue'
 import { useRoute } from 'vue-router'
 import { apiClient } from '../lib/api'
 import { useCartStore } from '../stores/cart'
+import { useAuthStore } from '../stores/auth'
 
 const route = useRoute()
 const cartStore = useCartStore()
+const authStore = useAuthStore()
 
 const producto = ref(null)
 const relatedProducts = ref([])
@@ -232,6 +251,7 @@ watch(() => route.params.id, (newId) => {
 })
 
 const agregarAlCarrito = async () => {
+  if (!authStore.isBusinessUser) return
   agregando.value = true
   // Simular pequeño delay de UI
   setTimeout(() => {

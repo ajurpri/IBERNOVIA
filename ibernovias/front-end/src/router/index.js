@@ -12,10 +12,12 @@ const AuthView = defineAsyncComponent(() => import('../views/AuthView.vue'))
 const TiendaView = defineAsyncComponent(() => import('../views/TiendaView.vue'))
 const CuentaView = defineAsyncComponent(() => import('../views/CuentaView.vue'))
 const ContactoView = defineAsyncComponent(() => import('../views/ContactoView.vue'))
+const AccesoEmpresarialView = defineAsyncComponent(() => import('../views/AccesoEmpresarialView.vue'))
 const PrivacidadView = defineAsyncComponent(() => import('../views/PrivacidadView.vue'))
 const CookiesView = defineAsyncComponent(() => import('../views/CookiesView.vue'))
 const LegalView = defineAsyncComponent(() => import('../views/LegalView.vue'))
 const AdminView = defineAsyncComponent(() => import('../views/AdminView.vue'))
+const AdminSetupView = defineAsyncComponent(() => import('../views/AdminSetupView.vue'))
 
 const routes = [
   {
@@ -23,8 +25,8 @@ const routes = [
     name: 'Home',
     component: HelloWorld,
     meta: {
-      title: 'IBERNOVIA | Complementos de Alta Costura',
-      description: 'Complementos de alta costura, seleccion premium y asesoramiento en tienda en Andujar.'
+      title: 'IBERNOVIA | Catálogo profesional B2B',
+      description: 'Catálogo de complementos para empresas. El público puede ver productos y las empresas acceden a precios y pedidos.'
     }
   },
   {
@@ -32,8 +34,8 @@ const routes = [
     name: 'Tienda',
     component: TiendaView,
     meta: {
-      title: 'Tienda | IBERNOVIA',
-      description: 'Explora complementos seleccionados y recibe asesoramiento personalizado.'
+      title: 'Catálogo profesional | IBERNOVIA',
+      description: 'Explora el catálogo. Los precios y pedidos son exclusivos para clientes profesionales registrados.'
     }
   },
   {
@@ -57,6 +59,7 @@ const routes = [
     name: 'Carrito',
     component: CarritoView,
     meta: {
+      requiresBusiness: true,
       title: 'Carrito | IBERNOVIA'
     }
   },
@@ -65,6 +68,7 @@ const routes = [
     name: 'Checkout',
     component: CheckoutView,
     meta: {
+      requiresBusiness: true,
       title: 'Checkout | IBERNOVIA'
     }
   },
@@ -73,6 +77,7 @@ const routes = [
     name: 'Confirmacion',
     component: ConfirmacionView,
     meta: {
+      requiresBusiness: true,
       title: 'Confirmación de Compra | IBERNOVIA'
     }
   },
@@ -91,6 +96,15 @@ const routes = [
     component: ContactoView,
     meta: {
       title: 'Contacto | IBERNOVIA'
+    }
+  },
+  {
+    path: '/acceso-empresarial',
+    name: 'AccesoEmpresarial',
+    component: AccesoEmpresarialView,
+    meta: {
+      title: 'Alta empresarial | IBERNOVIA',
+      description: 'Solicita el alta profesional para acceder a tarifas y pedidos mayoristas.'
     }
   },
   {
@@ -115,6 +129,14 @@ const routes = [
     component: LegalView,
     meta: {
       title: 'Legal | IBERNOVIA'
+    }
+  },
+  {
+    path: '/admin/setup',
+    name: 'AdminSetup',
+    component: AdminSetupView,
+    meta: {
+      title: 'Setup Administrativo | IBERNOVIA'
     }
   },
   {
@@ -157,6 +179,15 @@ router.afterEach((to) => {
 // Guard para proteger rutas autenticadas
 router.beforeEach((to, from, next) => {
   const authStore = useAuthStore()
+
+  if (to.meta.requiresBusiness) {
+    if (authStore.isBusinessUser) {
+      next()
+    } else {
+      next('/acceso-empresarial')
+    }
+    return
+  }
 
   if (to.meta.requiresAdmin) {
     if (authStore.isAuthenticated && authStore.isAdmin) {

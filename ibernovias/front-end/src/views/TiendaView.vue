@@ -5,11 +5,11 @@
         <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-5 sm:gap-6">
           <div>
             <span class="text-luxury-gold text-xs font-bold tracking-[0.3em] uppercase block mb-2">Coleccion 2026</span>
-            <h1 class="ib-title font-serif text-3xl sm:text-4xl md:text-5xl font-bold text-luxury-black">Tienda</h1>
-            <p class="text-gray-600 mt-2 max-w-2xl text-sm sm:text-base">Complementos nupciales de alta costura, selección premium y asesoramiento en tienda.</p>
+            <h1 class="ib-title font-serif text-3xl sm:text-4xl md:text-5xl font-bold text-luxury-black">Catálogo profesional</h1>
+            <p class="text-gray-600 mt-2 max-w-2xl text-sm sm:text-base">Mostramos colección para público general. Los precios y pedidos son exclusivos para empresas registradas.</p>
           </div>
           <div class="hidden sm:flex items-center gap-4">
-            <div class="px-4 py-2 rounded-full border border-white/80 bg-white/90 text-xs uppercase tracking-widest text-gray-500 shadow-sm">Envio 24-48h</div>
+            <div class="px-4 py-2 rounded-full border border-white/80 bg-white/90 text-xs uppercase tracking-widest text-gray-500 shadow-sm">Solo empresas</div>
             <div class="px-4 py-2 rounded-full border border-white/80 bg-white/90 text-xs uppercase tracking-widest text-gray-500 shadow-sm">Calidad premium</div>
           </div>
         </div>
@@ -61,7 +61,7 @@
               <option v-for="cat in categorias" :key="cat" :value="cat">{{ cat }}</option>
             </select>
           </div>
-          <div class="flex-1">
+          <div v-if="authStore.isBusinessUser" class="flex-1">
             <label class="block text-xs uppercase tracking-widest text-gray-500 mb-2" for="sort">Ordenar</label>
             <select
               id="sort"
@@ -92,7 +92,7 @@
       </div>
 
       <div v-else-if="loadError" class="rounded-2xl border border-red-100 bg-red-50/80 p-6 text-red-700">
-        <p class="font-semibold">No se pudo cargar la tienda.</p>
+        <p class="font-semibold">No se pudo cargar el catálogo.</p>
         <p class="text-sm mt-2">{{ loadError }}</p>
         <button
           type="button"
@@ -108,8 +108,8 @@
           <p class="text-[11px] sm:text-xs uppercase tracking-widest text-gray-500" aria-live="polite">
             {{ sortedProducts.length }} resultados
           </p>
-          <router-link to="/contacto" class="text-[11px] sm:text-xs uppercase tracking-widest text-luxury-black border-b border-luxury-gold hover:text-luxury-gold transition">
-            Necesitas ayuda? Contacto rapido
+          <router-link to="/acceso-empresarial" class="text-[11px] sm:text-xs uppercase tracking-widest text-luxury-black border-b border-luxury-gold hover:text-luxury-gold transition">
+            Alta profesional y contacto
           </router-link>
         </div>
 
@@ -134,8 +134,10 @@
 import { ref, onMounted, computed } from 'vue'
 import ProductCard from '../components/ProductCard.vue'
 import { apiClient } from '../lib/api'
+import { useAuthStore } from '../stores/auth'
 
 const productos = ref([])
+const authStore = useAuthStore()
 const isLoading = ref(true)
 const loadError = ref('')
 const searchTerm = ref('')
@@ -162,6 +164,9 @@ const filteredProducts = computed(() => {
 
 const sortedProducts = computed(() => {
   const list = [...filteredProducts.value]
+  if (!authStore.isBusinessUser) {
+    return list.sort((a, b) => (a.nombre || '').localeCompare(b.nombre || ''))
+  }
   if (sortOrder.value === 'precio-asc') {
     return list.sort((a, b) => (a.precio || 0) - (b.precio || 0))
   }

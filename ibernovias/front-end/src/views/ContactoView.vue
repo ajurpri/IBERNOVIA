@@ -17,7 +17,7 @@
           <span class="text-xs uppercase tracking-[0.3em] text-gray-500">Atención personalizada</span>
         </div>
         <h1 class="ib-title font-serif text-4xl md:text-5xl font-bold text-luxury-black mb-3">Contacto</h1>
-        <p class="text-gray-600">Nos encantaría saber de ti. Envíanos un mensaje y te respondemos lo antes posible.</p>
+        <p class="text-gray-600">Soporte general y atención comercial. Si eres empresa, también puedes solicitar el alta profesional.</p>
       </div>
 
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-10 mb-12">
@@ -64,7 +64,7 @@
           <div class="mt-8 rounded-xl bg-gradient-to-r from-luxury-black to-gray-800 text-white p-6">
             <p class="text-sm uppercase tracking-widest text-white/70">Visítanos</p>
             <p class="mt-2 text-lg font-semibold">Te esperamos en Plaza de Abastos</p>
-            <p class="text-white/70 text-sm mt-1">Atención personalizada y asesoramiento en tienda.</p>
+            <p class="text-white/70 text-sm mt-1">Atención personalizada para público general y clientes profesionales.</p>
           </div>
         </div>
 

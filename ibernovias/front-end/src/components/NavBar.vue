@@ -2,6 +2,7 @@
   <nav class="w-full bg-white/88 backdrop-blur-md border-b border-white/70 sticky top-0 z-[60] shadow-sm overflow-visible">
     <!-- Business Access Modal -->
     <BusinessAccessModal ref="businessModalRef" />
+    <EventsModal ref="eventsModalRef" />
     
     <!-- Signature thread -->
     <div class="h-px bg-gradient-to-r from-transparent via-luxury-gold/70 to-transparent"></div>
@@ -76,7 +77,8 @@
                 </div>
                 <div class="min-w-0">
                   <div class="font-semibold text-sm truncate">{{ prod.nombre }}</div>
-                  <div class="text-xs text-gray-500">€{{ prod.precio }}</div>
+                  <div v-if="authStore.isBusinessUser" class="text-xs text-gray-500">€{{ prod.precio }}</div>
+                  <div v-else class="text-xs text-gray-400">Solo empresas</div>
                 </div>
               </router-link>
             </div>
@@ -85,6 +87,14 @@
 
         <!-- Carrito + Usuario -->
         <div class="flex items-center flex-wrap gap-4 sm:gap-7">
+          <button
+            type="button"
+            @click="openEventsModal"
+            class="text-xs font-semibold uppercase tracking-widest px-3 py-2 bg-white border border-luxury-gold/40 text-luxury-black rounded hover:bg-luxury-black hover:text-white transition"
+          >
+            Eventos
+          </button>
+
           <!-- Botón Acceso Empresarial (si no es usuario empresarial) -->
           <button
             v-if="!authStore.isBusinessUser"
@@ -98,8 +108,8 @@
             ✓ Acceso Empresarial
           </div>
 
-          <!-- Carrito -->
-          <router-link to="/carrito" class="relative p-2.5 hover:text-luxury-gold transition" aria-label="Ver carrito">
+          <!-- Carrito (solo empresas) -->
+          <router-link v-if="authStore.isBusinessUser" to="/carrito" class="relative p-2.5 hover:text-luxury-gold transition" aria-label="Ver carrito">
             <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
             </svg>
@@ -157,7 +167,8 @@
                     <p class="text-xs text-gray-500">{{ authStore.user?.email }}</p>
                   </div>
                   <nav class="p-2">
-                    <router-link to="/carrito" @click="showUserMenu = false" class="block px-4 py-2 text-sm hover:bg-gray-100 transition">Mi Carrito</router-link>
+                    <router-link v-if="authStore.isBusinessUser" to="/carrito" @click="showUserMenu = false" class="block px-4 py-2 text-sm hover:bg-gray-100 transition">Pedidos</router-link>
+                    <router-link v-else to="/acceso-empresarial" @click="showUserMenu = false" class="block px-4 py-2 text-sm hover:bg-gray-100 transition">Alta empresarial</router-link>
                     <router-link to="/cuenta" @click="showUserMenu = false" class="block px-4 py-2 text-sm hover:bg-gray-100 transition">Mi Cuenta</router-link>
                     <router-link v-if="authStore.isAdmin" to="/admin" @click="showUserMenu = false" class="block px-4 py-2 text-sm hover:bg-gray-100 transition">Panel Admin</router-link>
                     <button 
@@ -186,7 +197,7 @@
             <!-- diamond divider -->
             <span class="mx-1 sm:mx-2 w-3 h-3 rotate-45 border border-luxury-gold/70 bg-white"></span>
 
-            <router-link to="/tienda" :class="navPillClass('/tienda')">Tienda</router-link>
+            <router-link to="/tienda" :class="navPillClass('/tienda')">Catálogo</router-link>
 
             <span class="mx-1 sm:mx-2 w-3 h-3 rotate-45 border border-luxury-gold/70 bg-white"></span>
 
@@ -194,6 +205,14 @@
           </div>
         </div>
       </div>
+
+      <router-link
+        v-if="!authStore.isBusinessUser"
+        to="/acceso-empresarial"
+        class="fixed sm:hidden bottom-4 left-1/2 -translate-x-1/2 z-[70] bg-luxury-black text-white px-5 py-2.5 rounded-full text-[11px] uppercase tracking-[0.2em] font-semibold shadow-lg hover:bg-luxury-gold hover:text-luxury-black transition"
+      >
+        Alta empresarial
+      </router-link>
     </div>
   </nav>
 </template>
@@ -205,6 +224,7 @@ import { useCartStore } from '../stores/cart'
 import { useAuthStore } from '../stores/auth'
 import { apiFetch } from '../lib/api'
 import BusinessAccessModal from './BusinessAccessModal.vue'
+import EventsModal from './EventsModal.vue'
 const logoBase = import.meta.env.BASE_URL + 'logo/optimized/'
 const logoSrc = `${logoBase}logo-140.jpg`
 const logoSrcSet = `${logoBase}logo-80.jpg 80w, ${logoBase}logo-140.jpg 140w, ${logoBase}logo-280.jpg 280w`
@@ -222,6 +242,7 @@ const showUserMenu = ref(false)
 const allProducts = ref([])
 const searchTimeout = ref(null)
 const businessModalRef = ref(null)
+const eventsModalRef = ref(null)
 
 const searchContainer = ref(null)
 const userMenuContainer = ref(null)
@@ -319,6 +340,12 @@ const handleLogout = () => {
 const openBusinessModal = () => {
   if (businessModalRef.value) {
     businessModalRef.value.openModal()
+  }
+}
+
+const openEventsModal = () => {
+  if (eventsModalRef.value) {
+    eventsModalRef.value.openModal()
   }
 }
 

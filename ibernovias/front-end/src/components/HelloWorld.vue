@@ -9,11 +9,11 @@
             <span class="text-xs uppercase tracking-[0.35em] text-luxury-gold font-semibold">Andujar · Jaen</span>
           </div>
           <h1 class="font-serif text-5xl sm:text-6xl lg:text-7xl leading-[1.05] text-luxury-black mb-6">
-            Atelier y asesoramiento
-            <span class="text-luxury-gold">en tienda</span>
+            Catálogo mayorista
+            <span class="text-luxury-gold">para profesionales</span>
           </h1>
           <p class="text-base sm:text-xl text-gray-600 max-w-xl mb-8 sm:mb-10">
-            Seleccion de complementos de alta costura, pruebas en atelier y un trato cercano para cada novia.
+            Mostramos nuestra colección para inspiración. Precios y pedidos únicamente para empresas registradas.
           </p>
 
           <div class="flex flex-col sm:flex-row gap-3 sm:gap-4 items-start sm:items-center">
@@ -21,29 +21,29 @@
               to="/tienda"
               class="group relative bg-luxury-black text-white px-8 sm:px-9 py-4 font-semibold uppercase tracking-[0.2em] text-xs sm:text-sm hover:bg-luxury-gold hover:text-luxury-black transition-all duration-300 overflow-hidden rounded focus:outline-none focus-visible:ring-2 focus-visible:ring-luxury-gold focus-visible:ring-offset-2 focus-visible:ring-offset-white"
             >
-              <span class="relative z-10">Explorar coleccion</span>
+              <span class="relative z-10">Ver catálogo</span>
               <div class="absolute inset-0 bg-luxury-gold/30 transform -translate-x-full group-hover:translate-x-0 transition-transform duration-300"></div>
             </router-link>
             <router-link
-              to="/contacto"
+              to="/acceso-empresarial"
               class="border border-luxury-black/20 text-luxury-black px-8 sm:px-9 py-4 uppercase tracking-[0.2em] text-xs sm:text-sm font-semibold rounded hover:border-luxury-black hover:bg-luxury-black hover:text-white transition-all duration-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-luxury-gold focus-visible:ring-offset-2 focus-visible:ring-offset-white"
             >
-              Reservar cita
+              Solicitar acceso profesional
             </router-link>
           </div>
 
           <div class="mt-8 sm:mt-10 grid grid-cols-2 sm:grid-cols-3 gap-4 text-[11px] sm:text-xs uppercase tracking-[0.2em] text-gray-500">
             <div class="rounded-2xl border border-white/70 bg-white/80 px-5 py-4 shadow-sm">
-              <p class="text-luxury-black font-semibold">Atelier local</p>
+              <p class="text-luxury-black font-semibold">Distribución B2B</p>
               <p class="mt-1">Andujar · Jaen</p>
             </div>
             <div class="rounded-2xl border border-white/70 bg-white/80 px-5 py-4 shadow-sm">
-              <p class="text-luxury-black font-semibold">Curado premium</p>
-              <p class="mt-1">Detalles a medida</p>
+              <p class="text-luxury-black font-semibold">Tarifa profesional</p>
+              <p class="mt-1">Acceso verificado</p>
             </div>
             <div class="rounded-2xl border border-white/70 bg-white/80 px-5 py-4 shadow-sm">
-              <p class="text-luxury-black font-semibold">Envio 24-48h</p>
-              <p class="mt-1">Packaging cuidado</p>
+              <p class="text-luxury-black font-semibold">Atención comercial</p>
+              <p class="mt-1">Soporte personalizado</p>
             </div>
           </div>
         </div>
@@ -80,15 +80,15 @@
         <div class="grid grid-cols-3 gap-4 bg-white/70 backdrop-blur border border-white/70 rounded-2xl px-6 py-5 text-luxury-black text-sm shadow-sm">
           <div class="flex items-center gap-3">
             <span class="text-luxury-gold text-lg">★</span>
-            <span>Envio 24-48h en toda Espana</span>
+            <span>Venta exclusiva para empresas</span>
           </div>
           <div class="flex items-center gap-3">
             <span class="text-luxury-gold text-lg">◆</span>
-            <span>Diseno artesanal y curado premium</span>
+            <span>Catálogo visible para público general</span>
           </div>
           <div class="flex items-center gap-3">
             <span class="text-luxury-gold text-lg">●</span>
-            <span>Pago seguro y devolucion 30 dias</span>
+            <span>Precios y pedidos con acceso profesional</span>
           </div>
         </div>
       </div>
@@ -128,20 +128,20 @@
             </svg>
           </div>
           <h3 class="font-serif text-xl mb-2">Atencion curada</h3>
-          <p class="text-gray-600 text-sm">Asesoramiento personalizado en tienda o por WhatsApp.</p>
+          <p class="text-gray-600 text-sm">Asesoramiento comercial personalizado para profesionales.</p>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- Experiencia en tienda -->
+  <!-- Experiencia profesional -->
   <section class="py-16 sm:py-20 bg-white">
     <div class="max-w-7xl mx-auto px-6 grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-12 items-center">
       <div>
         <span class="text-luxury-gold text-xs font-bold tracking-[0.3em] uppercase block mb-3">Andújar · Jaén</span>
-        <h2 class="font-serif text-4xl md:text-5xl text-luxury-black mb-6">Atelier y asesoramiento en tienda</h2>
+        <h2 class="font-serif text-4xl md:text-5xl text-luxury-black mb-6">Proveedor mayorista para empresas</h2>
         <p class="text-gray-600 text-lg mb-6">
-          Te acompañamos en cada detalle con una selección exclusiva de complementos nupciales. Visítanos en Plaza de Abastos y descubre piezas únicas.
+          Trabajamos con profesionales y comercios especializados en moda nupcial con catálogo actualizado y soporte comercial.
         </p>
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
           <div class="p-4 border rounded-lg">
@@ -308,21 +308,21 @@
   <section class="py-16 sm:py-20 bg-white">
     <div class="max-w-7xl mx-auto px-6">
       <div class="text-center mb-10 sm:mb-12">
-        <span class="text-luxury-gold text-xs font-bold tracking-[0.3em] uppercase block mb-3">Garantias</span>
-        <h2 class="font-serif text-3xl sm:text-4xl md:text-5xl text-luxury-black">Cuidado en cada detalle</h2>
+        <span class="text-luxury-gold text-xs font-bold tracking-[0.3em] uppercase block mb-3">Operativa B2B</span>
+        <h2 class="font-serif text-3xl sm:text-4xl md:text-5xl text-luxury-black">Soporte para clientes profesionales</h2>
       </div>
       <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
         <div class="p-7 border rounded-3xl shadow-sm bg-gradient-to-b from-white to-gray-50">
-          <p class="text-gray-600">Packaging premium pensado para regalo y presentacion impecable.</p>
-          <p class="mt-6 font-semibold text-luxury-black">Empaquetado especial</p>
+          <p class="text-gray-600">Validación de cuentas profesionales para proteger tarifas y condiciones comerciales.</p>
+          <p class="mt-6 font-semibold text-luxury-black">Acceso controlado</p>
         </div>
         <div class="p-7 border rounded-3xl shadow-sm bg-gradient-to-b from-white to-gray-50">
-          <p class="text-gray-600">Envio rapido 24-48h con seguimiento y soporte en todo momento.</p>
-          <p class="mt-6 font-semibold text-luxury-black">Envio seguro</p>
+          <p class="text-gray-600">Atención comercial directa para incidencias, reposición y asesoramiento de compra.</p>
+          <p class="mt-6 font-semibold text-luxury-black">Soporte comercial</p>
         </div>
         <div class="p-7 border rounded-3xl shadow-sm bg-gradient-to-b from-white to-gray-50">
-          <p class="text-gray-600">Devoluciones sencillas en 30 dias para que compres con confianza.</p>
-          <p class="mt-6 font-semibold text-luxury-black">Devolucion facil</p>
+          <p class="text-gray-600">Catálogo actualizado y condiciones orientadas a negocio y volumen profesional.</p>
+          <p class="mt-6 font-semibold text-luxury-black">Relación a largo plazo</p>
         </div>
       </div>
     </div>
@@ -331,11 +331,11 @@
   <!-- CTA final -->
   <section class="py-16 sm:py-20 bg-luxury-black text-white">
     <div class="max-w-7xl mx-auto px-6 text-center">
-      <h2 class="font-serif text-3xl sm:text-4xl md:text-5xl mb-4">Tu dia merece algo unico</h2>
-      <p class="text-white/80 max-w-2xl mx-auto mb-8">Explora la coleccion o visitanos en tienda para un asesoramiento personalizado.</p>
+      <h2 class="font-serif text-3xl sm:text-4xl md:text-5xl mb-4">¿Eres profesional del sector?</h2>
+      <p class="text-white/80 max-w-2xl mx-auto mb-8">Solicita tu alta empresarial y accede a tarifas, stock y pedidos mayoristas.</p>
       <div class="flex flex-col sm:flex-row gap-4 justify-center">
-        <router-link to="/tienda" class="bg-luxury-gold text-luxury-black px-8 py-3 font-bold uppercase tracking-widest text-sm hover:bg-white transition">Ver tienda</router-link>
-        <router-link to="/contacto" class="border border-white px-8 py-3 font-bold uppercase tracking-widest text-sm hover:bg-white hover:text-luxury-black transition">Contacto</router-link>
+        <router-link to="/acceso-empresarial" class="bg-luxury-gold text-luxury-black px-8 py-3 font-bold uppercase tracking-widest text-sm hover:bg-white transition">Solicitar alta</router-link>
+        <router-link to="/tienda" class="border border-white px-8 py-3 font-bold uppercase tracking-widest text-sm hover:bg-white hover:text-luxury-black transition">Ver catálogo</router-link>
       </div>
     </div>
   </section>
@@ -344,53 +344,53 @@
   <section class="py-16 sm:py-20 bg-white">
     <div class="max-w-7xl mx-auto px-6">
       <div class="text-center mb-10 sm:mb-12">
-        <span class="text-luxury-gold text-xs font-bold tracking-[0.3em] uppercase block mb-3">Opiniones</span>
-        <h2 class="font-serif text-3xl sm:text-4xl md:text-5xl text-luxury-black">Lo que dicen nuestras novias</h2>
+        <span class="text-luxury-gold text-xs font-bold tracking-[0.3em] uppercase block mb-3">Profesionales</span>
+        <h2 class="font-serif text-3xl sm:text-4xl md:text-5xl text-luxury-black">Lo que dicen nuestros clientes B2B</h2>
       </div>
       <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
         <div class="p-7 border rounded-lg bg-gradient-to-b from-white to-gray-50 hover:shadow-lg transition">
           <div class="flex gap-1 mb-4">
             <span v-for="i in 5" :key="i" class="text-luxury-gold text-lg">★</span>
           </div>
-          <p class="text-gray-600 mb-4 italic">"Ibernovia es el lugar perfecto para encontrar ese complemento especial. El asesoramiento fue increíble y el servicio impecable."</p>
-          <p class="font-bold text-luxury-black text-sm">María García</p>
-          <p class="text-gray-500 text-xs">Novia, Sevilla</p>
+          <p class="text-gray-600 mb-4 italic">"Nos resolvieron catálogo y reposición de forma ágil. La atención comercial es excelente."</p>
+          <p class="font-bold text-luxury-black text-sm">Boutique Luna</p>
+          <p class="text-gray-500 text-xs">Sevilla</p>
         </div>
         <div class="p-7 border rounded-lg bg-gradient-to-b from-white to-gray-50 hover:shadow-lg transition">
           <div class="flex gap-1 mb-4">
             <span v-for="i in 5" :key="i" class="text-luxury-gold text-lg">★</span>
           </div>
-          <p class="text-gray-600 mb-4 italic">"La entrega fue rápida y el empaquetado fue tan bonito que parecía un regalo en sí mismo. Totalmente recomendado."</p>
-          <p class="font-bold text-luxury-black text-sm">Carmen López</p>
-          <p class="text-gray-500 text-xs">Novia, Madrid</p>
+          <p class="text-gray-600 mb-4 italic">"Desde el alta profesional tenemos visibilidad de tarifas y trabajamos mejor cada campaña."</p>
+          <p class="font-bold text-luxury-black text-sm">Ceremonia Élite</p>
+          <p class="text-gray-500 text-xs">Madrid</p>
         </div>
         <div class="p-7 border rounded-lg bg-gradient-to-b from-white to-gray-50 hover:shadow-lg transition">
           <div class="flex gap-1 mb-4">
             <span v-for="i in 5" :key="i" class="text-luxury-gold text-lg">★</span>
           </div>
-          <p class="text-gray-600 mb-4 italic">"Visitamos el atelier y fue una experiencia de lujo. Todo los detalles cuidados, piezas exclusivas. ¡Volveremos!"</p>
-          <p class="font-bold text-luxury-black text-sm">Isabel Martínez</p>
-          <p class="text-gray-500 text-xs">Novia, Jaén</p>
+          <p class="text-gray-600 mb-4 italic">"Un proveedor serio para negocio: catálogo cuidado, soporte constante y comunicación clara."</p>
+          <p class="font-bold text-luxury-black text-sm">Atelier Sur</p>
+          <p class="text-gray-500 text-xs">Jaén</p>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- OFERTA ESPECIAL -->
+  <!-- CONDICIONES PROFESIONALES -->
   <section class="py-16 sm:py-20 bg-luxury-gold/5 border-y border-luxury-gold/20">
     <div class="max-w-7xl mx-auto px-6">
       <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
         <div>
-          <span class="text-luxury-gold text-xs font-bold tracking-[0.3em] uppercase block mb-3">Oferta Especial</span>
-          <h2 class="font-serif text-4xl md:text-5xl text-luxury-black mb-4">20% de descuento</h2>
-          <p class="text-xl text-luxury-gold font-bold mb-2">En tu primer pedido</p>
-          <p class="text-gray-600 mb-6">Registrate ahora y obtén un código de descuento exclusivo en toda la colección.</p>
-          <router-link to="/auth" class="inline-block bg-luxury-black text-white px-8 py-3 font-bold uppercase tracking-widest text-sm hover:bg-luxury-gold hover:text-luxury-black transition">Registrarse</router-link>
+          <span class="text-luxury-gold text-xs font-bold tracking-[0.3em] uppercase block mb-3">Condiciones</span>
+          <h2 class="font-serif text-4xl md:text-5xl text-luxury-black mb-4">Trabajamos con empresas</h2>
+          <p class="text-xl text-luxury-gold font-bold mb-2">Alta y validación profesional</p>
+          <p class="text-gray-600 mb-6">Solicita acceso y habilitaremos tu perfil para consultar precios, stock y gestión de pedidos.</p>
+          <router-link to="/acceso-empresarial" class="inline-block bg-luxury-black text-white px-8 py-3 font-bold uppercase tracking-widest text-sm hover:bg-luxury-gold hover:text-luxury-black transition">Solicitar alta</router-link>
         </div>
         <div class="bg-white rounded-3xl p-8 shadow-lg border border-luxury-gold/20">
-          <p class="text-center text-6xl font-bold text-luxury-gold mb-2">20%</p>
-          <p class="text-center text-gray-600 text-sm mb-4">Código: <span class="font-mono font-bold text-luxury-black">IBERNOVIA20</span></p>
-          <p class="text-center text-gray-500 text-xs">Válido para clientes nuevos. No acumulable.</p>
+          <p class="text-center text-4xl font-bold text-luxury-gold mb-2">24/48h</p>
+          <p class="text-center text-gray-600 text-sm mb-4">Tiempo estimado de validación comercial</p>
+          <p class="text-center text-gray-500 text-xs">Recibirás confirmación por email tras revisar tus datos.</p>
         </div>
       </div>
     </div>
