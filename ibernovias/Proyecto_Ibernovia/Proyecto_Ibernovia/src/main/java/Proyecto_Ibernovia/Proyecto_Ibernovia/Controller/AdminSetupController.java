@@ -2,10 +2,12 @@ package Proyecto_Ibernovia.Proyecto_Ibernovia.Controller;
 
 import Proyecto_Ibernovia.Proyecto_Ibernovia.Model.Usuario;
 import Proyecto_Ibernovia.Proyecto_Ibernovia.Repository.UsuarioRepository;
+import Proyecto_Ibernovia.Proyecto_Ibernovia.Util.JwtUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
@@ -18,9 +20,32 @@ public class AdminSetupController {
     private static final Logger logger = LoggerFactory.getLogger(AdminSetupController.class);
 
     private final UsuarioRepository usuarioRepository;
+    private final PasswordEncoder passwordEncoder;
+    private final JwtUtil jwtUtil;
 
-    public AdminSetupController(UsuarioRepository usuarioRepository) {
+    public AdminSetupController(UsuarioRepository usuarioRepository, PasswordEncoder passwordEncoder, JwtUtil jwtUtil) {
         this.usuarioRepository = usuarioRepository;
+        this.passwordEncoder = passwordEncoder;
+        this.jwtUtil = jwtUtil;
+    }
+
+    private Optional<Usuario> getAdminFromToken(String authHeader) {
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            return Optional.empty();
+        }
+        String token = authHeader.substring(7);
+        if (!jwtUtil.validateToken(token)) {
+            return Optional.empty();
+        }
+        Long userId = jwtUtil.extractUserIdFromToken(token);
+        if (userId == null) {
+            return Optional.empty();
+        }
+        Optional<Usuario> user = usuarioRepository.findById(userId);
+        if (user.isEmpty() || !Boolean.TRUE.equals(user.get().getIsAdmin())) {
+            return Optional.empty();
+        }
+        return user;
     }
 
     // Crear primer admin (solo funciona si no hay admins)
@@ -59,7 +84,7 @@ public class AdminSetupController {
             adminUser.setEmail(email);
             adminUser.setNombre(nombre != null && !nombre.isEmpty() ? nombre : "Administrador");
             adminUser.setApellido(""); // Por defecto vacío, se puede actualizar luego
-            adminUser.setPassword(password); // En producción: usar BCrypt
+            adminUser.setPassword(passwordEncoder.encode(password));
             adminUser.setIsAdmin(true);
             adminUser.setActivo(true);
 
@@ -99,8 +124,16 @@ public class AdminSetupController {
 
     // Crear admin adicional (sin restricción de admins previos)
     @PostMapping("/create-admin-adicional")
-    public ResponseEntity<Map<String, Object>> createAdditionalAdmin(@RequestBody Map<String, String> body) {
+        public ResponseEntity<Map<String, Object>> createAdditionalAdmin(
+            @RequestBody Map<String, String> body,
+            @RequestHeader(value = "Authorization", required = false) String authHeader
+        ) {
         try {
+            if (getAdminFromToken(authHeader).isEmpty()) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                .body(Map.of("success", false, "message", "No autorizado"));
+            }
+
             String email = body.get("email");
             String nombre = body.get("nombre");
             String password = body.get("password");
@@ -122,7 +155,7 @@ public class AdminSetupController {
             adminUser.setEmail(email);
             adminUser.setNombre(nombre != null && !nombre.isEmpty() ? nombre : "Administrador");
             adminUser.setApellido(""); // Por defecto vacío
-            adminUser.setPassword(password); // En producción: usar BCrypt
+            adminUser.setPassword(passwordEncoder.encode(password));
             adminUser.setIsAdmin(true);
             adminUser.setActivo(true);
 

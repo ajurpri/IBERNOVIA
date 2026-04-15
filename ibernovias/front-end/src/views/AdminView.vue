@@ -138,7 +138,14 @@
 
             <div>
               <label class="text-xs uppercase tracking-widest text-gray-500 block mb-1">Categoría</label>
-              <input v-model="form.categoria" required type="text" class="w-full px-4 py-2 border border-gray-200 rounded focus:outline-none focus:border-luxury-gold">
+              <select
+                v-model="form.categoria"
+                required
+                class="w-full px-4 py-2 border border-gray-200 rounded focus:outline-none focus:border-luxury-gold bg-white"
+              >
+                <option disabled value="">Selecciona una categoría</option>
+                <option v-for="cat in selectableCategories" :key="cat" :value="cat">{{ cat }}</option>
+              </select>
             </div>
 
             <div class="grid grid-cols-2 gap-3">
@@ -153,8 +160,17 @@
             </div>
 
             <div>
-              <label class="text-xs uppercase tracking-widest text-gray-500 block mb-1">Imagen URL</label>
-              <input v-model="form.imagen" type="text" class="w-full px-4 py-2 border border-gray-200 rounded focus:outline-none focus:border-luxury-gold" placeholder="/images/producto.jpg">
+              <label class="text-xs uppercase tracking-widest text-gray-500 block mb-1">Imagen</label>
+              <input 
+                type="file" 
+                ref="fileInput"
+                @change="handleImageUpload" 
+                accept="image/*" 
+                class="w-full px-4 py-2 border border-gray-200 rounded focus:outline-none focus:border-luxury-gold text-sm"
+              >
+              <div v-if="form.imagen" class="mt-2 text-xs text-gray-600">
+                ✓ Imagen seleccionada: {{ form.imagenNombre }}
+              </div>
             </div>
 
             <div>
@@ -463,6 +479,21 @@ const activeProducts = computed(() => products.value.filter(p => p.activo).lengt
 const lowStockProducts = computed(() => products.value.filter(p => p.stock < 5).length)
 const lowStockList = computed(() => products.value.filter(p => p.stock < 5).sort((a, b) => a.stock - b.stock))
 const categories = computed(() => [...new Set(products.value.map(p => p.categoria))])
+const predefinedCategories = [
+  'Ligas',
+  'Pendientes',
+  'Abanicos',
+  'Gemelos',
+  'Cruces',
+  'Tocados',
+  'Broches',
+  'Can-canes',
+  'Religioso'
+]
+const selectableCategories = computed(() => {
+  const existing = categories.value.filter(Boolean)
+  return [...new Set([...predefinedCategories, ...existing])]
+})
 const adminUsers = computed(() => users.value.filter(u => u.isAdmin).length)
 
 const loadProducts = async () => {
@@ -510,6 +541,24 @@ const editProduct = (producto) => {
   }, 100)
 }
 
+const handleImageUpload = (event) => {
+  const file = event.target.files?.[0]
+  if (!file) return
+  
+  try {
+    const reader = new FileReader()
+    reader.onload = (e) => {
+      const base64 = e.target?.result
+      form.value.imagen = base64
+      form.value.imagenNombre = file.name
+    }
+    reader.readAsDataURL(file)
+  } catch (error) {
+    message.value = '✗ Error al cargar la imagen.'
+    messageOk.value = false
+  }
+}
+
 const resetForm = (keepMessage = false) => {
   form.value = {
     id: null,
@@ -518,6 +567,7 @@ const resetForm = (keepMessage = false) => {
     precio: 0,
     stock: 0,
     imagen: '',
+    imagenNombre: '',
     descripcion: '',
     activo: true
   }

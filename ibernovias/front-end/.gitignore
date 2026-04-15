@@ -26,6 +26,12 @@ coverage
 
 *.tsbuildinfo
 
+# Local environment variables
+.env
+.env.local
+.env.development
+.env.production.local
+
 .eslintcache
 
 # Cypress

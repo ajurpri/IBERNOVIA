@@ -2,21 +2,32 @@ package Proyecto_Ibernovia.Proyecto_Ibernovia.Util;
 
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
+import jakarta.annotation.PostConstruct;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
-import java.util.Base64;
+import java.nio.charset.StandardCharsets;
 import java.util.Date;
 
 @Component
 public class JwtUtil {
 
     private static final long JWT_EXPIRATION_MS = 86400000; // 24 horas
-    private final SecretKey signingKey;
+    private final String jwtSecret;
+    private SecretKey signingKey;
 
-    public JwtUtil() {
-        // Generar una clave segura para HS512 (512 bits mínimo)
-        this.signingKey = Keys.secretKeyFor(SignatureAlgorithm.HS512);
+    public JwtUtil(@Value("${app.jwt.secret}") String jwtSecret) {
+        this.jwtSecret = jwtSecret;
+    }
+
+    @PostConstruct
+    void init() {
+        byte[] keyBytes = jwtSecret.getBytes(StandardCharsets.UTF_8);
+        if (keyBytes.length < 64) {
+            throw new IllegalArgumentException("app.jwt.secret debe tener al menos 64 caracteres para HS512");
+        }
+        this.signingKey = Keys.hmacShaKeyFor(keyBytes);
     }
 
     private SecretKey getSigningKey() {

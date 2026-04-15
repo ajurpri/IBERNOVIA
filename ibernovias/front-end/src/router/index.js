@@ -8,7 +8,7 @@ import { useAuthStore } from '../stores/auth'
 const CarritoView = defineAsyncComponent(() => import('../views/CarritoView.vue'))
 const CheckoutView = defineAsyncComponent(() => import('../views/CheckoutView.vue'))
 const ConfirmacionView = defineAsyncComponent(() => import('../views/ConfirmacionView.vue'))
-const AuthView = defineAsyncComponent(() => import('../views/AuthView.vue'))
+const AuthView = defineAsyncComponent(() => import('../views/AuthView.old.vue'))
 const TiendaView = defineAsyncComponent(() => import('../views/TiendaView.vue'))
 const CuentaView = defineAsyncComponent(() => import('../views/CuentaView.vue'))
 const ContactoView = defineAsyncComponent(() => import('../views/ContactoView.vue'))

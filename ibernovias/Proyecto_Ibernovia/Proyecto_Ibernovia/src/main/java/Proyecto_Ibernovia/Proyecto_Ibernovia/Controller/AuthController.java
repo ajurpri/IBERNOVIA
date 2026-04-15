@@ -131,7 +131,6 @@ public class AuthController {
         }
 
         Long userId = jwtUtil.extractUserIdFromToken(token);
-        String email = jwtUtil.extractEmailFromToken(token);
 
         if (userId == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Token inválido");

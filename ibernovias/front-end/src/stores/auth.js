@@ -1,16 +1,11 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
-import { 
-  signOut,
-  onAuthStateChanged
-} from 'firebase/auth'
-import { auth } from '../lib/firebase'
 
 // Get admin emails from .env (con fallback)
-const ADMIN_EMAILS = [
-  'admin@ibernovia.com',
-  'dam@ibernovia.com'
-]
+const ADMIN_EMAILS = (import.meta.env.VITE_ADMIN_EMAILS || 'admin@ibernovia.com,dam@ibernovia.com')
+  .split(',')
+  .map((email) => email.trim().toLowerCase())
+  .filter(Boolean)
 
 // Códigos de acceso para empresas (en producción, esto vendría de un backend)
 const VALID_BUSINESS_CODES = [
@@ -22,49 +17,48 @@ const VALID_BUSINESS_CODES = [
 console.log('🔐 Auth Store Initialized with ADMIN_EMAILS:', ADMIN_EMAILS)
 
 export const useAuthStore = defineStore('auth', () => {
-  const user = ref(null)
-  const token = ref(null)
-  const isAuthenticated = ref(false)
-  const isAdmin = ref(false)
-  const isBusinessUser = ref(false)
+  const savedUser = JSON.parse(localStorage.getItem('user') || 'null')
+  const savedToken = localStorage.getItem('token')
+
+  const user = ref(savedUser)
+  const token = ref(savedToken)
+  const isAuthenticated = ref(Boolean(savedToken && savedUser))
+  const isAdmin = ref(Boolean(savedUser?.isAdmin))
+  const isBusinessUser = ref(Boolean(savedUser?.isAdmin))
   const loading = ref(false)
 
-  // Inicializar escuchador de auth
-  onAuthStateChanged(auth, async (firebaseUser) => {
-    if (firebaseUser) {
-      const idToken = await firebaseUser.getIdToken()
-      
-      // Recuperar estado de usuario empresa del localStorage
-      const savedBusinessStatus = localStorage.getItem(`business_${firebaseUser.uid}`)
-      
-      user.value = {
-        id: firebaseUser.uid,
-        email: firebaseUser.email,
-        nombre: firebaseUser.displayName || 'Usuario'
-      }
-      token.value = idToken
-      isAuthenticated.value = true
-      isAdmin.value = ADMIN_EMAILS.includes(firebaseUser.email)
-      isBusinessUser.value = savedBusinessStatus === 'true' || isAdmin.value
-      
-      console.log(`✅ User logged in: ${firebaseUser.email}`)
-      console.log(`🔑 Is Admin: ${isAdmin.value}`)
-      console.log(`🏢 Is Business User: ${isBusinessUser.value}`)
-    } else {
-      user.value = null
-      token.value = null
-      isAuthenticated.value = false
-      isAdmin.value = false
-      isBusinessUser.value = false
-      console.log('❌ User logged out')
+  if (savedUser?.email) {
+    const savedBusinessStatus = localStorage.getItem(`business_${savedUser.userId || savedUser.id}`)
+    const savedUserIsAdmin = Boolean(savedUser.isAdmin) || ADMIN_EMAILS.includes((savedUser.email || '').toLowerCase())
+    isAdmin.value = savedUserIsAdmin
+    isBusinessUser.value = savedBusinessStatus === 'true' || savedUserIsAdmin
+  }
+
+  const setUser = (authPayload) => {
+    const normalizedUser = {
+      userId: authPayload.userId,
+      email: authPayload.email,
+      nombre: authPayload.nombre,
+      apellido: authPayload.apellido,
+      isAdmin: Boolean(authPayload.isAdmin)
     }
-    loading.value = false
-  })
+
+    user.value = normalizedUser
+    token.value = authPayload.token
+    isAuthenticated.value = true
+    isAdmin.value = normalizedUser.isAdmin || ADMIN_EMAILS.includes((normalizedUser.email || '').toLowerCase())
+
+    const savedBusinessStatus = localStorage.getItem(`business_${normalizedUser.userId}`)
+    isBusinessUser.value = savedBusinessStatus === 'true' || isAdmin.value
+
+    localStorage.setItem('token', authPayload.token)
+    localStorage.setItem('user', JSON.stringify(normalizedUser))
+  }
 
   const activateBusinessAccess = (code) => {
     if (VALID_BUSINESS_CODES.includes(code)) {
       if (user.value) {
-        localStorage.setItem(`business_${user.value.id}`, 'true')
+        localStorage.setItem(`business_${user.value.userId || user.value.id}`, 'true')
         isBusinessUser.value = true
         console.log('✅ Acceso para empresas activado')
         return true
@@ -75,15 +69,17 @@ export const useAuthStore = defineStore('auth', () => {
   }
 
   const logout = async () => {
-    try {
-      if (user.value) {
-        localStorage.removeItem(`business_${user.value.id}`)
-      }
-      await signOut(auth)
-      console.log('✅ Logout successful')
-    } catch (error) {
-      console.error('Error logout:', error)
+    if (user.value) {
+      localStorage.removeItem(`business_${user.value.userId || user.value.id}`)
     }
+    localStorage.removeItem('token')
+    localStorage.removeItem('user')
+    user.value = null
+    token.value = null
+    isAuthenticated.value = false
+    isAdmin.value = false
+    isBusinessUser.value = false
+    console.log('✅ Logout successful')
   }
 
   return {
@@ -93,6 +89,7 @@ export const useAuthStore = defineStore('auth', () => {
     isAdmin,
     isBusinessUser,
     loading,
+    setUser,
     activateBusinessAccess,
     logout
   }

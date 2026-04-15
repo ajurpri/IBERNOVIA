@@ -16,9 +16,11 @@ public class ContactMessageService {
     private static final Logger logger = LoggerFactory.getLogger(ContactMessageService.class);
 
     private final ContactMessageRepository contactMessageRepository;
+    private final EmailService emailService;
 
-    public ContactMessageService(ContactMessageRepository contactMessageRepository) {
+    public ContactMessageService(ContactMessageRepository contactMessageRepository, EmailService emailService) {
         this.contactMessageRepository = contactMessageRepository;
+        this.emailService = emailService;
     }
 
     public ContactMessage saveContactMessage(ContactRequest request) {
@@ -36,6 +38,13 @@ public class ContactMessageService {
         ContactMessage saved = contactMessageRepository.save(message);
         logger.info("✅ Mensaje guardado en BD - ID: {}, De: {}, Asunto: {}", 
             saved.getId(), saved.getEmail(), saved.getAsunto());
+
+        try {
+            emailService.sendContactEmail(request);
+        } catch (Exception e) {
+            logger.error("❌ Mensaje guardado, pero falló el envío de correo para ID {}: {}", saved.getId(), e.getMessage());
+        }
+
         return saved;
     }
 

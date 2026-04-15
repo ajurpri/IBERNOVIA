@@ -144,6 +144,7 @@
 <script setup>
 import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
+import { apiClient } from '../lib/api'
 
 const router = useRouter()
 
@@ -182,17 +183,13 @@ const submitForm = async () => {
   error.value = ''
 
   try {
-    const response = await fetch('/api/admin/setup/create-admin', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
+    const response = await apiClient.post('/api/admin/setup/create-admin', {
         email: form.value.email,
         nombre: form.value.nombre,
         password: form.value.password
-      })
     })
 
-    const data = await response.json()
+    const data = response.data
 
     if (data.success) {
       success.value = `✓ Admin creado correctamente. Email: ${data.admin.email}`
