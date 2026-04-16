@@ -61,7 +61,7 @@
               <option v-for="cat in categorias" :key="cat" :value="cat">{{ cat }}</option>
             </select>
           </div>
-          <div v-if="authStore.isBusinessUser" class="flex-1">
+          <div v-if="authStore.canSeePrices" class="flex-1">
             <label class="block text-xs uppercase tracking-widest text-gray-500 mb-2" for="sort">Ordenar</label>
             <select
               id="sort"
@@ -164,7 +164,7 @@ const filteredProducts = computed(() => {
 
 const sortedProducts = computed(() => {
   const list = [...filteredProducts.value]
-  if (!authStore.isBusinessUser) {
+  if (!authStore.canSeePrices) {
     return list.sort((a, b) => (a.nombre || '').localeCompare(b.nombre || ''))
   }
   if (sortOrder.value === 'precio-asc') {

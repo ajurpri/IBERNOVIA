@@ -17,7 +17,6 @@ const PrivacidadView = defineAsyncComponent(() => import('../views/PrivacidadVie
 const CookiesView = defineAsyncComponent(() => import('../views/CookiesView.vue'))
 const LegalView = defineAsyncComponent(() => import('../views/LegalView.vue'))
 const AdminView = defineAsyncComponent(() => import('../views/AdminView.vue'))
-const AdminSetupView = defineAsyncComponent(() => import('../views/AdminSetupView.vue'))
 
 const routes = [
   {
@@ -26,7 +25,7 @@ const routes = [
     component: HelloWorld,
     meta: {
       title: 'IBERNOVIA | Catálogo profesional B2B',
-      description: 'Catálogo de complementos para empresas. El público puede ver productos y las empresas acceden a precios y pedidos.'
+      description: 'Catálogo de complementos para empresas. El público puede ver productos y las empresas acceden a precios y solicitudes de presupuesto.'
     }
   },
   {
@@ -35,7 +34,7 @@ const routes = [
     component: TiendaView,
     meta: {
       title: 'Catálogo profesional | IBERNOVIA',
-      description: 'Explora el catálogo. Los precios y pedidos son exclusivos para clientes profesionales registrados.'
+      description: 'Explora el catálogo. Los precios y solicitudes de presupuesto son exclusivos para clientes profesionales registrados.'
     }
   },
   {
@@ -132,14 +131,6 @@ const routes = [
     }
   },
   {
-    path: '/admin/setup',
-    name: 'AdminSetup',
-    component: AdminSetupView,
-    meta: {
-      title: 'Setup Administrativo | IBERNOVIA'
-    }
-  },
-  {
     path: '/admin',
     name: 'Admin',
     component: AdminView,
@@ -177,11 +168,11 @@ router.afterEach((to) => {
 })
 
 // Guard para proteger rutas autenticadas
-router.beforeEach((to, from, next) => {
+router.beforeEach(async (to, from, next) => {
   const authStore = useAuthStore()
 
   if (to.meta.requiresBusiness) {
-    if (authStore.isBusinessUser) {
+    if (authStore.canRequestQuote) {
       next()
     } else {
       next('/acceso-empresarial')
@@ -190,7 +181,8 @@ router.beforeEach((to, from, next) => {
   }
 
   if (to.meta.requiresAdmin) {
-    if (authStore.isAuthenticated && authStore.isAdmin) {
+    const verifiedAdmin = await authStore.verifyAdminSession()
+    if (verifiedAdmin) {
       next()
     } else {
       next('/auth')

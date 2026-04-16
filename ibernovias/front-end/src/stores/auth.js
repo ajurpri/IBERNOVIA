@@ -1,11 +1,6 @@
 import { defineStore } from 'pinia'
-import { ref } from 'vue'
-
-// Get admin emails from .env (con fallback)
-const ADMIN_EMAILS = (import.meta.env.VITE_ADMIN_EMAILS || 'admin@ibernovia.com,dam@ibernovia.com')
-  .split(',')
-  .map((email) => email.trim().toLowerCase())
-  .filter(Boolean)
+import { ref, computed } from 'vue'
+import { apiClient } from '../lib/api'
 
 // Códigos de acceso para empresas (en producción, esto vendría de un backend)
 const VALID_BUSINESS_CODES = [
@@ -14,25 +9,34 @@ const VALID_BUSINESS_CODES = [
   'DEMO123'
 ]
 
-console.log('🔐 Auth Store Initialized with ADMIN_EMAILS:', ADMIN_EMAILS)
-
 export const useAuthStore = defineStore('auth', () => {
   const savedUser = JSON.parse(localStorage.getItem('user') || 'null')
   const savedToken = localStorage.getItem('token')
+  const savedGuestBusinessAccess = localStorage.getItem('guest_business_access') === 'true'
 
   const user = ref(savedUser)
   const token = ref(savedToken)
   const isAuthenticated = ref(Boolean(savedToken && savedUser))
-  const isAdmin = ref(Boolean(savedUser?.isAdmin))
-  const isBusinessUser = ref(Boolean(savedUser?.isAdmin))
+  const isAdmin = ref(Boolean(savedUser?.isAdmin === true))
+  const isBusinessUser = ref(Boolean(savedUser?.isAdmin) || savedGuestBusinessAccess)
   const loading = ref(false)
 
   if (savedUser?.email) {
     const savedBusinessStatus = localStorage.getItem(`business_${savedUser.userId || savedUser.id}`)
-    const savedUserIsAdmin = Boolean(savedUser.isAdmin) || ADMIN_EMAILS.includes((savedUser.email || '').toLowerCase())
+    const savedUserIsAdmin = Boolean(savedUser.isAdmin === true)
     isAdmin.value = savedUserIsAdmin
-    isBusinessUser.value = savedBusinessStatus === 'true' || savedUserIsAdmin
+    isBusinessUser.value = savedBusinessStatus === 'true' || savedUserIsAdmin || savedGuestBusinessAccess
   }
+
+  const viewMode = computed(() => {
+    if (isAdmin.value) return 'admin'
+    if (isBusinessUser.value) return 'business'
+    return 'public'
+  })
+
+  const canSeePrices = computed(() => isBusinessUser.value || isAdmin.value)
+  const canRequestQuote = computed(() => isBusinessUser.value || isAdmin.value)
+  const canAccessAdmin = computed(() => isAuthenticated.value && isAdmin.value)
 
   const setUser = (authPayload) => {
     const normalizedUser = {
@@ -46,10 +50,11 @@ export const useAuthStore = defineStore('auth', () => {
     user.value = normalizedUser
     token.value = authPayload.token
     isAuthenticated.value = true
-    isAdmin.value = normalizedUser.isAdmin || ADMIN_EMAILS.includes((normalizedUser.email || '').toLowerCase())
+    isAdmin.value = normalizedUser.isAdmin === true
 
     const savedBusinessStatus = localStorage.getItem(`business_${normalizedUser.userId}`)
-    isBusinessUser.value = savedBusinessStatus === 'true' || isAdmin.value
+    const hasGuestBusinessAccess = localStorage.getItem('guest_business_access') === 'true'
+    isBusinessUser.value = savedBusinessStatus === 'true' || hasGuestBusinessAccess || isAdmin.value
 
     localStorage.setItem('token', authPayload.token)
     localStorage.setItem('user', JSON.stringify(normalizedUser))
@@ -57,12 +62,13 @@ export const useAuthStore = defineStore('auth', () => {
 
   const activateBusinessAccess = (code) => {
     if (VALID_BUSINESS_CODES.includes(code)) {
+      localStorage.setItem('guest_business_access', 'true')
       if (user.value) {
         localStorage.setItem(`business_${user.value.userId || user.value.id}`, 'true')
-        isBusinessUser.value = true
-        console.log('✅ Acceso para empresas activado')
-        return true
       }
+      isBusinessUser.value = true
+      console.log('✅ Acceso para empresas activado')
+      return true
     }
     console.log('❌ Código inválido')
     return false
@@ -78,8 +84,38 @@ export const useAuthStore = defineStore('auth', () => {
     token.value = null
     isAuthenticated.value = false
     isAdmin.value = false
-    isBusinessUser.value = false
+    isBusinessUser.value = localStorage.getItem('guest_business_access') === 'true'
     console.log('✅ Logout successful')
+  }
+
+  const verifyAdminSession = async () => {
+    if (!token.value) return false
+    try {
+      const response = await apiClient.get('/api/auth/verify')
+      const payload = response.data
+
+      const normalizedUser = {
+        userId: payload.userId,
+        email: payload.email,
+        nombre: payload.nombre,
+        apellido: payload.apellido,
+        isAdmin: Boolean(payload.isAdmin)
+      }
+
+      user.value = normalizedUser
+      isAuthenticated.value = true
+      isAdmin.value = normalizedUser.isAdmin
+
+      const savedBusinessStatus = localStorage.getItem(`business_${normalizedUser.userId}`)
+      const hasGuestBusinessAccess = localStorage.getItem('guest_business_access') === 'true'
+      isBusinessUser.value = savedBusinessStatus === 'true' || hasGuestBusinessAccess || isAdmin.value
+
+      localStorage.setItem('user', JSON.stringify(normalizedUser))
+      return isAdmin.value
+    } catch (e) {
+      await logout()
+      return false
+    }
   }
 
   return {
@@ -88,8 +124,13 @@ export const useAuthStore = defineStore('auth', () => {
     isAuthenticated,
     isAdmin,
     isBusinessUser,
+    viewMode,
+    canSeePrices,
+    canRequestQuote,
+    canAccessAdmin,
     loading,
     setUser,
+    verifyAdminSession,
     activateBusinessAccess,
     logout
   }

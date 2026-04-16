@@ -22,15 +22,18 @@
         </div>
 
         <div class="px-6 py-5 overflow-y-auto space-y-3">
+          <div v-if="loading" class="py-10 text-center text-gray-500">Cargando eventos...</div>
+          <div v-else-if="events.length === 0" class="py-10 text-center text-gray-500">No hay eventos próximos</div>
           <article
             v-for="eventItem in events"
-            :key="eventItem.title"
+            v-else
+            :key="eventItem.id"
             class="rounded-xl border border-gray-200 bg-white px-4 py-4"
           >
-            <p class="text-[11px] uppercase tracking-[0.2em] text-luxury-gold font-semibold">{{ eventItem.displayDate }}</p>
-            <h4 class="mt-2 text-base font-semibold text-luxury-black">{{ eventItem.title }}</h4>
-            <p class="mt-1 text-sm text-gray-600">{{ eventItem.description }}</p>
-            <p class="mt-2 text-xs uppercase tracking-[0.12em] text-gray-500">{{ eventItem.place }}</p>
+            <p class="text-[11px] uppercase tracking-[0.2em] text-luxury-gold font-semibold">{{ formatEventDate(eventItem.fecha) }}</p>
+            <h4 class="mt-2 text-base font-semibold text-luxury-black">{{ eventItem.titulo }}</h4>
+            <p class="mt-1 text-sm text-gray-600">{{ eventItem.descripcion }}</p>
+            <p class="mt-2 text-xs uppercase tracking-[0.12em] text-gray-500">{{ eventItem.lugar }}</p>
           </article>
         </div>
 
@@ -50,37 +53,52 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
+import { apiClient } from '../lib/api'
 
 const showModal = ref(false)
-const events = [
-  {
-    displayDate: '14 MAR 2026 · 18:00',
-    title: 'Presentación Colección Atelier',
-    description: 'Novedades de catálogo y planificación de campaña para clientes profesionales.',
-    place: 'Atelier Ibernovia · Andújar'
-  },
-  {
-    displayDate: '28 MAR 2026 · 11:30',
-    title: 'Pruebas Privadas de Tocados',
-    description: 'Sesiones para selección de producto y combinación de referencias.',
-    place: 'Plaza de Abastos · Andújar'
-  },
-  {
-    displayDate: '11 ABR 2026 · 17:30',
-    title: 'Jornada Novia Invitada',
-    description: 'Visión comercial de tendencias y producto para temporada.',
-    place: 'Espacio Ibernovia'
+const events = ref([])
+const loading = ref(false)
+
+const formatEventDate = (dateString) => {
+  if (!dateString) return ''
+  const date = new Date(dateString)
+  return date.toLocaleDateString('es-ES', { 
+    day: '2-digit', 
+    month: 'short', 
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit'
+  }).toUpperCase()
+}
+
+const loadEvents = async () => {
+  try {
+    loading.value = true
+    const res = await apiClient.get('/api/eventos')
+    events.value = res.data || []
+  } catch (e) {
+    console.error('Error cargando eventos:', e)
+    events.value = []
+  } finally {
+    loading.value = false
   }
-]
+}
 
 const openModal = () => {
   showModal.value = true
+  if (events.value.length === 0) {
+    loadEvents()
+  }
 }
 
 const closeModal = () => {
   showModal.value = false
 }
+
+onMounted(() => {
+  loadEvents()
+})
 
 defineExpose({ openModal, closeModal })
 </script>

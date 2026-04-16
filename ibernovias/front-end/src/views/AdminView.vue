@@ -269,6 +269,269 @@
         </div>
       </div>
 
+      <!-- EVENTOS -->
+      <div v-if="activeTab === 'events'" class="grid grid-cols-1 lg:grid-cols-[2fr_1fr] gap-8">
+        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+          <div class="flex items-center justify-between mb-6">
+            <div>
+              <h2 class="font-bold text-lg text-luxury-black">Agenda de eventos</h2>
+              <p class="text-xs text-gray-500 mt-1">Total: {{ eventos.length }} eventos</p>
+            </div>
+            <button
+              @click="resetEventoForm"
+              class="px-4 py-2 text-xs uppercase tracking-widest border border-luxury-gold/30 text-luxury-gold hover:bg-luxury-gold/5 rounded transition"
+            >
+              ➕ Nuevo evento
+            </button>
+          </div>
+
+          <div v-if="loadingEventos" class="py-10 text-center text-gray-500">Cargando eventos...</div>
+          <div v-else-if="eventos.length === 0" class="py-10 text-center text-gray-500">Sin eventos registrados</div>
+
+          <div v-else class="space-y-3 max-h-[600px] overflow-y-auto">
+            <article
+              v-for="evento in eventos"
+              :key="evento.id"
+              @click="editEvento(evento)"
+              :class="eventoForm.id === evento.id ? 'bg-luxury-gold/5 border-luxury-gold' : 'hover:shadow-md'"
+              class="border border-gray-100 rounded-xl p-4 cursor-pointer transition"
+            >
+              <div class="flex items-start justify-between gap-4">
+                <div class="flex-1">
+                  <p class="text-xs uppercase tracking-widest text-luxury-gold font-semibold mb-1">{{ formatDateForDisplay(evento.fecha) }}</p>
+                  <h3 class="font-semibold text-luxury-black text-sm">{{ evento.titulo }}</h3>
+                  <p class="text-xs text-gray-600 mt-1">{{ evento.descripcion }}</p>
+                  <p class="text-xs text-gray-500 mt-2 uppercase">📍 {{ evento.lugar }}</p>
+                </div>
+              </div>
+            </article>
+          </div>
+        </div>
+
+        <!-- Formulario de eventos -->
+        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 h-fit">
+          <h2 class="font-serif text-2xl text-luxury-black mb-4">{{ eventoForm.id ? '✏️ Editar' : '➕ Nuevo evento' }}</h2>
+
+          <form class="space-y-4" @submit.prevent="saveEvento">
+            <div>
+              <label class="text-xs uppercase tracking-widest text-gray-500 block mb-1">Título *</label>
+              <input 
+                v-model="eventoForm.titulo" 
+                required 
+                type="text" 
+                placeholder="Ej: Presentación Colección" 
+                class="w-full px-4 py-2 border border-gray-200 rounded focus:outline-none focus:border-luxury-gold"
+              >
+            </div>
+
+            <div>
+              <label class="text-xs uppercase tracking-widest text-gray-500 block mb-1">Fecha y Hora *</label>
+              <input 
+                v-model="eventoForm.fecha" 
+                required 
+                type="datetime-local" 
+                class="w-full px-4 py-2 border border-gray-200 rounded focus:outline-none focus:border-luxury-gold"
+              >
+            </div>
+
+            <div>
+              <label class="text-xs uppercase tracking-widest text-gray-500 block mb-1">Lugar *</label>
+              <input 
+                v-model="eventoForm.lugar" 
+                required 
+                type="text" 
+                placeholder="Ej: Atelier Ibernovia · Andújar" 
+                class="w-full px-4 py-2 border border-gray-200 rounded focus:outline-none focus:border-luxury-gold"
+              >
+            </div>
+
+            <div>
+              <label class="text-xs uppercase tracking-widest text-gray-500 block mb-1">Descripción</label>
+              <textarea 
+                v-model="eventoForm.descripcion" 
+                rows="3" 
+                placeholder="Detalles del evento..."
+                class="w-full px-4 py-2 border border-gray-200 rounded focus:outline-none focus:border-luxury-gold"
+              ></textarea>
+            </div>
+
+            <div class="flex gap-2">
+              <button
+                type="submit"
+                :disabled="savingEvento"
+                class="flex-1 bg-luxury-black text-white py-2 uppercase text-xs tracking-widest rounded disabled:opacity-50 hover:bg-luxury-gold hover:text-luxury-black transition font-bold"
+              >
+                {{ savingEvento ? '⏳ Guardando...' : '✓ Guardar' }}
+              </button>
+              <button
+                type="button"
+                class="px-4 py-2 border border-gray-200 rounded text-xs uppercase tracking-widest hover:bg-gray-50"
+                @click="resetEventoForm"
+              >
+                Limpiar
+              </button>
+            </div>
+
+            <div v-if="eventoMessage" :class="eventoMessageOk ? 'bg-green-50 text-green-700 border-green-200' : 'bg-red-50 text-red-700 border-red-200'" class="p-3 rounded border text-sm">
+              {{ eventoMessageOk ? '✓' : '✗' }} {{ eventoMessage }}
+            </div>
+          </form>
+
+          <div v-if="eventoForm.id" class="mt-6 pt-6 border-t border-gray-200">
+            <button
+              @click="removeEvento(eventoForm.id)"
+              class="w-full px-4 py-2 border border-red-200 text-red-600 rounded text-xs uppercase tracking-widest hover:bg-red-50"
+            >
+              Eliminar evento
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- SOLICITUDES DE PRESUPUESTO -->
+      <div v-if="activeTab === 'quote-requests'" class="grid grid-cols-1 lg:grid-cols-[2fr_1fr] gap-8">
+        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+          <div class="flex items-center justify-between mb-6">
+            <div>
+              <h2 class="font-bold text-lg text-luxury-black">Solicitudes de Presupuesto</h2>
+              <p class="text-xs text-gray-500 mt-1">Total: {{ solicitudes.length }} | Pendientes: {{ solicitudes.filter(s => s.estado === 'pendiente').length }}</p>
+            </div>
+            <button
+              @click="loadSolicitudes"
+              class="px-4 py-2 text-xs uppercase tracking-widest border border-luxury-gold/30 text-luxury-gold hover:bg-luxury-gold/5 rounded transition"
+            >
+              🔄 Actualizar
+            </button>
+          </div>
+
+          <div class="flex gap-2 mb-6">
+            <button
+              @click="solicitudFilter = 'all'; loadSolicitudes()"
+              :class="solicitudFilter === 'all' ? 'bg-luxury-black text-white' : 'border border-gray-200 text-gray-600 hover:bg-gray-50'"
+              class="px-4 py-2 text-xs uppercase tracking-widest rounded transition"
+            >
+              Todas
+            </button>
+            <button
+              @click="solicitudFilter = 'pendiente'; loadSolicitudes()"
+              :class="solicitudFilter === 'pendiente' ? 'bg-luxury-black text-white' : 'border border-gray-200 text-gray-600 hover:bg-gray-50'"
+              class="px-4 py-2 text-xs uppercase tracking-widest rounded transition"
+            >
+              Pendientes
+            </button>
+            <button
+              @click="solicitudFilter = 'respondida'; loadSolicitudes()"
+              :class="solicitudFilter === 'respondida' ? 'bg-luxury-black text-white' : 'border border-gray-200 text-gray-600 hover:bg-gray-50'"
+              class="px-4 py-2 text-xs uppercase tracking-widest rounded transition"
+            >
+              Respondidas
+            </button>
+          </div>
+
+          <div v-if="loadingSolicitudes" class="py-10 text-center text-gray-500">Cargando solicitudes...</div>
+          <div v-else-if="solicitudes.length === 0" class="py-10 text-center text-gray-500">Sin solicitudes</div>
+
+          <div v-else class="space-y-3 max-h-[600px] overflow-y-auto">
+            <article
+              v-for="sol in solicitudes"
+              :key="sol.id"
+              @click="selectedSolicitud = sol"
+              :class="selectedSolicitud?.id === sol.id ? 'bg-luxury-gold/5 border-luxury-gold' : 'hover:shadow-md'"
+              class="border border-gray-100 rounded-xl p-4 cursor-pointer transition"
+            >
+              <div class="flex items-start justify-between gap-4">
+                <div class="flex-1">
+                  <div class="flex items-center gap-2 mb-1">
+                    <p class="font-semibold text-luxury-black">{{ sol.empresaNombre }}</p>
+                    <span :class="sol.estado === 'pendiente' ? 'bg-orange-50 text-orange-600' : 'bg-green-50 text-green-600'" class="text-xs font-semibold px-2 py-1 rounded">
+                      {{ sol.estado === 'pendiente' ? '⏳ Pendiente' : '✓ Respondida' }}
+                    </span>
+                  </div>
+                  <p class="text-xs text-gray-600">{{ sol.personaContacto || 'Sin contacto' }}</p>
+                  <p class="text-xs text-gray-500 mt-1">{{ sol.email }}</p>
+                  <p class="text-xs text-gray-400 mt-1">{{ new Date(sol.createdAt).toLocaleString('es-ES') }}</p>
+                </div>
+              </div>
+            </article>
+          </div>
+        </div>
+
+        <!-- Detalle solicitud -->
+        <div v-if="selectedSolicitud" class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 h-fit sticky top-6">
+          <div class="flex items-center justify-between mb-4">
+            <h2 class="font-serif text-xl text-luxury-black">Detalle</h2>
+            <button
+              @click="selectedSolicitud = null"
+              class="text-gray-400 hover:text-gray-600 text-xl"
+            >
+              ✕
+            </button>
+          </div>
+
+          <div class="space-y-4 pb-4 border-b border-gray-200">
+            <div>
+              <p class="text-xs uppercase tracking-widest text-gray-500 mb-1">Empresa</p>
+              <p class="font-semibold text-luxury-black">{{ selectedSolicitud.empresaNombre }}</p>
+            </div>
+
+            <div>
+              <p class="text-xs uppercase tracking-widest text-gray-500 mb-1">Contacto</p>
+              <p class="text-gray-700">{{ selectedSolicitud.personaContacto || '-' }}</p>
+            </div>
+
+            <div>
+              <p class="text-xs uppercase tracking-widest text-gray-500 mb-1">Email</p>
+              <a :href="`mailto:${selectedSolicitud.email}`" class="text-luxury-gold hover:text-luxury-black transition">
+                {{ selectedSolicitud.email }}
+              </a>
+            </div>
+
+            <div>
+              <p class="text-xs uppercase tracking-widest text-gray-500 mb-1">Teléfono</p>
+              <a :href="`tel:${selectedSolicitud.telefono}`" class="text-luxury-gold hover:text-luxury-black transition">
+                {{ selectedSolicitud.telefono }}
+              </a>
+            </div>
+
+            <div>
+              <p class="text-xs uppercase tracking-widest text-gray-500 mb-1">Productos Solicitados</p>
+              <div class="bg-gray-50 p-3 rounded text-sm text-gray-700 max-h-40 overflow-y-auto">
+                {{ selectedSolicitud.productosSolicitados }}
+              </div>
+            </div>
+
+            <div v-if="selectedSolicitud.notas">
+              <p class="text-xs uppercase tracking-widest text-gray-500 mb-1">Mensaje</p>
+              <p class="bg-blue-50 text-blue-900 p-3 rounded text-sm">{{ selectedSolicitud.notas }}</p>
+            </div>
+
+            <div>
+              <p class="text-xs uppercase tracking-widest text-gray-500 mb-1">Fecha de Solicitud</p>
+              <p class="text-gray-700">{{ new Date(selectedSolicitud.createdAt).toLocaleString('es-ES') }}</p>
+            </div>
+          </div>
+
+          <div class="mt-6 space-y-2">
+            <div v-if="selectedSolicitud.estado === 'pendiente'">
+              <button
+                @click="updateEstadoSolicitud(selectedSolicitud.id, 'respondida')"
+                class="w-full px-4 py-2 bg-green-600 text-white rounded text-xs uppercase tracking-widest hover:bg-green-700 transition font-bold"
+              >
+                ✓ Marcar como Respondida
+              </button>
+            </div>
+            <div v-else>
+              <button
+                @click="updateEstadoSolicitud(selectedSolicitud.id, 'pendiente')"
+                class="w-full px-4 py-2 border border-orange-300 text-orange-600 rounded text-xs uppercase tracking-widest hover:bg-orange-50 transition"
+              >
+                ⏳ Volver a Pendiente
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <!-- MENSAJES DE CONTACTO -->
       <div v-if="activeTab === 'messages'" class="grid grid-cols-1 lg:grid-cols-[2fr_1fr] gap-8">
         <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
@@ -440,6 +703,8 @@ const tabs = [
   { id: 'dashboard', label: '📊 Dashboard' },
   { id: 'products', label: '📦 Productos' },
   { id: 'users', label: '👥 Usuarios' },
+  { id: 'events', label: '🎯 Eventos' },
+  { id: 'quote-requests', label: '📋 Presupuestos' },
   { id: 'messages', label: '💬 Mensajes' }
 ]
 
@@ -462,6 +727,24 @@ const loadingMessages = ref(false)
 const messageFilter = ref('all')
 const selectedMessage = ref(null)
 const noteText = ref('')
+
+const eventos = ref([])
+const loadingEventos = ref(false)
+const savingEvento = ref(false)
+const eventoForm = ref({
+  id: null,
+  titulo: '',
+  descripcion: '',
+  fecha: '',
+  lugar: ''
+})
+const eventoMessage = ref('')
+const eventoMessageOk = ref(true)
+
+const solicitudes = ref([])
+const loadingSolicitudes = ref(false)
+const solicitudFilter = ref('all')
+const selectedSolicitud = ref(null)
 
 const form = ref({
   id: null,
@@ -719,8 +1002,162 @@ const saveNote = async () => {
   }
 }
 
+// ===== EVENTOS =====
+const loadEventos = async () => {
+  try {
+    loadingEventos.value = true
+    const token = localStorage.getItem('token')
+    const res = await apiClient.get('/api/admin/eventos', {
+      headers: { 'Authorization': `Bearer ${token}` }
+    })
+    eventos.value = res.data
+  } catch (e) {
+    if (toast) toast.show('✗ Error al cargar eventos', 'error', 1500)
+  } finally {
+    loadingEventos.value = false
+  }
+}
+
+const formatDateForInput = (dateString) => {
+  if (!dateString) return ''
+  const date = new Date(dateString)
+  return date.toISOString().slice(0, 16)
+}
+
+const formatDateForDisplay = (dateString) => {
+  if (!dateString) return ''
+  const date = new Date(dateString)
+  return date.toLocaleDateString('es-ES', { 
+    day: '2-digit', 
+    month: 'short', 
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit'
+  }).toUpperCase()
+}
+
+const editEvento = (evento) => {
+  eventoForm.value = {
+    id: evento.id,
+    titulo: evento.titulo,
+    descripcion: evento.descripcion,
+    fecha: formatDateForInput(evento.fecha),
+    lugar: evento.lugar
+  }
+}
+
+const resetEventoForm = () => {
+  eventoForm.value = {
+    id: null,
+    titulo: '',
+    descripcion: '',
+    fecha: '',
+    lugar: ''
+  }
+  eventoMessage.value = ''
+}
+
+const saveEvento = async () => {
+  if (!eventoForm.value.titulo || !eventoForm.value.fecha || !eventoForm.value.lugar) {
+    eventoMessage.value = 'Título, fecha y lugar son obligatorios'
+    eventoMessageOk.value = false
+    return
+  }
+
+  try {
+    savingEvento.value = true
+    const token = localStorage.getItem('token')
+    const payload = {
+      titulo: eventoForm.value.titulo,
+      descripcion: eventoForm.value.descripcion,
+      fecha: new Date(eventoForm.value.fecha).toISOString(),
+      lugar: eventoForm.value.lugar
+    }
+
+    let res
+    if (eventoForm.value.id) {
+      res = await apiClient.put(`/api/admin/eventos/${eventoForm.value.id}`, payload, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      })
+      eventos.value = eventos.value.map(e => e.id === res.data.id ? res.data : e)
+      eventoMessage.value = '✓ Evento actualizado correctamente'
+    } else {
+      res = await apiClient.post('/api/admin/eventos', payload, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      })
+      eventos.value.push(res.data)
+      eventoMessage.value = '✓ Evento creado correctamente'
+    }
+    eventoMessageOk.value = true
+    setTimeout(() => resetEventoForm(), 1500)
+  } catch (e) {
+    eventoMessage.value = '✗ Error al guardar evento'
+    eventoMessageOk.value = false
+    if (toast) toast.show(eventoMessage.value, 'error', 1500)
+  } finally {
+    savingEvento.value = false
+  }
+}
+
+const removeEvento = async (id) => {
+  if (!confirm('¿Confirmar eliminación del evento?')) return
+  try {
+    const token = localStorage.getItem('token')
+    await apiClient.delete(`/api/admin/eventos/${id}`, {
+      headers: { 'Authorization': `Bearer ${token}` }
+    })
+    eventos.value = eventos.value.filter(e => e.id !== id)
+    resetEventoForm()
+    if (toast) toast.show('✓ Evento eliminado', 'success', 1500)
+  } catch (e) {
+    if (toast) toast.show('✗ Error al eliminar evento', 'error', 1500)
+  }
+}
+
+// ===== SOLICITUDES DE PRESUPUESTO =====
+const loadSolicitudes = async () => {
+  try {
+    loadingSolicitudes.value = true
+    const token = localStorage.getItem('token')
+    const estado = solicitudFilter.value === 'all' ? 'all' : solicitudFilter.value
+    const res = await apiClient.get(`/api/admin/solicitudes?estado=${estado}`, {
+      headers: { 'Authorization': `Bearer ${token}` }
+    })
+    solicitudes.value = res.data
+  } catch (e) {
+    if (toast) toast.show('✗ Error al cargar solicitudes', 'error', 1500)
+  } finally {
+    loadingSolicitudes.value = false
+  }
+}
+
+const updateEstadoSolicitud = async (solicitudId, nuevoEstado) => {
+  try {
+    const token = localStorage.getItem('token')
+    const res = await apiClient.put(`/api/admin/solicitudes/${solicitudId}/estado`, 
+      { estado: nuevoEstado },
+      { headers: { 'Authorization': `Bearer ${token}` } }
+    )
+    
+    const index = solicitudes.value.findIndex(s => s.id === solicitudId)
+    if (index !== -1) {
+      solicitudes.value[index] = res.data
+      if (selectedSolicitud.value?.id === solicitudId) {
+        selectedSolicitud.value = res.data
+      }
+    }
+    
+    if (toast) toast.show(`✓ Estado actualizado a "${nuevoEstado}"`, 'success', 1500)
+  } catch (e) {
+    if (toast) toast.show('✗ Error al actualizar estado', 'error', 1500)
+  }
+}
+
 onMounted(() => {
   loadProducts()
   loadMessages()
+  loadEventos()
+  loadSolicitudes()
 })
+
 </script>

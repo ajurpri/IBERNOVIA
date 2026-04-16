@@ -77,7 +77,7 @@
                 </div>
                 <div class="min-w-0">
                   <div class="font-semibold text-sm truncate">{{ prod.nombre }}</div>
-                  <div v-if="authStore.isBusinessUser" class="text-xs text-gray-500">€{{ prod.precio }}</div>
+                  <div v-if="authStore.canSeePrices" class="text-xs text-gray-500">€{{ prod.precio }}</div>
                   <div v-else class="text-xs text-gray-400">Solo empresas</div>
                 </div>
               </router-link>
@@ -97,7 +97,7 @@
 
           <!-- Botón Acceso Empresarial (si no es usuario empresarial) -->
           <button
-            v-if="!authStore.isBusinessUser"
+            v-if="!authStore.canSeePrices"
             @click="openBusinessModal"
             class="text-xs font-bold uppercase tracking-widest px-3 py-2 bg-blue-50 text-blue-600 rounded hover:bg-blue-100 transition border border-blue-200">
             🏢 Acceso Empresarial
@@ -109,7 +109,7 @@
           </div>
 
           <!-- Carrito (solo empresas) -->
-          <router-link v-if="authStore.isBusinessUser" to="/carrito" class="relative p-2.5 hover:text-luxury-gold transition" aria-label="Ver carrito">
+          <router-link v-if="authStore.canRequestQuote" to="/carrito" class="relative p-2.5 hover:text-luxury-gold transition" aria-label="Ver carrito">
             <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
             </svg>
@@ -167,7 +167,7 @@
                     <p class="text-xs text-gray-500">{{ authStore.user?.email }}</p>
                   </div>
                   <nav class="p-2">
-                    <router-link v-if="authStore.isBusinessUser" to="/carrito" @click="showUserMenu = false" class="block px-4 py-2 text-sm hover:bg-gray-100 transition">Pedidos</router-link>
+                    <router-link v-if="authStore.canRequestQuote" to="/carrito" @click="showUserMenu = false" class="block px-4 py-2 text-sm hover:bg-gray-100 transition">Presupuestos</router-link>
                     <router-link v-else to="/acceso-empresarial" @click="showUserMenu = false" class="block px-4 py-2 text-sm hover:bg-gray-100 transition">Alta empresarial</router-link>
                     <router-link to="/cuenta" @click="showUserMenu = false" class="block px-4 py-2 text-sm hover:bg-gray-100 transition">Mi Cuenta</router-link>
                     <router-link v-if="authStore.isAdmin" to="/admin" @click="showUserMenu = false" class="block px-4 py-2 text-sm hover:bg-gray-100 transition">Panel Admin</router-link>
@@ -207,7 +207,7 @@
       </div>
 
       <router-link
-        v-if="!authStore.isBusinessUser"
+        v-if="!authStore.canSeePrices"
         to="/acceso-empresarial"
         class="fixed sm:hidden bottom-4 left-1/2 -translate-x-1/2 z-[70] bg-luxury-black text-white px-5 py-2.5 rounded-full text-[11px] uppercase tracking-[0.2em] font-semibold shadow-lg hover:bg-luxury-gold hover:text-luxury-black transition"
       >

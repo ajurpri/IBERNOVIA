@@ -113,11 +113,11 @@
               <p class="text-xs text-gray-400 text-center">{{ cartStore.totalItems }} producto(s)</p>
             </div>
 
-            <!-- Botón Checkout -->
+            <!-- Botón Solicitar Presupuesto -->
             <button 
-              @click="proceedCheckout"
-              class="w-full bg-luxury-black text-white py-3 font-bold uppercase tracking-widest text-sm hover:bg-luxury-gold hover:text-luxury-black transition mb-3">
-              Proceder a Pagar
+              @click="abrirModalPresupuesto"
+              class="w-full bg-luxury-gold/20 text-luxury-gold py-3 font-bold uppercase tracking-widest text-sm hover:bg-luxury-gold/30 transition border border-luxury-gold mb-3">
+              📋 Solicitar Presupuesto
             </button>
 
             <!-- Botón Vaciar -->
@@ -149,15 +149,119 @@
         </div>
       </div>
     </div>
+
+    <!-- Modal Solicitar Presupuesto -->
+    <Teleport to="body">
+      <div v-if="mostrarModalPresupuesto" class="fixed inset-0 z-50 bg-black/60 flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl max-w-md w-full shadow-2xl overflow-hidden">
+          <div class="bg-luxury-gold/10 px-6 py-4 border-b border-luxury-gold/20 flex items-center justify-between">
+            <h2 class="font-serif text-2xl text-luxury-black">Solicitar Presupuesto</h2>
+            <button 
+              @click="cerrarModalPresupuesto"
+              class="text-gray-400 hover:text-gray-600 text-2xl font-light">
+              ✕
+            </button>
+          </div>
+
+          <form @submit.prevent="enviarPresupuesto" class="px-6 py-6 space-y-4">
+            <div>
+              <label class="block text-sm font-semibold text-gray-700 mb-2">Nombre de Empresa *</label>
+              <input 
+                v-model="formPresupuesto.empresaNombre"
+                type="text"
+                required
+                placeholder="Tu empresa"
+                class="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:border-luxury-gold"
+              >
+            </div>
+
+            <div>
+              <label class="block text-sm font-semibold text-gray-700 mb-2">Persona de Contacto</label>
+              <input 
+                v-model="formPresupuesto.personaContacto"
+                type="text"
+                placeholder="Nombre"
+                class="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:border-luxury-gold"
+              >
+            </div>
+
+            <div>
+              <label class="block text-sm font-semibold text-gray-700 mb-2">Email *</label>
+              <input 
+                v-model="formPresupuesto.email"
+                type="email"
+                required
+                placeholder="tu@email.com"
+                class="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:border-luxury-gold"
+              >
+            </div>
+
+            <div>
+              <label class="block text-sm font-semibold text-gray-700 mb-2">Teléfono *</label>
+              <input 
+                v-model="formPresupuesto.telefono"
+                type="tel"
+                required
+                placeholder="+34 600 000 000"
+                class="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:border-luxury-gold"
+              >
+            </div>
+
+            <div>
+              <label class="block text-sm font-semibold text-gray-700 mb-2">Mensaje (opcional)</label>
+              <textarea 
+                v-model="formPresupuesto.notas"
+                rows="3"
+                placeholder="Notas adicionales sobre tu solicitud..."
+                class="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:border-luxury-gold text-sm"
+              ></textarea>
+            </div>
+
+            <div class="bg-blue-50 border border-blue-200 rounded p-3 text-sm text-blue-700">
+              <strong>{{ cartStore.items.length }}</strong> producto(s) incluido(s) en el presupuesto
+            </div>
+
+            <div class="flex gap-3 pt-4">
+              <button
+                type="button"
+                @click="cerrarModalPresupuesto"
+                class="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded font-semibold hover:bg-gray-50 transition"
+              >
+                Cancelar
+              </button>
+              <button
+                type="submit"
+                :disabled="enviandoPresupuesto"
+                class="flex-1 px-4 py-2 bg-luxury-gold text-white rounded font-semibold hover:bg-luxury-gold/90 transition disabled:opacity-50"
+              >
+                {{ enviandoPresupuesto ? '⏳ Enviando...' : '✓ Enviar' }}
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </Teleport>
   </div>
 </template>
 
 <script setup>
-import { inject } from 'vue'
+import { inject, ref } from 'vue'
 import { useCartStore } from '../stores/cart'
+import { apiClient } from '../lib/api'
 
 const cartStore = useCartStore()
 const toast = inject('toast')
+
+const mostrarModalPresupuesto = ref(false)
+const enviandoPresupuesto = ref(false)
+
+const formPresupuesto = ref({
+  empresaNombre: '',
+  personaContacto: '',
+  email: '',
+  telefono: '',
+  notas: ''
+})
 
 const sumarCantidad = (id) => {
   const item = cartStore.items.find(i => i.id === id)
@@ -181,9 +285,59 @@ const removeItemWithToast = (item) => {
   if (toast) toast.show(`✓ "${itemName}" eliminado del carrito`, 'warning', 2000)
 }
 
-const proceedCheckout = () => {
-  if (toast) {
-    toast.show('🎉 ¡Procesando tu pedido! Próximamente: Integración de pago', 'info', 3000)
+const abrirModalPresupuesto = () => {
+  mostrarModalPresupuesto.value = true
+}
+
+const cerrarModalPresupuesto = () => {
+  mostrarModalPresupuesto.value = false
+  formPresupuesto.value = {
+    empresaNombre: '',
+    personaContacto: '',
+    email: '',
+    telefono: '',
+    notas: ''
+  }
+}
+
+const enviarPresupuesto = async () => {
+  if (!formPresupuesto.value.empresaNombre || !formPresupuesto.value.email || !formPresupuesto.value.telefono) {
+    if (toast) toast.show('✗ Rellena todos los campos obligatorios', 'error', 2000)
+    return
+  }
+
+  if (cartStore.items.length === 0) {
+    if (toast) toast.show('✗ El carrito está vacío', 'error', 2000)
+    return
+  }
+
+  try {
+    enviandoPresupuesto.value = true
+    
+    const productosTexto = cartStore.items
+      .map(item => `${item.nombre} (${item.categoria}) - Cantidad: ${item.cantidad} - ${item.precio}€ c/u`)
+      .join(' | ')
+
+    const payload = {
+      empresaNombre: formPresupuesto.value.empresaNombre,
+      personaContacto: formPresupuesto.value.personaContacto,
+      email: formPresupuesto.value.email,
+      telefono: formPresupuesto.value.telefono,
+      productosSolicitados: productosTexto,
+      notas: formPresupuesto.value.notas
+    }
+
+    await apiClient.post('/api/admin/solicitudes', payload)
+    
+    if (toast) toast.show('✓ Presupuesto enviado exitosamente. Nos pondremos en contacto pronto.', 'success', 3000)
+    
+    cerrarModalPresupuesto()
+    cartStore.clear()
+  } catch (error) {
+    console.error('Error:', error)
+    if (toast) toast.show('✗ Error al enviar presupuesto', 'error', 2000)
+  } finally {
+    enviandoPresupuesto.value = false
   }
 }
 </script>

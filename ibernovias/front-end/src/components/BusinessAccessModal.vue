@@ -5,7 +5,7 @@
       <div class="text-center mb-6">
         <div class="text-4xl mb-3">🏢</div>
         <h2 class="font-serif text-2xl text-luxury-black mb-2">Acceso Empresarial</h2>
-        <p class="text-sm text-gray-600">Ingresa tu código para ver precios y realizar pedidos</p>
+        <p class="text-sm text-gray-600">Ingresa tu código para ver precios y solicitar presupuestos</p>
       </div>
 
       <!-- Form -->

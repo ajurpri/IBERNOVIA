@@ -38,10 +38,10 @@
 
       <!-- Badge de Stock/Oferta -->
       <div class="absolute top-3 left-3 flex flex-col gap-2">
-        <div v-if="authStore.isBusinessUser && producto.precio < 50" class="bg-red-500 text-white text-xs font-bold px-3 py-1 uppercase tracking-wider shadow-lg">
+        <div v-if="authStore.canSeePrices && producto.precio < 50" class="bg-red-500 text-white text-xs font-bold px-3 py-1 uppercase tracking-wider shadow-lg">
           Oferta
         </div>
-        <div v-if="authStore.isBusinessUser && producto.stock && producto.stock < 10" class="bg-orange-500 text-white text-xs font-bold px-3 py-1 uppercase tracking-wider shadow-lg">
+        <div v-if="authStore.canSeePrices && producto.stock && producto.stock < 10" class="bg-orange-500 text-white text-xs font-bold px-3 py-1 uppercase tracking-wider shadow-lg">
           ¡Últimas {{ producto.stock }}!
         </div>
       </div>
@@ -78,7 +78,7 @@
         </div>
         
         <!-- Precio o llamada a acción -->
-        <div v-if="authStore.isBusinessUser" class="text-xl font-semibold text-luxury-black mb-3 text-center">€{{ producto.precio || '0' }}</div>
+        <div v-if="authStore.canSeePrices" class="text-xl font-semibold text-luxury-black mb-3 text-center">€{{ producto.precio || '0' }}</div>
         <div v-else class="text-sm text-gray-500 mb-3 text-center italic">
           <p>Contacta para precios</p>
           <p class="text-xs text-luxury-gold font-semibold">Acceso empresarial</p>
@@ -86,7 +86,7 @@
         
         <!-- Botón Agregar al Carrito -->
         <button
-          v-if="authStore.isBusinessUser"
+          v-if="authStore.canRequestQuote"
           @click.stop="agregarAlCarrito"
           :disabled="agregando"
           class="w-full border border-luxury-black/20 text-luxury-black text-xs py-3 font-semibold uppercase tracking-wider hover:bg-luxury-black hover:text-white transition-all duration-300 disabled:opacity-50 shadow-sm hover:shadow-md rounded focus:outline-none focus-visible:ring-2 focus-visible:ring-luxury-gold focus-visible:ring-offset-2">

@@ -49,7 +49,7 @@
           {{ producto.nombre }}
         </h1>
 
-        <p v-if="authStore.isBusinessUser" class="text-3xl text-luxury-gold font-bold mb-8">
+        <p v-if="authStore.canSeePrices" class="text-3xl text-luxury-gold font-bold mb-8">
           {{ producto.precio }}€
         </p>
         <div v-else class="mb-8 rounded-lg border border-luxury-gold/30 bg-luxury-gray/60 px-4 py-3">
@@ -63,7 +63,7 @@
           {{ producto.descripcion }}
         </div>
 
-        <div v-if="authStore.isBusinessUser" class="mb-8 grid grid-cols-2 gap-4">
+        <div v-if="authStore.canSeePrices" class="mb-8 grid grid-cols-2 gap-4">
           <div v-if="producto.stock" class="text-sm text-luxury-black font-semibold">
             ✓ En stock ({{ producto.stock }})
           </div>
@@ -73,7 +73,7 @@
         </div>
 
         <!-- Selector de cantidad -->
-        <div v-if="authStore.isBusinessUser" class="flex items-center gap-4 mb-8">
+        <div v-if="authStore.canRequestQuote" class="flex items-center gap-4 mb-8">
           <label class="text-sm font-semibold text-gray-700">Cantidad:</label>
           <div class="flex items-center border border-gray-300 rounded">
             <button @click="cantidad = Math.max(1, cantidad - 1)" class="px-3 py-2 hover:bg-gray-100">-</button>
@@ -82,7 +82,7 @@
           </div>
         </div>
 
-        <div v-if="authStore.isBusinessUser" class="flex gap-4">
+        <div v-if="authStore.canRequestQuote" class="flex gap-4">
           <button 
             @click="agregarCarrito"
             :disabled="!producto.stock"
@@ -110,7 +110,7 @@
           leave-active-class="transition duration-300 ease-in"
           leave-from-class="opacity-100 translate-y-0"
           leave-to-class="opacity-0 translate-y-2">
-          <div v-if="agregado && authStore.isBusinessUser" class="mt-6 p-4 bg-gradient-to-r from-luxury-gold/20 to-luxury-gold/10 border-2 border-luxury-gold text-luxury-black text-sm rounded-lg shadow-lg flex items-center gap-3">
+          <div v-if="agregado && authStore.canRequestQuote" class="mt-6 p-4 bg-gradient-to-r from-luxury-gold/20 to-luxury-gold/10 border-2 border-luxury-gold text-luxury-black text-sm rounded-lg shadow-lg flex items-center gap-3">
             <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" /></svg>
             <div>
               <p class="font-bold">¡Producto agregado!</p>
@@ -160,7 +160,7 @@ onMounted(async () => {
 })
 
 const agregarCarrito = async () => {
-  if (!authStore.isBusinessUser) return
+  if (!authStore.canRequestQuote) return
   if (agregando.value) return
   agregando.value = true
   cantidadAgregada.value = cantidad.value

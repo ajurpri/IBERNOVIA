@@ -52,10 +52,10 @@
             <span class="inline-block bg-luxury-gold text-luxury-black px-3 sm:px-4 py-2 text-[11px] sm:text-xs font-bold uppercase tracking-widest">
               {{ producto.categoria }}
             </span>
-            <span v-if="authStore.isBusinessUser && producto.stock > 0" class="inline-block bg-luxury-gold/10 text-luxury-black px-3 sm:px-4 py-2 text-[11px] sm:text-xs font-bold uppercase tracking-widest border border-luxury-gold/30">
+            <span v-if="authStore.canSeePrices && producto.stock > 0" class="inline-block bg-luxury-gold/10 text-luxury-black px-3 sm:px-4 py-2 text-[11px] sm:text-xs font-bold uppercase tracking-widest border border-luxury-gold/30">
               En Stock ({{ producto.stock }})
             </span>
-            <span v-else-if="authStore.isBusinessUser" class="inline-block bg-red-100 text-red-700 px-3 sm:px-4 py-2 text-[11px] sm:text-xs font-bold uppercase tracking-widest">
+            <span v-else-if="authStore.canSeePrices" class="inline-block bg-red-100 text-red-700 px-3 sm:px-4 py-2 text-[11px] sm:text-xs font-bold uppercase tracking-widest">
               Agotado
             </span>
           </div>
@@ -71,12 +71,12 @@
             <p class="text-gray-500 text-sm mb-5 sm:mb-6 leading-relaxed">
               {{ producto.descripcion }}
             </p>
-            <div v-if="authStore.isBusinessUser" class="flex items-baseline gap-3">
+            <div v-if="authStore.canSeePrices" class="flex items-baseline gap-3">
               <span class="text-3xl sm:text-4xl font-bold text-luxury-gold">{{ producto.precio }}€</span>
               <span class="text-base sm:text-lg text-gray-400 line-through">{{ (producto.precio * 1.1).toFixed(2) }}€</span>
             </div>
             <div v-else class="rounded-lg border border-luxury-gold/30 bg-luxury-gray/60 px-4 py-4">
-              <p class="text-sm text-gray-600">Catálogo público. Tarifas y pedidos disponibles solo para clientes profesionales.</p>
+              <p class="text-sm text-gray-600">Catálogo público. Tarifas y solicitudes de presupuesto disponibles solo para clientes profesionales.</p>
               <router-link to="/acceso-empresarial" class="inline-block mt-2 text-xs uppercase tracking-widest font-semibold text-luxury-black hover:text-luxury-gold transition">
                 Solicitar acceso empresarial
               </router-link>
@@ -89,14 +89,14 @@
               <span class="text-gray-500">Referencia:</span>
               <span class="font-mono text-gray-900 ml-2">#{{ producto.id }}</span>
             </div>
-            <div v-if="authStore.isBusinessUser">
+            <div v-if="authStore.canSeePrices">
               <span class="text-gray-500">Stock:</span>
               <span class="text-gray-900 ml-2">{{ producto.stock }} unidades</span>
             </div>
           </div>
 
           <!-- Selector de Cantidad y Agregar al Carrito -->
-          <div v-if="authStore.isBusinessUser" class="mb-6 sm:mb-8">
+          <div v-if="authStore.canRequestQuote" class="mb-6 sm:mb-8">
             <label class="block text-xs sm:text-sm font-bold uppercase tracking-widest text-gray-700 mb-3">Cantidad</label>
             <div class="flex gap-4 items-end">
               <div class="flex items-center border border-gray-300 rounded">
@@ -115,7 +115,7 @@
 
           <!-- Botón Agregar al Carrito -->
           <button
-            v-if="authStore.isBusinessUser"
+            v-if="authStore.canRequestQuote"
             @click="agregarAlCarrito"
             :disabled="agregando"
             class="w-full bg-luxury-black text-white py-3.5 sm:py-4 font-bold uppercase tracking-widest text-sm sm:text-lg hover:bg-luxury-gold hover:text-luxury-black transition disabled:opacity-50 mb-3">
@@ -131,7 +131,7 @@
           </router-link>
 
           <!-- Link a Carrito -->
-          <div v-if="productoAgregado && authStore.isBusinessUser" class="text-center">
+          <div v-if="productoAgregado && authStore.canRequestQuote" class="text-center">
             <router-link to="/carrito" class="inline-block text-luxury-gold hover:text-luxury-black font-bold uppercase tracking-widest text-sm transition border-b-2 border-luxury-gold hover:border-luxury-black">
               Ver Carrito →
             </router-link>
@@ -184,7 +184,7 @@
                 >
               </div>
               <h3 class="text-sm font-medium text-gray-900 truncate">{{ rel.nombre }}</h3>
-              <p v-if="authStore.isBusinessUser" class="text-sm text-luxury-gold font-bold">{{ rel.precio }}€</p>
+              <p v-if="authStore.canSeePrices" class="text-sm text-luxury-gold font-bold">{{ rel.precio }}€</p>
               <p v-else class="text-xs text-gray-500">Solo empresas</p>
             </router-link>
           </div>
@@ -251,7 +251,7 @@ watch(() => route.params.id, (newId) => {
 })
 
 const agregarAlCarrito = async () => {
-  if (!authStore.isBusinessUser) return
+  if (!authStore.canRequestQuote) return
   agregando.value = true
   // Simular pequeño delay de UI
   setTimeout(() => {

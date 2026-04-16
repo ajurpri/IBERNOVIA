@@ -3,6 +3,7 @@ package Proyecto_Ibernovia.Proyecto_Ibernovia.Controller;
 import Proyecto_Ibernovia.Proyecto_Ibernovia.Model.Usuario;
 import Proyecto_Ibernovia.Proyecto_Ibernovia.Repository.UsuarioRepository;
 import Proyecto_Ibernovia.Proyecto_Ibernovia.Util.JwtUtil;
+import org.springframework.beans.factory.annotation.Value;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -22,11 +23,18 @@ public class AdminSetupController {
     private final UsuarioRepository usuarioRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
+    private final String setupAdminKey;
 
-    public AdminSetupController(UsuarioRepository usuarioRepository, PasswordEncoder passwordEncoder, JwtUtil jwtUtil) {
+    public AdminSetupController(
+            UsuarioRepository usuarioRepository,
+            PasswordEncoder passwordEncoder,
+            JwtUtil jwtUtil,
+            @Value("${app.admin.setup-key:}") String setupAdminKey
+    ) {
         this.usuarioRepository = usuarioRepository;
         this.passwordEncoder = passwordEncoder;
         this.jwtUtil = jwtUtil;
+        this.setupAdminKey = setupAdminKey;
     }
 
     private Optional<Usuario> getAdminFromToken(String authHeader) {
@@ -50,8 +58,21 @@ public class AdminSetupController {
 
     // Crear primer admin (solo funciona si no hay admins)
     @PostMapping("/create-admin")
-    public ResponseEntity<Map<String, Object>> createFirstAdmin(@RequestBody Map<String, String> body) {
+        public ResponseEntity<Map<String, Object>> createFirstAdmin(
+            @RequestBody Map<String, String> body,
+            @RequestHeader(value = "X-Setup-Key", required = false) String requestSetupKey
+        ) {
         try {
+            if (setupAdminKey == null || setupAdminKey.isBlank()) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                .body(Map.of("success", false, "message", "Setup admin deshabilitado"));
+            }
+
+            if (requestSetupKey == null || !setupAdminKey.equals(requestSetupKey)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                .body(Map.of("success", false, "message", "Clave de setup inválida"));
+            }
+
             String email = body.get("email");
             String nombre = body.get("nombre");
             String password = body.get("password");

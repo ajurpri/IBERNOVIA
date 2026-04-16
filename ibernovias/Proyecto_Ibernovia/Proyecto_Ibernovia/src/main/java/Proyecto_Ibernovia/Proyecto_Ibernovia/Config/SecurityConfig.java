@@ -37,7 +37,6 @@ public class SecurityConfig {
                 "/api/contacto",
                 "/api/contacto/",
                 "/api/admin/setup/check",
-                "/api/admin/setup/create-admin",
                 "/images/**"
             ).permitAll()
             .requestMatchers(HttpMethod.GET, "/api/productos/**").permitAll()

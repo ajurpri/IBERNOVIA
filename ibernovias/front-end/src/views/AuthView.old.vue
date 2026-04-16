@@ -10,7 +10,7 @@
       <!-- Tarjeta de Autenticación -->
       <div class="bg-white rounded-lg shadow-2xl overflow-hidden">
         <!-- Selector de Tabs -->
-        <div class="grid grid-cols-3 border-b border-gray-200">
+        <div class="grid grid-cols-2 border-b border-gray-200">
           <button 
             @click="activeTab = 'login'"
             :class="[
@@ -30,16 +30,6 @@
                 : 'bg-gray-50 text-gray-600 hover:bg-gray-100'
             ]">
             Registrarse
-          </button>
-          <button 
-            @click="activeTab = 'admin'"
-            :class="[
-              'py-4 font-bold uppercase tracking-widest text-xs transition',
-              activeTab === 'admin' 
-                ? 'bg-red-500 text-white' 
-                : 'bg-gray-50 text-gray-600 hover:bg-gray-100'
-            ]">
-            Admin (Dev)
           </button>
         </div>
 
@@ -200,38 +190,6 @@
             </p>
           </form>
 
-          <!-- PESTAÑA: ADMIN (DEV) -->
-          <div v-if="activeTab === 'admin'" class="space-y-6">
-            <div class="bg-red-50 border border-red-200 rounded-lg p-4">
-              <p class="text-xs text-red-600 font-bold uppercase tracking-widest mb-2">⚠️ Acceso de Desarrollador</p>
-              <p class="text-xs text-red-600">Esta opción solo está disponible en desarrollo. Usa las credenciales por defecto para acceder al panel de administración.</p>
-            </div>
-
-            <div class="bg-gray-50 border border-gray-200 rounded-lg p-4">
-              <p class="text-xs text-gray-700 mb-3 font-semibold">Credenciales de Desarrollo:</p>
-              <div class="space-y-2">
-                <div class="flex items-center justify-between bg-white p-2 rounded border border-gray-200">
-                  <span class="text-xs font-mono text-gray-500">Email:</span>
-                  <code class="text-xs font-bold text-luxury-gold bg-gray-100 px-2 py-1 rounded">admin@ibernovia.com</code>
-                </div>
-                <div class="flex items-center justify-between bg-white p-2 rounded border border-gray-200">
-                  <span class="text-xs font-mono text-gray-500">Password:</span>
-                  <code class="text-xs font-bold text-luxury-gold bg-gray-100 px-2 py-1 rounded">admin123</code>
-                </div>
-              </div>
-            </div>
-
-            <button 
-              @click="loginAsAdmin"
-              type="button"
-              class="w-full bg-red-500 text-white py-3 font-bold uppercase tracking-widest hover:bg-red-600 transition rounded">
-              Entrar como Admin
-            </button>
-
-            <p class="text-center text-xs text-gray-500">
-              O usa las credenciales de arriba en la sección "Iniciar Sesión"
-            </p>
-          </div>
         </div>
       </div>
 
@@ -284,32 +242,6 @@ const handleLogin = async () => {
   loadingLogin.value = true
 
   try {
-    // Credenciales de desarrollador para admin
-    if (loginForm.value.email === 'admin@ibernovia.com' && loginForm.value.password === 'admin123') {
-      authStore.setUser({
-        userId: 'admin',
-        email: 'admin@ibernovia.com',
-        nombre: 'Administrador',
-        apellido: 'IBERNOVIA',
-        isAdmin: true,
-        token: 'dev-token-admin-' + Date.now()
-      })
-      localStorage.setItem('token', 'dev-token-admin-' + Date.now())
-      localStorage.setItem('user', JSON.stringify({
-        userId: 'admin',
-        email: 'admin@ibernovia.com',
-        nombre: 'Administrador',
-        apellido: 'IBERNOVIA',
-        isAdmin: true
-      }))
-      
-      successMessage.value = '¡Bienvenido Admin!'
-      setTimeout(() => {
-        router.push('/admin')
-      }, 500)
-      return
-    }
-
     const response = await apiClient.post('/api/auth/login', {
       email: loginForm.value.email,
       password: loginForm.value.password
@@ -323,7 +255,11 @@ const handleLogin = async () => {
     successMessage.value = '¡Bienvenido de vuelta!'
     
     setTimeout(() => {
-      router.push('/carrito')
+      if (response.data?.isAdmin) {
+        router.push('/admin')
+      } else {
+        router.push('/carrito')
+      }
     }, 500)
 
   } catch (error) {
@@ -386,27 +322,4 @@ const handleRegister = async () => {
   }
 }
 
-const loginAsAdmin = () => {
-  authStore.setUser({
-    userId: 'admin',
-    email: 'admin@ibernovia.com',
-    nombre: 'Administrador',
-    apellido: 'IBERNOVIA',
-    isAdmin: true,
-    token: 'dev-token-admin-' + Date.now()
-  })
-  localStorage.setItem('token', 'dev-token-admin-' + Date.now())
-  localStorage.setItem('user', JSON.stringify({
-    userId: 'admin',
-    email: 'admin@ibernovia.com',
-    nombre: 'Administrador',
-    apellido: 'IBERNOVIA',
-    isAdmin: true
-  }))
-  
-  successMessage.value = '¡Bienvenido Admin!'
-  setTimeout(() => {
-    router.push('/admin')
-  }, 500)
-}
 </script>

@@ -9,7 +9,7 @@
             Acceso a catálogo de profesionales
           </h1>
           <p class="text-lg text-gray-300 leading-relaxed">
-            Amplía tu oferta de producto con las colecciones de Ibernovia. Acceso a tarifas mayoristas, gestión de pedidos y soporte comercial personalizado.
+            Amplía tu oferta de producto con las colecciones de Ibernovia. Acceso a tarifas mayoristas, solicitud de presupuestos y soporte comercial personalizado.
           </p>
         </div>
       </div>
@@ -210,7 +210,7 @@
                 <div class="flex-shrink-0 w-8 h-8 rounded-full bg-luxury-gold/10 flex items-center justify-center text-luxury-gold font-bold text-sm">4</div>
                 <div>
                   <p class="font-semibold text-luxury-black text-sm">¡Acceso completo!</p>
-                  <p class="text-xs text-gray-600 mt-1">Disfruta tarifas, stock y pedidos</p>
+                  <p class="text-xs text-gray-600 mt-1">Disfruta tarifas, stock y presupuestos</p>
                 </div>
               </li>
             </ol>
