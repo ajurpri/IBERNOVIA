@@ -259,17 +259,36 @@
 
       <!-- Contenido Principal -->
       <div v-else>
-        <!-- Filtros de Categoría -->
+        <!-- Filtros: Familias + Subfamilias -->
+        <div class="flex flex-wrap justify-center gap-3 md:gap-4 mb-6 text-xs uppercase tracking-[0.25em] font-semibold">
+          <button
+            @click="cambiarFamilia('Todas')"
+            :aria-pressed="familiaSeleccionada === 'Todas' ? 'true' : 'false'"
+            :class="familiaSeleccionada === 'Todas' ? 'bg-luxury-black text-white shadow-lg' : 'bg-white/90 text-gray-700 hover:text-luxury-black hover:bg-white'"
+            class="px-6 py-3 transition-all duration-300 rounded-full border border-white/80 shadow-sm whitespace-nowrap focus:outline-none focus-visible:ring-2 focus-visible:ring-luxury-gold focus-visible:ring-offset-2 focus-visible:ring-offset-white">
+            Todas
+          </button>
+          <button
+            v-for="fam in familias"
+            :key="fam"
+            @click="cambiarFamilia(fam)"
+            :aria-pressed="familiaSeleccionada === fam ? 'true' : 'false'"
+            :class="familiaSeleccionada === fam ? 'bg-luxury-black text-white shadow-lg' : 'bg-white/90 text-gray-700 hover:text-luxury-black hover:bg-white'"
+            class="px-6 py-3 transition-all duration-300 rounded-full border border-white/80 shadow-sm whitespace-nowrap focus:outline-none focus-visible:ring-2 focus-visible:ring-luxury-gold focus-visible:ring-offset-2 focus-visible:ring-offset-white">
+            {{ fam }}
+          </button>
+        </div>
+
         <div id="categorias" class="flex flex-wrap justify-center gap-3 md:gap-4 mb-16 text-xs uppercase tracking-[0.25em] font-semibold">
-          <button 
+          <button
             @click="cambiarCategoria('Todos')"
             :aria-pressed="categoriaSeleccionada === 'Todos' ? 'true' : 'false'"
             :class="categoriaSeleccionada === 'Todos' ? 'bg-luxury-black text-white shadow-lg' : 'bg-white/90 text-gray-700 hover:text-luxury-black hover:bg-white'"
             class="px-6 py-3 transition-all duration-300 rounded-full border border-white/80 shadow-sm whitespace-nowrap focus:outline-none focus-visible:ring-2 focus-visible:ring-luxury-gold focus-visible:ring-offset-2 focus-visible:ring-offset-white">
-            Todos
+            Todas
           </button>
-          <button 
-            v-for="cat in categorias" 
+          <button
+            v-for="cat in categorias"
             :key="cat"
             @click="cambiarCategoria(cat)"
             :aria-pressed="categoriaSeleccionada === cat ? 'true' : 'false'"
@@ -410,10 +429,45 @@ const productos = ref([])
 const loading = ref(true)
 const error = ref(false)
 const errorDetalle = ref('')
-const categorias = ['Ligas', 'Pendientes', 'Abanicos', 'Gemelos', 'Cruces', 'Tocados']
+
+const familiaSeleccionada = ref('Todas')
 const categoriaSeleccionada = ref('Todos')
 const paginaActual = ref(1)
 const productosPorPagina = 12
+
+const familias = computed(() => {
+  const set = new Set(productos.value.map((p) => p.familia).filter(Boolean))
+  const list = Array.from(set)
+
+  const preferred = ['Novia', 'Novio', 'Fiesta', 'Comunión', 'Arras']
+  return list.sort((a, b) => {
+    const ia = preferred.indexOf(a)
+    const ib = preferred.indexOf(b)
+    if (ia !== -1 || ib !== -1) {
+      return (ia === -1 ? 999 : ia) - (ib === -1 ? 999 : ib)
+    }
+    return a.localeCompare(b)
+  })
+})
+
+const categorias = computed(() => {
+  const base = familiaSeleccionada.value === 'Todas'
+    ? productos.value
+    : productos.value.filter((p) => p.familia === familiaSeleccionada.value)
+
+  const counts = new Map()
+  for (const p of base) {
+    const cat = p?.categoria
+    if (!cat) continue
+    counts.set(cat, (counts.get(cat) || 0) + 1)
+  }
+
+  // Mostramos solo las subfamilias más frecuentes para que el menú quede limpio
+  return Array.from(counts.entries())
+    .sort((a, b) => (b[1] - a[1]) || a[0].localeCompare(b[0]))
+    .slice(0, 8)
+    .map(([cat]) => cat)
+})
 
 onMounted(async () => {
   try {
@@ -433,16 +487,27 @@ onMounted(async () => {
   }
 })
 
+const cambiarFamilia = (fam) => {
+  familiaSeleccionada.value = fam
+  categoriaSeleccionada.value = 'Todos'
+  paginaActual.value = 1
+}
+
 const cambiarCategoria = (cat) => {
   categoriaSeleccionada.value = cat
   paginaActual.value = 1
 }
 
 const productosFiltrados = computed(() => {
+  const base = familiaSeleccionada.value === 'Todas'
+    ? productos.value
+    : productos.value.filter((p) => p.familia === familiaSeleccionada.value)
+
   if (categoriaSeleccionada.value === 'Todos') {
-    return productos.value
+    return base
   }
-  return productos.value.filter(p => p.categoria === categoriaSeleccionada.value)
+
+  return base.filter((p) => p.categoria === categoriaSeleccionada.value)
 })
 
 const productosVisibles = computed(() => {

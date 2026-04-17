@@ -15,6 +15,8 @@ public class ContactMessageService {
 
     private static final Logger logger = LoggerFactory.getLogger(ContactMessageService.class);
 
+    public record SaveResult(ContactMessage saved, boolean emailSent) {}
+
     private final ContactMessageRepository contactMessageRepository;
     private final EmailService emailService;
 
@@ -23,29 +25,23 @@ public class ContactMessageService {
         this.emailService = emailService;
     }
 
-    public ContactMessage saveContactMessage(ContactRequest request) {
+    public SaveResult saveContactMessage(ContactRequest request) {
         ContactMessage message = new ContactMessage();
         message.setNombre(request.getNombre());
         message.setEmail(request.getEmail());
         message.setAsunto(request.getAsunto());
         message.setMensaje(request.getMensaje());
 
-        // Campos adicionales si la solicitud incluye datos empresariales
-        if (request instanceof ContactRequest) {
-            // Se pueden agregar más campos si extiende ContactRequest
-        }
-
         ContactMessage saved = contactMessageRepository.save(message);
-        logger.info("✅ Mensaje guardado en BD - ID: {}, De: {}, Asunto: {}", 
+        logger.info("✅ Mensaje guardado en BD - ID: {}, De: {}, Asunto: {}",
             saved.getId(), saved.getEmail(), saved.getAsunto());
 
-        try {
-            emailService.sendContactEmail(request);
-        } catch (Exception e) {
-            logger.error("❌ Mensaje guardado, pero falló el envío de correo para ID {}: {}", saved.getId(), e.getMessage());
+        boolean emailSent = emailService.sendContactEmail(request);
+        if (!emailSent) {
+            logger.warn("⚠️ Mensaje guardado, pero el correo NO se pudo enviar para ID {}", saved.getId());
         }
 
-        return saved;
+        return new SaveResult(saved, emailSent);
     }
 
     public List<ContactMessage> getAllMessages() {

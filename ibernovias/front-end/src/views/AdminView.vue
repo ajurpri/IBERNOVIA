@@ -113,7 +113,7 @@
                 </div>
                 <div class="flex-1">
                   <h3 class="font-semibold text-luxury-black">{{ producto.nombre }}</h3>
-                  <p class="text-xs uppercase tracking-widest text-gray-400">{{ producto.categoria }}</p>
+                  <p class="text-xs uppercase tracking-widest text-gray-400">{{ [producto.familia, producto.categoria].filter(Boolean).join(' · ') }}</p>
                   <div class="flex items-center gap-4 mt-2">
                     <span class="font-bold text-luxury-gold">€{{ producto.precio }}</span>
                     <span class="text-sm" :class="producto.stock > 5 ? 'text-green-600' : 'text-orange-600'">Stock: {{ producto.stock }}</span>
@@ -134,6 +134,17 @@
             <div>
               <label class="text-xs uppercase tracking-widest text-gray-500 block mb-1">Nombre</label>
               <input v-model="form.nombre" required type="text" class="w-full px-4 py-2 border border-gray-200 rounded focus:outline-none focus:border-luxury-gold">
+            </div>
+
+            <div>
+              <label class="text-xs uppercase tracking-widest text-gray-500 block mb-1">Familia</label>
+              <select
+                v-model="form.familia"
+                class="w-full px-4 py-2 border border-gray-200 rounded focus:outline-none focus:border-luxury-gold bg-white"
+              >
+                <option value="">(Sin familia)</option>
+                <option v-for="fam in selectableFamilies" :key="fam" :value="fam">{{ fam }}</option>
+              </select>
             </div>
 
             <div>
@@ -749,6 +760,7 @@ const selectedSolicitud = ref(null)
 const form = ref({
   id: null,
   nombre: '',
+  familia: '',
   categoria: '',
   precio: 0,
   stock: 0,
@@ -761,18 +773,16 @@ const form = ref({
 const activeProducts = computed(() => products.value.filter(p => p.activo).length)
 const lowStockProducts = computed(() => products.value.filter(p => p.stock < 5).length)
 const lowStockList = computed(() => products.value.filter(p => p.stock < 5).sort((a, b) => a.stock - b.stock))
+
+const families = computed(() => [...new Set(products.value.map(p => p.familia))])
+const predefinedFamilies = ['Novia', 'Novio', 'Fiesta', 'Comunión', 'Arras']
+const selectableFamilies = computed(() => {
+  const existing = families.value.filter(Boolean)
+  return [...new Set([...predefinedFamilies, ...existing])]
+})
+
 const categories = computed(() => [...new Set(products.value.map(p => p.categoria))])
-const predefinedCategories = [
-  'Ligas',
-  'Pendientes',
-  'Abanicos',
-  'Gemelos',
-  'Cruces',
-  'Tocados',
-  'Broches',
-  'Can-canes',
-  'Religioso'
-]
+const predefinedCategories = []
 const selectableCategories = computed(() => {
   const existing = categories.value.filter(Boolean)
   return [...new Set([...predefinedCategories, ...existing])]
@@ -796,10 +806,15 @@ const loadProducts = async () => {
 const filteredProducts = computed(() => {
   const term = search.value.toLowerCase().trim()
   return products.value.filter(p => {
-    const matchesSearch = !term || p.nombre.toLowerCase().includes(term) || (p.categoria || '').toLowerCase().includes(term)
+    const matchesSearch = !term
+      || p.nombre.toLowerCase().includes(term)
+      || (p.familia || '').toLowerCase().includes(term)
+      || (p.categoria || '').toLowerCase().includes(term)
+
     const matchesStatus = statusFilter.value === 'all'
       || (statusFilter.value === 'active' && p.activo)
       || (statusFilter.value === 'inactive' && !p.activo)
+
     return matchesSearch && matchesStatus
   })
 })
@@ -846,6 +861,7 @@ const resetForm = (keepMessage = false) => {
   form.value = {
     id: null,
     nombre: '',
+    familia: '',
     categoria: '',
     precio: 0,
     stock: 0,

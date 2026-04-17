@@ -49,6 +49,9 @@
 
           <!-- Botón Badge -->
           <div class="flex flex-wrap gap-2">
+            <span v-if="producto.familia" class="inline-block bg-luxury-black text-white px-3 sm:px-4 py-2 text-[11px] sm:text-xs font-bold uppercase tracking-widest">
+              {{ producto.familia }}
+            </span>
             <span class="inline-block bg-luxury-gold text-luxury-black px-3 sm:px-4 py-2 text-[11px] sm:text-xs font-bold uppercase tracking-widest">
               {{ producto.categoria }}
             </span>
@@ -227,10 +230,16 @@ const loadProductData = async (id) => {
     const res = await apiClient.get(`/api/productos/${id}`)
     producto.value = res.data
     
-    // 2. Cargar relacionados (misma categoría)
-    if (producto.value.categoria) {
-      const resRel = await apiClient.get(`/api/productos/categoria/${producto.value.categoria}`)
-      // Filtramos para no mostrar el mismo producto y tomamos solo 4
+    // 2. Cargar relacionados (misma familia si existe; si no, por categoría)
+    if (producto.value.familia) {
+      const familiaEncoded = encodeURIComponent(producto.value.familia)
+      const resRel = await apiClient.get(`/api/productos/familia/${familiaEncoded}`)
+      relatedProducts.value = resRel.data
+        .filter(p => p.id !== producto.value.id)
+        .slice(0, 4)
+    } else if (producto.value.categoria) {
+      const categoriaEncoded = encodeURIComponent(producto.value.categoria)
+      const resRel = await apiClient.get(`/api/productos/categoria/${categoriaEncoded}`)
       relatedProducts.value = resRel.data
         .filter(p => p.id !== producto.value.id)
         .slice(0, 4)

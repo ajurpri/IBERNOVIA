@@ -22,12 +22,18 @@ public class ContactoController {
     }
 
     @PostMapping
-    public ResponseEntity<Map<String, String>> enviarContacto(@Valid @RequestBody ContactRequest request) {
+    public ResponseEntity<Map<String, Object>> enviarContacto(@Valid @RequestBody ContactRequest request) {
         try {
-            ContactMessage saved = contactMessageService.saveContactMessage(request);
+            ContactMessageService.SaveResult result = contactMessageService.saveContactMessage(request);
+
+            String message = result.emailSent()
+                ? "Mensaje recibido y enviado por correo correctamente"
+                : "Mensaje recibido. Ahora mismo no se pudo enviar el correo (revisa configuración SMTP)";
+
             return ResponseEntity.ok(Map.of(
-                "message", "Solicitud guardada correctamente",
-                "id", saved.getId().toString()
+                "message", message,
+                "id", result.saved().getId().toString(),
+                "emailSent", result.emailSent()
             ));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)

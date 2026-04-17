@@ -15,7 +15,13 @@ public class Producto {
     private Long id;
 
     private String nombre;
+
+    // Familia (nivel alto): Novia / Novio / Fiesta / Comunión / Arras
+    private String familia;
+
+    // Categoría (nivel tipo): Ligas, Pendientes, ...
     private String categoria;
+
     private Double precio;
     private String imagen;
     

@@ -44,18 +44,30 @@
               id="search"
               v-model="searchTerm"
               type="search"
-              placeholder="Buscar por nombre o categoria"
+              placeholder="Buscar por nombre, referencia o subfamilia"
               class="w-full px-3 sm:px-4 py-2.5 sm:py-3 border border-gray-200 rounded-lg focus:outline-none focus:border-luxury-gold focus:ring-1 focus:ring-luxury-gold text-sm bg-white"
               aria-label="Buscar productos"
             />
           </div>
           <div class="flex-1">
-            <label class="block text-xs uppercase tracking-widest text-gray-500 mb-2" for="category">Categoria</label>
+            <label class="block text-xs uppercase tracking-widest text-gray-500 mb-2" for="family">Familia</label>
+            <select
+              id="family"
+              v-model="selectedFamily"
+              class="w-full px-3 sm:px-4 py-2.5 sm:py-3 border border-gray-200 rounded-lg focus:outline-none focus:border-luxury-gold focus:ring-1 focus:ring-luxury-gold text-sm bg-white"
+              aria-label="Filtrar por familia"
+            >
+              <option value="Todas">Todas</option>
+              <option v-for="fam in familias" :key="fam" :value="fam">{{ fam }}</option>
+            </select>
+          </div>
+          <div class="flex-1">
+            <label class="block text-xs uppercase tracking-widest text-gray-500 mb-2" for="category">Subfamilia</label>
             <select
               id="category"
               v-model="selectedCategory"
               class="w-full px-3 sm:px-4 py-2.5 sm:py-3 border border-gray-200 rounded-lg focus:outline-none focus:border-luxury-gold focus:ring-1 focus:ring-luxury-gold text-sm bg-white"
-              aria-label="Filtrar por categoria"
+              aria-label="Filtrar por subfamilia"
             >
               <option value="Todos">Todas</option>
               <option v-for="cat in categorias" :key="cat" :value="cat">{{ cat }}</option>
@@ -131,7 +143,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, computed } from 'vue'
+import { ref, onMounted, computed, watch } from 'vue'
 import ProductCard from '../components/ProductCard.vue'
 import { apiClient } from '../lib/api'
 import { useAuthStore } from '../stores/auth'
@@ -141,46 +153,153 @@ const authStore = useAuthStore()
 const isLoading = ref(true)
 const loadError = ref('')
 const searchTerm = ref('')
+const selectedFamily = ref('Todas')
 const selectedCategory = ref('Todos')
 const sortOrder = ref('destacados')
 
-const categorias = computed(() => {
-  const set = new Set(productos.value.map((p) => p.categoria).filter(Boolean))
-  return Array.from(set).sort()
-})
+const familias = computed(() => {
+  const set = new Set(productos.value.map((p) => p.familia).filter(Boolean))
+  const list = Array.from(set)
 
-const filteredProducts = computed(() => {
-  const term = searchTerm.value.trim().toLowerCase()
-  return productos.value.filter((p) => {
-    const matchesTerm = term
-      ? `${p.nombre || ''} ${p.categoria || ''}`.toLowerCase().includes(term)
-      : true
-    const matchesCategory = selectedCategory.value === 'Todos'
-      ? true
-      : p.categoria === selectedCategory.value
-    return matchesTerm && matchesCategory
+  // Ordenar poniendo primero las familias principales si existen
+  const preferred = ['Novia', 'Novio', 'Fiesta', 'Comunión', 'Arras']
+  return list.sort((a, b) => {
+    const ia = preferred.indexOf(a)
+    const ib = preferred.indexOf(b)
+    if (ia !== -1 || ib !== -1) {
+      return (ia === -1 ? 999 : ia) - (ib === -1 ? 999 : ib)
+    }
+    return a.localeCompare(b)
   })
 })
 
+const fold = (v) => (v ?? '').toString()
+  .replace(/\uFFFD/g, '')
+  .normalize('NFD')
+  .replace(/[\u0300-\u036f]/g, '')
+  .toLowerCase()
+
+const normalizeForSearch = (v) => fold(v)
+  .replace(/[^a-z0-9]+/g, ' ')
+  .trim()
+  .replace(/\s+/g, ' ')
+
+const categorias = computed(() => {
+  const list = selectedFamily.value === 'Todas'
+    ? productos.value
+    : productos.value.filter((p) => p.familia === selectedFamily.value)
+
+  const set = new Set(list.map((p) => p.categoria).filter(Boolean))
+  return Array.from(set).sort()
+})
+
+watch(selectedFamily, () => {
+  if (selectedCategory.value !== 'Todos' && !categorias.value.includes(selectedCategory.value)) {
+    selectedCategory.value = 'Todos'
+  }
+})
+
+const scoredProducts = computed(() => {
+  const term = normalizeForSearch(searchTerm.value)
+  const rawTokens = term ? term.split(' ') : []
+  const tokens = rawTokens.filter((t) => t.length >= 2 || /^\d+$/.test(t))
+
+  const base = productos.value.filter((p) => {
+    const matchesFamily = selectedFamily.value === 'Todas'
+      ? true
+      : p.familia === selectedFamily.value
+
+    const matchesCategory = selectedCategory.value === 'Todos'
+      ? true
+      : p.categoria === selectedCategory.value
+
+    return matchesFamily && matchesCategory
+  })
+
+  if (tokens.length === 0) {
+    return base.map((p) => ({ producto: p, score: 0 }))
+  }
+
+  const tokenMatches = (hay, hayCompact, t) => {
+    if (hay.includes(t) || hayCompact.includes(t)) return true
+
+    // Fuzzy simple: si falta 1 carácter (por ejemplo por textos con �), seguimos encontrando
+    if (t.length >= 6) {
+      for (let i = 0; i < t.length; i++) {
+        const variant = t.slice(0, i) + t.slice(i + 1)
+        if (variant.length >= 5 && hayCompact.includes(variant)) return true
+      }
+    }
+
+    return false
+  }
+
+  const strict = []
+  const loose = []
+
+  for (const p of base) {
+    const haystack = normalizeForSearch(`${p.nombre || ''} ${p.familia || ''} ${p.categoria || ''} ${p.imagen || ''}`)
+    const haystackCompact = haystack.replace(/\s+/g, '')
+
+    let matched = 0
+    for (const t of tokens) {
+      if (tokenMatches(haystack, haystackCompact, t)) matched++
+    }
+
+    if (matched === tokens.length) {
+      strict.push({ producto: p, score: 1000 + matched + (haystack.includes(term) ? 10 : 0) })
+    } else if (matched > 0) {
+      loose.push({ producto: p, score: matched + (haystack.includes(term) ? 3 : 0) })
+    }
+  }
+
+  // Si hay resultados "buenos" (todas las palabras), usamos esos.
+  // Si no, caemos a coincidencias parciales para no dejar el buscador "muerto".
+  return strict.length ? strict : loose
+})
+
 const sortedProducts = computed(() => {
-  const list = [...filteredProducts.value]
+  const term = normalizeForSearch(searchTerm.value)
+  const hasTerm = term.length > 0
+
+  const list = scoredProducts.value.map((x) => x)
+
+  if (hasTerm) {
+    list.sort((a, b) => {
+      if (b.score !== a.score) return b.score - a.score
+
+      if (authStore.canSeePrices) {
+        if (sortOrder.value === 'precio-asc') return (a.producto.precio || 0) - (b.producto.precio || 0)
+        if (sortOrder.value === 'precio-desc') return (b.producto.precio || 0) - (a.producto.precio || 0)
+        if (sortOrder.value === 'nombre-asc') return (a.producto.nombre || '').localeCompare(b.producto.nombre || '')
+      }
+
+      return (a.producto.nombre || '').localeCompare(b.producto.nombre || '')
+    })
+
+    return list.map((x) => x.producto)
+  }
+
+  const products = list.map((x) => x.producto)
+
   if (!authStore.canSeePrices) {
-    return list.sort((a, b) => (a.nombre || '').localeCompare(b.nombre || ''))
+    return products.sort((a, b) => (a.nombre || '').localeCompare(b.nombre || ''))
   }
   if (sortOrder.value === 'precio-asc') {
-    return list.sort((a, b) => (a.precio || 0) - (b.precio || 0))
+    return products.sort((a, b) => (a.precio || 0) - (b.precio || 0))
   }
   if (sortOrder.value === 'precio-desc') {
-    return list.sort((a, b) => (b.precio || 0) - (a.precio || 0))
+    return products.sort((a, b) => (b.precio || 0) - (a.precio || 0))
   }
   if (sortOrder.value === 'nombre-asc') {
-    return list.sort((a, b) => (a.nombre || '').localeCompare(b.nombre || ''))
+    return products.sort((a, b) => (a.nombre || '').localeCompare(b.nombre || ''))
   }
-  return list
+  return products
 })
 
 const resetFilters = () => {
   searchTerm.value = ''
+  selectedFamily.value = 'Todas'
   selectedCategory.value = 'Todos'
   sortOrder.value = 'destacados'
 }
