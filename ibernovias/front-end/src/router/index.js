@@ -1,6 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import { defineAsyncComponent } from 'vue'
-import HelloWorld from '../components/HelloWorld.vue'
 import ProductoView from '../views/ProductoView.vue'
 import { useAuthStore } from '../stores/auth'
 
@@ -10,6 +9,7 @@ const CheckoutView = defineAsyncComponent(() => import('../views/CheckoutView.vu
 const ConfirmacionView = defineAsyncComponent(() => import('../views/ConfirmacionView.vue'))
 const AuthView = defineAsyncComponent(() => import('../views/AuthView.old.vue'))
 const TiendaView = defineAsyncComponent(() => import('../views/TiendaView.vue'))
+const HomeView = defineAsyncComponent(() => import('../views/HomeView.vue'))
 const CuentaView = defineAsyncComponent(() => import('../views/CuentaView.vue'))
 const ContactoView = defineAsyncComponent(() => import('../views/ContactoView.vue'))
 const AccesoEmpresarialView = defineAsyncComponent(() => import('../views/AccesoEmpresarialView.vue'))
@@ -22,10 +22,10 @@ const routes = [
   {
     path: '/',
     name: 'Home',
-    component: HelloWorld,
+    component: HomeView,
     meta: {
-      title: 'IBERNOVIA | Catálogo profesional B2B',
-      description: 'Catálogo de complementos para empresas. El público puede ver productos y las empresas acceden a precios y solicitudes de presupuesto.'
+      title: 'IBERNOVIA | Inicio',
+      description: 'IBERNOVIA Atelier: diseño nupcial y complementos profesionales.'
     }
   },
   {

@@ -43,15 +43,15 @@
 }
 
 .ib-title::before {
-  content: '';
+  /* Dot removed per user request: keep space for underline but hide decorative dot */
+  content: none;
   position: absolute;
   left: 0;
   bottom: 0;
-  width: 8px;
-  height: 8px;
-  border-radius: 999px;
-  background: rgb(var(--luxury-gold-rgb) / 0.9);
-  box-shadow: 0 6px 18px rgb(var(--luxury-black-rgb) / 0.12);
+  width: 0;
+  height: 0;
+  background: transparent;
+  box-shadow: none;
 }
 
 .ib-surface {

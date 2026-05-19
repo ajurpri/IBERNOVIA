@@ -37,13 +37,13 @@ provide('toast', { show: showToast })
 <style>
 /* IMPORTANTE: Estilos Globales de Lujo */
 :root {
-  --luxury-gold: #c4a06a;
-  --luxury-gold-rgb: 196 160 106;
-  --luxury-black: #1f1c17;
-  --luxury-black-rgb: 31 28 23;
-  --luxury-gray: #f6f2ed;
-  --luxury-cream: #fbf8f2;
-  --luxury-ink: #2a2621;
+  --luxury-gold: #a87547;
+  --luxury-gold-rgb: 168 117 71;
+  --luxury-black: #2d2924;
+  --luxury-black-rgb: 45 41 36;
+  --luxury-gray: #d9d9d9;
+  --luxury-cream: #fcfaf6;
+  --luxury-ink: #3a342d;
 }
 
 * {
@@ -63,40 +63,9 @@ provide('toast', { show: showToast })
   z-index: 1;
 }
 
-.signature-shell::before {
-  content: '';
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  z-index: 0;
-  opacity: 0.7;
-  background-image:
-    linear-gradient(135deg, rgb(var(--luxury-gold-rgb) / 0.05) 0 1px, transparent 1px 100%),
-    linear-gradient(45deg, rgb(var(--luxury-gold-rgb) / 0.03) 0 1px, transparent 1px 100%),
-    radial-gradient(circle at 18% 12%, rgb(var(--luxury-gold-rgb) / 0.08), transparent 35%),
-    radial-gradient(circle at 82% 10%, rgb(var(--luxury-gold-rgb) / 0.05), transparent 35%),
-    radial-gradient(circle at 20% 88%, rgb(var(--luxury-gold-rgb) / 0.06), transparent 38%),
-    radial-gradient(circle at 80% 85%, rgb(var(--luxury-gold-rgb) / 0.04), transparent 38%);
-  background-size: 56px 56px, 72px 72px, auto, auto, auto, auto;
-  background-position: 0 0, 14px 14px, center, center, center, center;
-}
-
+.signature-shell::before,
 .signature-shell::after {
-  content: '';
-  position: fixed;
-  inset: 10px;
-  pointer-events: none;
-  z-index: 0;
-  border-radius: 24px;
-  border: 1px solid rgb(var(--luxury-gold-rgb) / 0.18);
-  background:
-    radial-gradient(circle at 0% 0%, rgb(var(--luxury-gold-rgb) / 0.12), transparent 35%),
-    radial-gradient(circle at 100% 0%, rgb(var(--luxury-gold-rgb) / 0.1), transparent 35%),
-    radial-gradient(circle at 0% 100%, rgb(var(--luxury-gold-rgb) / 0.08), transparent 35%),
-    radial-gradient(circle at 100% 100%, rgb(var(--luxury-gold-rgb) / 0.08), transparent 35%);
-  box-shadow:
-    0 0 0 1px rgb(var(--luxury-black-rgb) / 0.05) inset,
-    0 24px 70px rgb(var(--luxury-black-rgb) / 0.08);
+  content: none;
 }
 
 .skip-link {
@@ -138,10 +107,7 @@ body {
   font-family: 'Manrope', 'Segoe UI', sans-serif;
   color: var(--luxury-ink);
   background-color: var(--luxury-gray);
-  background-image:
-    radial-gradient(circle at 15% 10%, rgb(var(--luxury-gold-rgb) / 0.12), transparent 40%),
-    radial-gradient(circle at 80% 5%, rgb(var(--luxury-gold-rgb) / 0.08), transparent 40%),
-    linear-gradient(180deg, rgba(255, 255, 255, 0.9), rgba(246, 242, 237, 0.9));
+  background-image: none;
   background-attachment: fixed;
   margin: 0;
   overflow-x: hidden;
@@ -191,7 +157,7 @@ body {
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #c9a02c;
+  background: #95633d;
 }
 
 /* Hover effects premium */
