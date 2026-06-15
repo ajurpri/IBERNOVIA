@@ -214,10 +214,6 @@ public class AuthController {
                         passwordEncoder.encode(randomPassword)
                 );
                 
-                if (email.toLowerCase().contains("admin")) {
-                    usuario.setIsAdmin(true);
-                }
-                
                 usuario = usuarioRepository.save(usuario);
             } else {
                 usuario = usuarioOptional.get();

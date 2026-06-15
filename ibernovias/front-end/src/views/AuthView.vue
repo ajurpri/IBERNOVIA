@@ -1,306 +1,228 @@
 <template>
-  <div class="min-h-screen bg-gradient-to-br from-luxury-black to-gray-900 flex items-center justify-center py-12 px-4">
-    <div class="w-full max-w-md">
-      <!-- Logo -->
-      <div class="text-center mb-8">
-        <h1 class="font-serif text-4xl text-luxury-gold mb-2">IBERNOVIA</h1>
-        <p class="text-gray-400 text-sm uppercase tracking-widest">Complementos Nupciales Exclusivos</p>
+  <div class="min-h-screen bg-[#fdfdfc] flex items-center justify-center py-16 px-4 sm:px-6 lg:px-8">
+    <div class="w-full max-w-md space-y-8 animate-fade-in-up">
+      
+      <!-- Brand Logo & Header -->
+      <div class="text-center">
+        <span class="text-[10px] uppercase tracking-[0.4em] text-luxury-gold font-bold block mb-4">ATELIER IBERNOVIA</span>
+        <h1 class="font-serif text-4xl md:text-5xl font-light text-luxury-black tracking-wide mb-2">Mi Cuenta</h1>
+        <p class="text-xs text-gray-400 uppercase tracking-widest">Acceso Exclusivo Clientes y Profesionales</p>
       </div>
 
-      <!-- Tarjeta de Autenticación -->
-      <div class="bg-white rounded-lg shadow-2xl overflow-hidden">
-        <!-- Selector de Tabs -->
-        <div class="grid grid-cols-3 border-b border-gray-200">
+      <!-- Main Auth Card -->
+      <div class="bg-white border border-black/5 rounded-none shadow-sm overflow-hidden p-8 md:p-10 space-y-6">
+        
+        <!-- Tab Selector (Only Login and Register) -->
+        <div class="flex border-b border-black/5 pb-4 mb-6">
           <button 
             @click="activeTab = 'login'"
             :class="[
-              'py-4 font-bold uppercase tracking-widest text-sm transition',
+              'flex-1 text-center pb-2 text-[11px] font-bold uppercase tracking-[0.2em] transition-colors duration-300 border-b-2',
               activeTab === 'login' 
-                ? 'bg-luxury-gold text-luxury-black' 
-                : 'bg-gray-50 text-gray-600 hover:bg-gray-100'
+                ? 'border-luxury-gold text-luxury-black' 
+                : 'border-transparent text-gray-400 hover:text-luxury-black'
             ]">
             Iniciar Sesión
           </button>
           <button 
             @click="activeTab = 'register'"
             :class="[
-              'py-4 font-bold uppercase tracking-widest text-sm transition',
+              'flex-1 text-center pb-2 text-[11px] font-bold uppercase tracking-[0.2em] transition-colors duration-300 border-b-2',
               activeTab === 'register' 
-                ? 'bg-luxury-gold text-luxury-black' 
-                : 'bg-gray-50 text-gray-600 hover:bg-gray-100'
+                ? 'border-luxury-gold text-luxury-black' 
+                : 'border-transparent text-gray-400 hover:text-luxury-black'
             ]">
-            Registrarse
+            Crear Cuenta
           </button>
+        </div>
+
+        <!-- Feedback Messages -->
+        <div v-if="errorGlobal" class="p-4 bg-red-50/50 border-l-2 border-red-500 text-red-700 text-xs tracking-wide">
+          {{ errorGlobal }}
+        </div>
+        <div v-if="successMessage" class="p-4 bg-luxury-gold/5 border-l-2 border-luxury-gold text-luxury-black text-xs tracking-wide">
+          {{ successMessage }}
+        </div>
+
+        <!-- FORM: LOGIN -->
+        <form v-if="activeTab === 'login'" @submit.prevent="handleLogin" class="space-y-6">
+          <!-- Email Field -->
+          <div class="relative group">
+            <label class="block text-[10px] uppercase tracking-[0.25em] text-gray-400 font-bold mb-1 transition-colors group-focus-within:text-luxury-gold">
+              Email
+            </label>
+            <input 
+              v-model="loginForm.email"
+              type="email" 
+              required
+              autocomplete="email"
+              class="w-full pb-3 pt-1 border-b border-gray-300 bg-transparent rounded-none focus:outline-none focus:border-luxury-gold transition-colors text-sm text-luxury-black placeholder-gray-400/30"
+              placeholder="introduce tu email"
+            >
+          </div>
+
+          <!-- Password Field -->
+          <div class="relative group">
+            <label class="block text-[10px] uppercase tracking-[0.25em] text-gray-400 font-bold mb-1 transition-colors group-focus-within:text-luxury-gold">
+              Contraseña
+            </label>
+            <input 
+              v-model="loginForm.password"
+              type="password" 
+              required
+              autocomplete="current-password"
+              class="w-full pb-3 pt-1 border-b border-gray-300 bg-transparent rounded-none focus:outline-none focus:border-luxury-gold transition-colors text-sm text-luxury-black placeholder-gray-400/30"
+              placeholder="••••••••"
+            >
+          </div>
+
+          <!-- Forgot Password -->
+          <div class="text-right">
+            <a href="#" class="text-[10px] text-gray-400 hover:text-luxury-gold transition-colors font-bold uppercase tracking-wider">
+              ¿Olvidaste tu contraseña?
+            </a>
+          </div>
+
+          <!-- Submit Button -->
           <button 
-            @click="activeTab = 'admin'"
-            :class="[
-              'py-4 font-bold uppercase tracking-widest text-xs transition',
-              activeTab === 'admin' 
-                ? 'bg-red-500 text-white' 
-                : 'bg-gray-50 text-gray-600 hover:bg-gray-100'
-            ]">
-            Admin
+            type="submit"
+            :disabled="loadingLogin"
+            class="w-full py-4 bg-luxury-black text-white hover:bg-luxury-gold hover:text-white text-[11px] font-bold uppercase tracking-[0.25em] transition-all duration-300 rounded-full shadow-md hover:shadow-lg disabled:opacity-50 mt-6">
+            {{ loadingLogin ? 'Accediendo...' : 'Acceder' }}
           </button>
+        </form>
+
+        <!-- FORM: REGISTER -->
+        <form v-if="activeTab === 'register'" @submit.prevent="handleRegister" class="space-y-6">
+          <!-- First Name -->
+          <div class="relative group">
+            <label class="block text-[10px] uppercase tracking-[0.25em] text-gray-400 font-bold mb-1 transition-colors group-focus-within:text-luxury-gold">
+              Nombre
+            </label>
+            <input 
+              v-model="registerForm.nombre"
+              type="text" 
+              required
+              autocomplete="given-name"
+              class="w-full pb-3 pt-1 border-b border-gray-300 bg-transparent rounded-none focus:outline-none focus:border-luxury-gold transition-colors text-sm text-luxury-black placeholder-gray-400/30"
+              placeholder="tu nombre"
+            >
+          </div>
+
+          <!-- Last Name -->
+          <div class="relative group">
+            <label class="block text-[10px] uppercase tracking-[0.25em] text-gray-400 font-bold mb-1 transition-colors group-focus-within:text-luxury-gold">
+              Apellido
+            </label>
+            <input 
+              v-model="registerForm.apellido"
+              type="text" 
+              required
+              autocomplete="family-name"
+              class="w-full pb-3 pt-1 border-b border-gray-300 bg-transparent rounded-none focus:outline-none focus:border-luxury-gold transition-colors text-sm text-luxury-black placeholder-gray-400/30"
+              placeholder="tu apellido"
+            >
+          </div>
+
+          <!-- Email -->
+          <div class="relative group">
+            <label class="block text-[10px] uppercase tracking-[0.25em] text-gray-400 font-bold mb-1 transition-colors group-focus-within:text-luxury-gold">
+              Email
+            </label>
+            <input 
+              v-model="registerForm.email"
+              type="email" 
+              required
+              autocomplete="email"
+              class="w-full pb-3 pt-1 border-b border-gray-300 bg-transparent rounded-none focus:outline-none focus:border-luxury-gold transition-colors text-sm text-luxury-black placeholder-gray-400/30"
+              placeholder="tu@email.com"
+            >
+          </div>
+
+          <!-- Password -->
+          <div class="relative group">
+            <label class="block text-[10px] uppercase tracking-[0.25em] text-gray-400 font-bold mb-1 transition-colors group-focus-within:text-luxury-gold">
+              Contraseña
+            </label>
+            <input 
+              v-model="registerForm.password"
+              type="password" 
+              required
+              minlength="6"
+              autocomplete="new-password"
+              class="w-full pb-3 pt-1 border-b border-gray-300 bg-transparent rounded-none focus:outline-none focus:border-luxury-gold transition-colors text-sm text-luxury-black placeholder-gray-400/30"
+              placeholder="••••••••"
+            >
+            <p class="text-[9px] text-gray-400 tracking-wider uppercase mt-1">Mínimo 6 caracteres</p>
+          </div>
+
+          <!-- Confirm Password -->
+          <div class="relative group">
+            <label class="block text-[10px] uppercase tracking-[0.25em] text-gray-400 font-bold mb-1 transition-colors group-focus-within:text-luxury-gold">
+              Confirmar Contraseña
+            </label>
+            <input 
+              v-model="registerForm.confirmPassword"
+              type="password" 
+              required
+              autocomplete="new-password"
+              class="w-full pb-3 pt-1 border-b border-gray-300 bg-transparent rounded-none focus:outline-none focus:border-luxury-gold transition-colors text-sm text-luxury-black placeholder-gray-400/30"
+              placeholder="repite tu contraseña"
+            >
+          </div>
+
+          <!-- Accept Terms -->
+          <div class="flex items-start gap-3 pt-2">
+            <input 
+              v-model="registerForm.acceptTerms"
+              type="checkbox" 
+              id="terms"
+              class="mt-1 rounded-none border-gray-300 text-luxury-gold focus:ring-luxury-gold"
+            >
+            <label for="terms" class="text-[10px] text-gray-500 uppercase tracking-wider leading-relaxed">
+              Acepto los términos y condiciones y la política de privacidad de Ibernovia
+            </label>
+          </div>
+
+          <!-- Submit Button -->
+          <button 
+            type="submit"
+            :disabled="loadingRegister"
+            class="w-full py-4 bg-luxury-black text-white hover:bg-luxury-gold hover:text-white text-[11px] font-bold uppercase tracking-[0.25em] transition-all duration-300 rounded-full shadow-md hover:shadow-lg disabled:opacity-50 mt-6">
+            {{ loadingRegister ? 'Creando Cuenta...' : 'Crear Cuenta' }}
+          </button>
+        </form>
+
+        <!-- Divider for Google Login -->
+        <div class="flex items-center gap-3 my-6">
+          <div class="flex-1 h-[1px] bg-black/5"></div>
+          <span class="text-[9px] text-gray-400 uppercase tracking-[0.2em] font-bold">O ACCEDE CON</span>
+          <div class="flex-1 h-[1px] bg-black/5"></div>
         </div>
 
-        <!-- Contenido -->
-        <div class="p-8">
-          <!-- Mensaje de Error Global -->
-          <div v-if="errorGlobal" class="mb-6 p-4 bg-red-50 border border-red-200 rounded text-red-600 text-sm">
-            {{ errorGlobal }}
-          </div>
+        <!-- Google Login Button -->
+        <button 
+          type="button"
+          @click="handleGoogleLogin"
+          :disabled="loadingGoogle"
+          class="w-full bg-white border border-black/10 text-luxury-black py-3 px-4 rounded-full text-[10px] font-bold uppercase tracking-[0.2em] hover:bg-[#fafafa] hover:border-luxury-gold transition-all duration-300 flex items-center justify-center gap-3">
+          <svg class="w-4 h-4 shrink-0" viewBox="0 0 24 24">
+            <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+            <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+            <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+            <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+          </svg>
+          <span>{{ loadingGoogle ? 'Conectando...' : 'Google' }}</span>
+        </button>
 
-          <!-- Mensaje de Éxito -->
-          <div v-if="successMessage" class="mb-6 p-4 bg-luxury-gold/10 border border-luxury-gold/30 rounded text-luxury-black text-sm">
-            {{ successMessage }}
-          </div>
-
-          <!-- PESTAÑA: LOGIN -->
-          <form v-if="activeTab === 'login'" @submit.prevent="handleLogin" class="space-y-4">
-            <!-- Email -->
-            <div>
-              <label class="block text-sm font-bold text-gray-700 mb-2 uppercase tracking-widest">Email</label>
-              <input 
-                v-model="loginForm.email"
-                type="email" 
-                required
-                autocomplete="email"
-                class="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:border-luxury-gold transition"
-                placeholder="tu@email.com"
-              >
-            </div>
-
-            <!-- Contraseña -->
-            <div>
-              <label class="block text-sm font-bold text-gray-700 mb-2 uppercase tracking-widest">Contraseña</label>
-              <input 
-                v-model="loginForm.password"
-                type="password" 
-                required
-                autocomplete="current-password"
-                class="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:border-luxury-gold transition"
-                placeholder="••••••••"
-              >
-            </div>
-
-            <!-- Link Recuperar Contraseña -->
-            <div class="text-right">
-              <a href="#" class="text-xs text-luxury-gold hover:text-luxury-black transition font-semibold">
-                ¿Olvidaste tu contraseña?
-              </a>
-            </div>
-
-            <!-- Botón Login -->
-            <button 
-              type="submit"
-              :disabled="loadingLogin"
-              class="w-full bg-luxury-black text-white py-3 font-bold uppercase tracking-widest hover:bg-luxury-gold hover:text-luxury-black transition disabled:opacity-50 rounded mt-6">
-              {{ loadingLogin ? 'Iniciando...' : 'Iniciar Sesión' }}
-            </button>
-
-            <!-- Separador -->
-            <div class="flex items-center gap-3 my-6">
-              <div class="flex-1 h-px bg-gray-300"></div>
-              <span class="text-xs text-gray-500 font-semibold">O CON</span>
-              <div class="flex-1 h-px bg-gray-300"></div>
-            </div>
-
-            <!-- Botón Google -->
-            <button 
-              type="button"
-              @click="handleGoogleLogin"
-              :disabled="loadingGoogle"
-              class="w-full bg-white border-2 border-gray-300 text-gray-700 py-3 font-bold uppercase tracking-widest hover:bg-gray-50 hover:border-blue-500 transition disabled:opacity-50 rounded flex items-center justify-center gap-3">
-              <svg class="w-5 h-5" viewBox="0 0 24 24">
-                <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
-                <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
-                <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
-                <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
-              </svg>
-              <span>{{ loadingGoogle ? 'Conectando...' : 'Google' }}</span>
-            </button>
-
-            <!-- Info -->
-            <p class="text-center text-xs text-gray-500 mt-4">
-              ¿Primera vez? Crea una cuenta gratis arriba →
-            </p>
-          </form>
-
-          <!-- PESTAÑA: REGISTRO -->
-          <form v-if="activeTab === 'register'" @submit.prevent="handleRegister" class="space-y-4">
-            <!-- Nombre -->
-            <div>
-              <label class="block text-sm font-bold text-gray-700 mb-2 uppercase tracking-widest">Nombre</label>
-              <input 
-                v-model="registerForm.nombre"
-                type="text" 
-                required
-                autocomplete="given-name"
-                class="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:border-luxury-gold transition"
-                placeholder="Tu nombre"
-              >
-            </div>
-
-            <!-- Apellido -->
-            <div>
-              <label class="block text-sm font-bold text-gray-700 mb-2 uppercase tracking-widest">Apellido</label>
-              <input 
-                v-model="registerForm.apellido"
-                type="text" 
-                required
-                autocomplete="family-name"
-                class="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:border-luxury-gold transition"
-                placeholder="Tu apellido"
-              >
-            </div>
-
-            <!-- Email -->
-            <div>
-              <label class="block text-sm font-bold text-gray-700 mb-2 uppercase tracking-widest">Email</label>
-              <input 
-                v-model="registerForm.email"
-                type="email" 
-                required
-                autocomplete="email"
-                class="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:border-luxury-gold transition"
-                placeholder="tu@email.com"
-              >
-            </div>
-
-            <!-- Contraseña -->
-            <div>
-              <label class="block text-sm font-bold text-gray-700 mb-2 uppercase tracking-widest">Contraseña</label>
-              <input 
-                v-model="registerForm.password"
-                type="password" 
-                required
-                minlength="6"
-                autocomplete="new-password"
-                class="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:border-luxury-gold transition"
-                placeholder="Mínimo 6 caracteres"
-              >
-              <p class="text-xs text-gray-500 mt-1">Mínimo 6 caracteres</p>
-            </div>
-
-            <!-- Confirmar Contraseña -->
-            <div>
-              <label class="block text-sm font-bold text-gray-700 mb-2 uppercase tracking-widest">Confirmar Contraseña</label>
-              <input 
-                v-model="registerForm.confirmPassword"
-                type="password" 
-                required
-                autocomplete="new-password"
-                class="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:border-luxury-gold transition"
-                placeholder="Repite tu contraseña"
-              >
-            </div>
-
-            <!-- Checkbox Términos -->
-            <div class="flex items-start gap-2">
-              <input 
-                v-model="registerForm.acceptTerms"
-                type="checkbox" 
-                id="terms"
-                class="mt-1 rounded border-gray-300"
-              >
-              <label for="terms" class="text-xs text-gray-600">
-                Acepto los términos y condiciones y la política de privacidad de IBERNOVIA
-              </label>
-            </div>
-
-            <!-- Botón Registro -->
-            <button 
-              type="submit"
-              :disabled="loadingRegister"
-              class="w-full bg-luxury-black text-white py-3 font-bold uppercase tracking-widest hover:bg-luxury-gold hover:text-luxury-black transition disabled:opacity-50 rounded mt-6">
-              {{ loadingRegister ? 'Registrando...' : 'Crear Cuenta' }}
-            </button>
-
-            <!-- Separador -->
-            <div class="flex items-center gap-3 my-6">
-              <div class="flex-1 h-px bg-gray-300"></div>
-              <span class="text-xs text-gray-500 font-semibold">O CON</span>
-              <div class="flex-1 h-px bg-gray-300"></div>
-            </div>
-
-            <!-- Botón Google -->
-            <button 
-              type="button"
-              @click="handleGoogleLogin"
-              :disabled="loadingGoogle"
-              class="w-full bg-white border-2 border-gray-300 text-gray-700 py-3 font-bold uppercase tracking-widest hover:bg-gray-50 hover:border-blue-500 transition disabled:opacity-50 rounded flex items-center justify-center gap-3">
-              <svg class="w-5 h-5" viewBox="0 0 24 24">
-                <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
-                <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
-                <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
-                <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
-              </svg>
-              <span>{{ loadingGoogle ? 'Conectando...' : 'Google' }}</span>
-            </button>
-
-            <!-- Info -->
-            <p class="text-center text-xs text-gray-500 mt-4">
-              ¿Ya tienes cuenta? Inicia sesión arriba ←
-            </p>
-          </form>
-
-          <!-- PESTAÑA: ADMIN -->
-          <div v-if="activeTab === 'admin'" class="space-y-6">
-            <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
-              <p class="text-xs text-blue-600 font-bold uppercase tracking-widest mb-2">🔐 Autenticación Firebase</p>
-              <p class="text-xs text-blue-600">Sistema seguro con protección completa. Crea o inicia sesión con tus credenciales.</p>
-            </div>
-
-            <div class="bg-gray-50 border border-gray-200 rounded-lg p-4">
-              <p class="text-xs text-gray-700 mb-3 font-semibold">Acceso administrativo:</p>
-              <p class="text-xs text-gray-600 mb-3">Crea una cuenta con email <code class="bg-white px-2 py-1 rounded border font-mono">admin</code> o contacta al administrador.</p>
-              <button 
-                @click="showAdminForm = !showAdminForm"
-                type="button"
-                class="w-full bg-blue-500 text-white py-2 font-bold uppercase text-xs hover:bg-blue-600 transition rounded">
-                {{ showAdminForm ? 'Ocultar' : 'Crear cuenta admin' }}
-              </button>
-            </div>
-
-            <!-- Formulario Admin -->
-            <form v-if="showAdminForm" @submit.prevent="handleAdminRegister" class="space-y-4 bg-gray-50 p-4 rounded-lg border border-gray-200">
-              <div>
-                <label class="block text-xs font-bold text-gray-700 mb-2 uppercase">Email</label>
-                <input 
-                  v-model="adminForm.email"
-                  type="email"
-                  required
-                  class="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:border-blue-500"
-                  placeholder="admin@tudominio.com"
-                >
-              </div>
-              <div>
-                <label class="block text-xs font-bold text-gray-700 mb-2 uppercase">Contraseña</label>
-                <input 
-                  v-model="adminForm.password"
-                  type="password"
-                  required
-                  minlength="6"
-                  class="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:border-blue-500"
-                  placeholder="Mínimo 6 caracteres"
-                >
-              </div>
-              <button 
-                type="submit"
-                :disabled="loadingAdmin"
-                class="w-full bg-blue-600 text-white py-2 font-bold uppercase text-xs hover:bg-blue-700 transition disabled:opacity-50 rounded">
-                {{ loadingAdmin ? 'Creando...' : 'Crear Cuenta Admin' }}
-              </button>
-            </form>
-          </div>
-        </div>
       </div>
 
-      <!-- Info Seguridad -->
-      <div class="mt-8 text-center text-xs text-gray-400 space-y-2">
-        <p>🔒 Autenticación segura con Firebase</p>
-        <p>✓ Contraseñas encriptadas • Datos protegidos • HTTPS seguro</p>
+      <!-- Security Trust Badges -->
+      <div class="text-center text-[10px] text-gray-400 uppercase tracking-widest space-y-1">
+        <p>🔒 Conexión segura y cifrada</p>
+        <p>Garantía de privacidad Atelier Ibernovia</p>
       </div>
+
     </div>
   </div>
 </template>
@@ -323,12 +245,10 @@ const router = useRouter()
 const authStore = useAuthStore()
 
 const activeTab = ref('login')
-const showAdminForm = ref(false)
 const errorGlobal = ref('')
 const successMessage = ref('')
 const loadingLogin = ref(false)
 const loadingRegister = ref(false)
-const loadingAdmin = ref(false)
 const loadingGoogle = ref(false)
 
 const loginForm = ref({
@@ -343,11 +263,6 @@ const registerForm = ref({
   password: '',
   confirmPassword: '',
   acceptTerms: false
-})
-
-const adminForm = ref({
-  email: '',
-  password: ''
 })
 
 const handleLogin = async () => {
@@ -373,7 +288,7 @@ const handleLogin = async () => {
     const response = await apiClient.post('/api/auth/firebase-login', { token: firebaseIdToken })
     authStore.setUser(response.data)
 
-    successMessage.value = '¡Bienvenido!'
+    successMessage.value = '¡Acceso correcto! Iniciando sesión...'
     
     setTimeout(() => {
       if (response.data?.isAdmin) {
@@ -467,59 +382,6 @@ const handleRegister = async () => {
   }
 }
 
-const handleAdminRegister = async () => {
-  errorGlobal.value = ''
-  successMessage.value = ''
-
-  if (!adminForm.value.email || !adminForm.value.password) {
-    errorGlobal.value = 'Por favor completa todos los campos'
-    return
-  }
-
-  if (adminForm.value.password.length < 6) {
-    errorGlobal.value = 'La contraseña debe tener al menos 6 caracteres'
-    return
-  }
-
-  loadingAdmin.value = true
-
-  try {
-    const userCredential = await createUserWithEmailAndPassword(
-      auth,
-      adminForm.value.email,
-      adminForm.value.password
-    )
-
-    await updateProfile(userCredential.user, {
-      displayName: 'Administrador'
-    })
-
-    // Sincronizar con el backend
-    const firebaseIdToken = await userCredential.user.getIdToken()
-    const response = await apiClient.post('/api/auth/firebase-login', { token: firebaseIdToken })
-    authStore.setUser(response.data)
-
-    successMessage.value = '¡Cuenta admin creada! Redirigiendo...'
-    
-    setTimeout(() => {
-      router.push('/admin')
-    }, 800)
-
-  } catch (error) {
-    const errorCode = error.code
-    if (errorCode === 'auth/email-already-in-use') {
-      errorGlobal.value = 'Esta cuenta ya existe'
-    } else if (errorCode === 'auth/weak-password') {
-      errorGlobal.value = 'Contraseña demasiado débil'
-    } else {
-      errorGlobal.value = error.response?.data || error.message || 'Error al crear cuenta'
-    }
-    console.error('Error Admin:', error)
-  } finally {
-    loadingAdmin.value = false
-  }
-}
-
 const handleGoogleLogin = async () => {
   errorGlobal.value = ''
   successMessage.value = ''
@@ -545,7 +407,7 @@ const handleGoogleLogin = async () => {
     const response = await apiClient.post('/api/auth/firebase-login', { token: firebaseIdToken })
     authStore.setUser(response.data)
 
-    successMessage.value = '¡Bienvenido!'
+    successMessage.value = '¡Acceso correcto! Iniciando sesión...'
     
     setTimeout(() => {
       if (response.data?.isAdmin) {
@@ -570,3 +432,20 @@ const handleGoogleLogin = async () => {
   }
 }
 </script>
+
+<style scoped>
+.animate-fade-in-up {
+  animation: fadeInUp 1s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+</style>
