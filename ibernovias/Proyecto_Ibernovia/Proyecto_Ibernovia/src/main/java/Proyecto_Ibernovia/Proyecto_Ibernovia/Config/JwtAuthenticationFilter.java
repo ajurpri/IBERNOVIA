@@ -46,10 +46,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                     if (userOpt.isPresent()) {
                         Usuario user = userOpt.get();
                         List<SimpleGrantedAuthority> authorities = new ArrayList<>();
+                        authorities.add(new SimpleGrantedAuthority("ROLE_USER"));
                         if (Boolean.TRUE.equals(user.getIsAdmin())) {
                             authorities.add(new SimpleGrantedAuthority("ROLE_ADMIN"));
-                        } else {
-                            authorities.add(new SimpleGrantedAuthority("ROLE_USER"));
+                            authorities.add(new SimpleGrantedAuthority("ROLE_BUSINESS"));
+                        }
+                        if (Boolean.TRUE.equals(user.getIsBusiness())) {
+                            authorities.add(new SimpleGrantedAuthority("ROLE_BUSINESS"));
                         }
 
                         UsernamePasswordAuthenticationToken authentication =

@@ -1,104 +1,178 @@
 <template>
-  <div class="min-h-screen bg-luxury-gray">
-    <!-- Hero moved to HomeView to keep '/' as landing only -->
-
-    <div id="catalogo" class="max-w-7xl mx-auto px-4 py-8 sm:py-10">
-      <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-8 sm:mb-10">
-        <div class="bg-white/65 rounded-2xl p-3 sm:p-4 border border-black/8 shadow-sm backdrop-blur-[1px]">
-          <p class="text-xs text-gray-500 uppercase tracking-widest">Ubicación</p>
-          <p class="text-sm text-luxury-black font-semibold">Plaza de Abastos · Andújar</p>
-        </div>
-        <div class="bg-white/65 rounded-2xl p-3 sm:p-4 border border-black/8 shadow-sm backdrop-blur-[1px]">
-          <p class="text-xs text-gray-500 uppercase tracking-widest">Horario</p>
-          <p class="text-sm text-luxury-black font-semibold">Lun–Vie · 09:00–20:00 · Sáb · 10:00–14:00</p>
-        </div>
-        <div class="bg-white/65 rounded-2xl p-3 sm:p-4 border border-black/8 shadow-sm backdrop-blur-[1px]">
-          <p class="text-xs text-gray-500 uppercase tracking-widest">Contacto</p>
-          <p class="text-sm text-luxury-black font-semibold">953 51 50 70</p>
-        </div>
-      </div>
-
-      <div class="mb-6 sm:mb-8 rounded-2xl border border-black/10 bg-white/95 p-4 sm:p-6 shadow-sm backdrop-blur-[1px]">
-        <div class="flex flex-col md:flex-row md:items-center gap-4">
-          <div class="flex-1">
-            <label class="block text-xs uppercase tracking-widest text-gray-500 mb-2" for="search">Buscar</label>
+  <div class="min-h-screen bg-[#fdfdfc]">
+    
+    <div id="catalogo" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-24 animate-fade-in-up">
+      
+      <!-- Sleek Editorial Filter Bar -->
+      <div class="flex flex-col lg:flex-row lg:items-end justify-between gap-8 pb-10 border-b border-black/5 mb-12">
+        
+        <!-- Search Field -->
+        <div class="flex-1 min-w-[280px]">
+          <span class="block text-[9px] uppercase tracking-[0.25em] text-gray-400 font-bold mb-2">Buscar en Colección</span>
+          <div class="relative group">
             <input
               id="search"
               v-model="searchTerm"
               type="search"
-              placeholder="Buscar por nombre, referencia o subfamilia"
-              class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:border-luxury-gold focus:ring-1 focus:ring-luxury-gold text-sm bg-white"
+              placeholder="Ej. Vestido corte sirena, velo..."
+              class="w-full pb-2.5 pt-1 border-b border-gray-200 bg-transparent rounded-none focus:outline-none focus:border-luxury-gold transition-colors text-sm text-luxury-black placeholder-gray-400/40"
               aria-label="Buscar productos"
             />
           </div>
-          <div class="w-56">
-            <label class="block text-xs uppercase tracking-widest text-gray-500 mb-2" for="family">Familia</label>
-            <select
-              id="family"
-              v-model="selectedFamily"
-              class="w-full px-3 py-3 border border-gray-200 rounded-xl focus:outline-none focus:border-luxury-gold focus:ring-1 focus:ring-luxury-gold text-sm bg-white"
-              aria-label="Filtrar por familia"
-            >
-              <option value="Todas">Todas</option>
-              <option v-for="fam in familias" :key="fam" :value="fam">{{ fam }}</option>
-            </select>
-          </div>
-          <div class="w-56">
-            <label class="block text-xs uppercase tracking-widest text-gray-500 mb-2" for="category">Subfamilia</label>
-            <select
-              id="category"
-              v-model="selectedCategory"
-              class="w-full px-3 py-3 border border-gray-200 rounded-xl focus:outline-none focus:border-luxury-gold focus:ring-1 focus:ring-luxury-gold text-sm bg-white"
-              aria-label="Filtrar por subfamilia"
-            >
-              <option value="Todos">Todas</option>
-              <option v-for="cat in categorias" :key="cat" :value="cat">{{ cat }}</option>
-            </select>
-          </div>
-          <div class="flex items-center">
+        </div>
+
+        <!-- Dropdowns Row -->
+        <div class="flex flex-wrap items-end gap-6 sm:gap-8">
+          
+          <!-- Custom Family Selector -->
+          <div class="w-full sm:w-48 relative custom-dropdown">
+            <span class="block text-[9px] uppercase tracking-[0.25em] text-gray-400 font-bold mb-2">Colección / Familia</span>
             <button
               type="button"
-              @click="resetFilters"
-              class="px-4 py-3 text-[12px] uppercase tracking-widest border border-gray-300 rounded-xl hover:border-luxury-black hover:bg-luxury-black hover:text-white transition"
+              @click="familyDropdownOpen = !familyDropdownOpen; categoryDropdownOpen = false"
+              class="w-full pb-2.5 pt-1 border-b border-gray-200 bg-transparent text-left text-sm text-luxury-black flex justify-between items-center cursor-pointer transition-colors hover:border-luxury-gold focus:outline-none"
             >
-              Limpiar
+              <span>{{ selectedFamily === 'Todas' ? 'Todas las colecciones' : selectedFamily }}</span>
+              <svg 
+                class="w-3.5 h-3.5 text-luxury-gold transition-transform duration-300"
+                :class="{ 'rotate-180': familyDropdownOpen }" 
+                fill="none" 
+                stroke="currentColor" 
+                stroke-width="1.8" 
+                viewBox="0 0 24 24"
+              >
+                <path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
+              </svg>
             </button>
+            
+            <transition name="dropdown-slide">
+              <div 
+                v-show="familyDropdownOpen" 
+                class="absolute left-0 right-0 mt-2 bg-[#fdfdfc] border border-black/10 rounded-xl shadow-xl z-50 py-1 overflow-hidden"
+              >
+                <button
+                  type="button"
+                  @click="selectedFamily = 'Todas'; familyDropdownOpen = false"
+                  class="w-full px-4 py-2.5 text-left text-xs uppercase tracking-wider transition-colors hover:bg-luxury-gold/10 focus:outline-none"
+                  :class="selectedFamily === 'Todas' ? 'text-luxury-gold font-bold' : 'text-luxury-black'"
+                >
+                  Todas las colecciones
+                </button>
+                <button
+                  v-for="fam in familias"
+                  :key="fam"
+                  type="button"
+                  @click="selectedFamily = fam; familyDropdownOpen = false"
+                  class="w-full px-4 py-2.5 text-left text-xs uppercase tracking-wider transition-colors hover:bg-luxury-gold/10 focus:outline-none"
+                  :class="selectedFamily === fam ? 'text-luxury-gold font-bold' : 'text-luxury-black'"
+                >
+                  {{ fam }}
+                </button>
+              </div>
+            </transition>
           </div>
+
+          <!-- Custom Subfamily Selector -->
+          <div class="w-full sm:w-48 relative custom-dropdown">
+            <span class="block text-[9px] uppercase tracking-[0.25em] text-gray-400 font-bold mb-2">Subfamilia</span>
+            <button
+              type="button"
+              @click="categoryDropdownOpen = !categoryDropdownOpen; familyDropdownOpen = false"
+              class="w-full pb-2.5 pt-1 border-b border-gray-200 bg-transparent text-left text-sm text-luxury-black flex justify-between items-center cursor-pointer transition-colors hover:border-luxury-gold focus:outline-none"
+            >
+              <span>{{ selectedCategory === 'Todos' ? 'Todas las subfamilias' : selectedCategory }}</span>
+              <svg 
+                class="w-3.5 h-3.5 text-luxury-gold transition-transform duration-300"
+                :class="{ 'rotate-180': categoryDropdownOpen }" 
+                fill="none" 
+                stroke="currentColor" 
+                stroke-width="1.8" 
+                viewBox="0 0 24 24"
+              >
+                <path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
+              </svg>
+            </button>
+            
+            <transition name="dropdown-slide">
+              <div 
+                v-show="categoryDropdownOpen" 
+                class="absolute left-0 right-0 mt-2 bg-[#fdfdfc] border border-black/10 rounded-xl shadow-xl z-50 py-1 overflow-hidden"
+              >
+                <button
+                  type="button"
+                  @click="selectedCategory = 'Todos'; categoryDropdownOpen = false"
+                  class="w-full px-4 py-2.5 text-left text-xs uppercase tracking-wider transition-colors hover:bg-luxury-gold/10 focus:outline-none"
+                  :class="selectedCategory === 'Todos' ? 'text-luxury-gold font-bold' : 'text-luxury-black'"
+                >
+                  Todas las subfamilias
+                </button>
+                <button
+                  v-for="cat in categorias"
+                  :key="cat"
+                  type="button"
+                  @click="selectedCategory = cat; categoryDropdownOpen = false"
+                  class="w-full px-4 py-2.5 text-left text-xs uppercase tracking-wider transition-colors hover:bg-luxury-gold/10 focus:outline-none"
+                  :class="selectedCategory === cat ? 'text-luxury-gold font-bold' : 'text-luxury-black'"
+                >
+                  {{ cat }}
+                </button>
+              </div>
+            </transition>
+          </div>
+
+          <!-- Clear Button -->
+          <button
+            type="button"
+            @click="resetFilters"
+            v-if="searchTerm || selectedFamily !== 'Todas' || selectedCategory !== 'Todos'"
+            class="pb-2.5 text-[10px] uppercase tracking-[0.2em] text-luxury-gold hover:text-luxury-black font-bold transition-colors border-b border-transparent hover:border-luxury-black focus:outline-none"
+          >
+            Limpiar Filtros
+          </button>
         </div>
       </div>
 
-      <div v-if="isLoading" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4 lg:gap-6" role="status" aria-live="polite">
-        <div v-for="n in 8" :key="n" class="h-[260px] sm:h-[320px] lg:h-[360px] rounded-2xl bg-gray-100 animate-pulse"></div>
+      <!-- Loading skeleton -->
+      <div v-if="isLoading" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-8 gap-y-12" role="status" aria-live="polite">
+        <div v-for="n in 8" :key="n" class="aspect-[3/4] rounded-xl bg-gray-50 border border-black/5 animate-pulse"></div>
       </div>
 
-      <div v-else-if="loadError" class="rounded-2xl border border-red-100 bg-red-50/80 p-6 text-red-700">
-        <p class="font-semibold">No se pudo cargar el catálogo.</p>
-        <p class="text-sm mt-2">{{ loadError }}</p>
+      <!-- Load error view -->
+      <div v-else-if="loadError" class="rounded-xl border border-red-100 bg-red-50/50 p-6 text-red-700">
+        <p class="font-semibold text-sm">No se pudo cargar el catálogo de productos.</p>
+        <p class="text-xs mt-1 text-red-500">{{ loadError }}</p>
         <button
           type="button"
           @click="fetchProductos"
-          class="mt-4 px-5 py-2 text-xs uppercase tracking-widest bg-luxury-black text-white rounded hover:bg-luxury-gold hover:text-luxury-black transition"
+          class="mt-4 px-6 py-2.5 text-[10px] uppercase tracking-widest bg-luxury-black text-white hover:bg-luxury-gold hover:text-white transition rounded-full"
         >
-          Reintentar
+          Reintentar Carga
         </button>
       </div>
 
-      <div v-else>
-        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-5 sm:mb-6">
-          <p class="text-[11px] sm:text-xs uppercase tracking-widest text-gray-500" aria-live="polite">
-            {{ sortedProducts.length }} resultados
+      <!-- Products Content -->
+      <div v-else class="animate-fade-in delay-150">
+        <!-- Results Counter & Action link -->
+        <div class="flex items-center justify-between gap-4 mb-8">
+          <p class="text-[10px] uppercase tracking-widest text-gray-400 font-bold" aria-live="polite">
+            {{ sortedProducts.length }} diseños encontrados
           </p>
-          <router-link to="/acceso-empresarial" class="text-[11px] sm:text-xs uppercase tracking-widest text-luxury-black border-b border-luxury-gold hover:text-luxury-gold transition">
+          <router-link 
+            to="/acceso-empresarial" 
+            class="text-[10px] uppercase tracking-widest text-luxury-gold hover:text-luxury-black font-bold border-b border-transparent hover:border-luxury-black transition-colors"
+          >
             Alta profesional y contacto
           </router-link>
         </div>
 
-        <div v-if="sortedProducts.length === 0" class="rounded-2xl border border-white/80 bg-white/90 p-8 text-center">
-          <p class="text-luxury-black font-semibold">No hay productos con estos filtros.</p>
-          <p class="text-sm text-gray-500 mt-2">Prueba con otra busqueda o categoria.</p>
+        <!-- No products match -->
+        <div v-if="sortedProducts.length === 0" class="rounded-xl border border-black/5 bg-transparent p-12 text-center">
+          <p class="text-luxury-black font-serif text-lg font-light">No se encontraron diseños coincidentes.</p>
+          <p class="text-xs text-gray-400 mt-2">Prueba modificando tus términos de búsqueda o filtrando por otra colección.</p>
         </div>
 
-        <div v-else class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 items-stretch">
+        <!-- Products Grid (4 Columns, Luxury Spacing) -->
+        <div v-else class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-8 gap-y-12 items-stretch">
           <ProductCard
             v-for="prod in sortedProducts"
             :key="prod.id"
@@ -106,12 +180,13 @@
           />
         </div>
       </div>
+      
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted, computed, watch } from 'vue'
+import { ref, onMounted, onUnmounted, computed, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import ProductCard from '../components/ProductCard.vue'
 import { apiClient } from '../lib/api'
@@ -129,11 +204,14 @@ const selectedCategory = ref('Todos')
 const sortOrder = ref('destacados')
 const syncFromRoute = ref(false)
 
+// Dropdowns open state
+const familyDropdownOpen = ref(false)
+const categoryDropdownOpen = ref(false)
+
 const familias = computed(() => {
   const set = new Set(productos.value.map((p) => p.familia).filter(Boolean))
   const list = Array.from(set)
 
-  // Ordenar poniendo primero las familias principales si existen
   const preferred = ['Novia', 'Novio', 'Fiesta', 'Comunión', 'Arras']
   return list.sort((a, b) => {
     const ia = preferred.indexOf(a)
@@ -195,14 +273,12 @@ const scoredProducts = computed(() => {
   const tokenMatches = (hay, hayCompact, t) => {
     if (hay.includes(t) || hayCompact.includes(t)) return true
 
-    // Fuzzy simple: si falta 1 carácter (por ejemplo por textos con �), seguimos encontrando
     if (t.length >= 6) {
       for (let i = 0; i < t.length; i++) {
         const variant = t.slice(0, i) + t.slice(i + 1)
         if (variant.length >= 5 && hayCompact.includes(variant)) return true
       }
     }
-
     return false
   }
 
@@ -225,8 +301,6 @@ const scoredProducts = computed(() => {
     }
   }
 
-  // Si hay resultados "buenos" (todas las palabras), usamos esos.
-  // Si no, caemos a coincidencias parciales para no dejar el buscador "muerto".
   return strict.length ? strict : loose
 })
 
@@ -324,9 +398,21 @@ const fetchProductos = async () => {
   }
 }
 
+const closeDropdowns = (e) => {
+  if (!e.target.closest('.custom-dropdown')) {
+    familyDropdownOpen.value = false
+    categoryDropdownOpen.value = false
+  }
+}
+
 onMounted(async () => {
   await fetchProductos()
   applyQueryFilters()
+  document.addEventListener('click', closeDropdowns)
+})
+
+onUnmounted(() => {
+  document.removeEventListener('click', closeDropdowns)
 })
 
 watch(() => route.query, () => {
@@ -339,3 +425,48 @@ watch([searchTerm, selectedFamily, selectedCategory, sortOrder], () => {
   updateRouteQuery()
 })
 </script>
+
+<style scoped>
+.animate-fade-in-up {
+  animation: fadeInUp 1.2s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.animate-fade-in {
+  animation: fadeIn 1s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.delay-150 {
+  animation-delay: 150ms;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Custom Dropdown Animation */
+.dropdown-slide-enter-active,
+.dropdown-slide-leave-active {
+  transition: opacity 0.25s cubic-bezier(0.16, 1, 0.3, 1), transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.dropdown-slide-enter-from,
+.dropdown-slide-leave-to {
+  opacity: 0;
+  transform: translateY(-8px);
+}
+</style>

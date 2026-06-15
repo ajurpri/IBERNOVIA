@@ -7,14 +7,16 @@ public class LoginResponse {
     private String nombre;
     private String apellido;
     private Boolean isAdmin;
+    private Boolean isBusiness;
 
-    public LoginResponse(String token, Long userId, String email, String nombre, String apellido, Boolean isAdmin) {
+    public LoginResponse(String token, Long userId, String email, String nombre, String apellido, Boolean isAdmin, Boolean isBusiness) {
         this.token = token;
         this.userId = userId;
         this.email = email;
         this.nombre = nombre;
         this.apellido = apellido;
         this.isAdmin = isAdmin;
+        this.isBusiness = isBusiness;
     }
 
     public String getToken() {
@@ -63,5 +65,13 @@ public class LoginResponse {
 
     public void setIsAdmin(Boolean isAdmin) {
         this.isAdmin = isAdmin;
+    }
+
+    public Boolean getIsBusiness() {
+        return isBusiness;
+    }
+
+    public void setIsBusiness(Boolean isBusiness) {
+        this.isBusiness = isBusiness;
     }
 }

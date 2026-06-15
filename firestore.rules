@@ -1,0 +1,20 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Regla por defecto: Denegar todas las lecturas y escrituras
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Colección de usuarios: solo el propio usuario autenticado puede leer/escribir su documento
+    match /users/{userId} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+    }
+
+    // Colección de contactos/alta: el público puede crear (escribir), pero solo los admins pueden leer
+    match /contacto_solicitudes/{solicitudId} {
+      allow create: if true;
+      allow read, update, delete: if request.auth != null && request.auth.token.email.matches('.*admin.*');
+    }
+  }
+}

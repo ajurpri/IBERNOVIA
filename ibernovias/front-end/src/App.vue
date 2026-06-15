@@ -11,6 +11,7 @@
     <FooterSection />
     <CookieBanner />
     <Toast ref="toastRef" />
+    <FloatingChat />
   </div>
 </template>
 
@@ -21,6 +22,7 @@ import FooterSection from './components/FooterSection.vue'
 import CookieBanner from './components/CookieBanner.vue'
 import BackToTop from './components/BackToTop.vue'
 import Toast from './components/Toast.vue'
+import FloatingChat from './components/FloatingChat.vue'
 import { useAuthStore } from './stores/auth'
 
 const authStore = useAuthStore()

@@ -72,6 +72,7 @@ public class AdminController {
                         u.getApellido(),
                         u.getActivo(),
                         u.getIsAdmin(),
+                        u.getIsBusiness(),
                         u.getCreatedAt()
                 ))
                 .collect(Collectors.toList());
@@ -101,6 +102,9 @@ public class AdminController {
         if (request.getActivo() != null) {
             user.setActivo(request.getActivo());
         }
+        if (request.getIsBusiness() != null) {
+            user.setIsBusiness(request.getIsBusiness());
+        }
 
         Usuario saved = usuarioRepository.save(user);
         AdminUserResponse response = new AdminUserResponse(
@@ -110,6 +114,7 @@ public class AdminController {
                 saved.getApellido(),
                 saved.getActivo(),
                 saved.getIsAdmin(),
+                saved.getIsBusiness(),
                 saved.getCreatedAt()
         );
 

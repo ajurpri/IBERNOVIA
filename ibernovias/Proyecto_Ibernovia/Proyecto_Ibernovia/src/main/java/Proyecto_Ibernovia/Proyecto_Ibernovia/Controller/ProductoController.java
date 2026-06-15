@@ -5,6 +5,7 @@ import Proyecto_Ibernovia.Proyecto_Ibernovia.Repository.ProductoRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.beans.factory.annotation.Value;
 
 import java.util.List;
 import java.util.Optional;
@@ -14,25 +15,47 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.Path;
 
+import Proyecto_Ibernovia.Proyecto_Ibernovia.Model.Usuario;
+import Proyecto_Ibernovia.Proyecto_Ibernovia.Repository.UsuarioRepository;
+import Proyecto_Ibernovia.Proyecto_Ibernovia.Util.JwtUtil;
+
 @RestController
 @RequestMapping("/api/productos")
 public class ProductoController {
 
     private final ProductoRepository repository;
+    private final UsuarioRepository usuarioRepository;
+    private final JwtUtil jwtUtil;
 
-    public ProductoController(ProductoRepository repository) {
+    @Value("${app.business.codes:EMPRESA2025,IBERNOVIA2025,DEMO123}")
+    private String businessCodesString;
+
+    public ProductoController(ProductoRepository repository, UsuarioRepository usuarioRepository, JwtUtil jwtUtil) {
         this.repository = repository;
+        this.usuarioRepository = usuarioRepository;
+        this.jwtUtil = jwtUtil;
     }
 
     @GetMapping
-    public List<Producto> listarProductos() {
-        return repository.findAll();
+    public List<Producto> listarProductos(
+            @RequestHeader(value = "Authorization", required = false) String authHeader,
+            @RequestHeader(value = "X-Business-Code", required = false) String businessCodeHeader
+    ) {
+        boolean canSee = checkCanSeePrices(authHeader, businessCodeHeader);
+        return repository.findAll().stream()
+                .map(p -> sanitizeProduct(p, canSee))
+                .toList();
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Producto> obtenerProducto(@PathVariable Long id) {
+    public ResponseEntity<Producto> obtenerProducto(
+            @PathVariable Long id,
+            @RequestHeader(value = "Authorization", required = false) String authHeader,
+            @RequestHeader(value = "X-Business-Code", required = false) String businessCodeHeader
+    ) {
         Optional<Producto> producto = repository.findById(id);
-        return producto.map(ResponseEntity::ok)
+        boolean canSee = checkCanSeePrices(authHeader, businessCodeHeader);
+        return producto.map(p -> ResponseEntity.ok(sanitizeProduct(p, canSee)))
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
@@ -86,18 +109,39 @@ public class ProductoController {
     }
 
     @GetMapping("/categoria/{categoria}")
-    public List<Producto> obtenerPorCategoria(@PathVariable String categoria) {
-        return repository.findByCategoria(categoria);
+    public List<Producto> obtenerPorCategoria(
+            @PathVariable String categoria,
+            @RequestHeader(value = "Authorization", required = false) String authHeader,
+            @RequestHeader(value = "X-Business-Code", required = false) String businessCodeHeader
+    ) {
+        boolean canSee = checkCanSeePrices(authHeader, businessCodeHeader);
+        return repository.findByCategoria(categoria).stream()
+                .map(p -> sanitizeProduct(p, canSee))
+                .toList();
     }
 
     @GetMapping("/familia/{familia}")
-    public List<Producto> obtenerPorFamilia(@PathVariable String familia) {
-        return repository.findByFamilia(familia);
+    public List<Producto> obtenerPorFamilia(
+            @PathVariable String familia,
+            @RequestHeader(value = "Authorization", required = false) String authHeader,
+            @RequestHeader(value = "X-Business-Code", required = false) String businessCodeHeader
+    ) {
+        boolean canSee = checkCanSeePrices(authHeader, businessCodeHeader);
+        return repository.findByFamilia(familia).stream()
+                .map(p -> sanitizeProduct(p, canSee))
+                .toList();
     }
 
     @GetMapping("/buscar/{query}")
-    public List<Producto> buscar(@PathVariable String query) {
-        return repository.findByNombreContainingIgnoreCaseOrDescripcionContainingIgnoreCase(query, query);
+    public List<Producto> buscar(
+            @PathVariable String query,
+            @RequestHeader(value = "Authorization", required = false) String authHeader,
+            @RequestHeader(value = "X-Business-Code", required = false) String businessCodeHeader
+    ) {
+        boolean canSee = checkCanSeePrices(authHeader, businessCodeHeader);
+        return repository.findByNombreContainingIgnoreCaseOrDescripcionContainingIgnoreCase(query, query).stream()
+                .map(p -> sanitizeProduct(p, canSee))
+                .toList();
     }
 
     @PostMapping("/inicializar")
@@ -152,6 +196,54 @@ public class ProductoController {
             System.err.println("Error procesando imagen base64: " + e.getMessage());
             return null; // Tomar una acción por defecto si fallan
         }
+    }
+
+    private boolean checkCanSeePrices(String authHeader, String businessCodeHeader) {
+        // 1. Check if the valid business code is provided in the header
+        if (businessCodeHeader != null && businessCodesString != null) {
+            String trimmedHeader = businessCodeHeader.trim();
+            for (String code : businessCodesString.split(",")) {
+                if (code.trim().equalsIgnoreCase(trimmedHeader)) {
+                    return true;
+                }
+            }
+        }
+
+        // 2. Check if the user is logged in and has ADMIN or BUSINESS role
+        if (authHeader != null && authHeader.startsWith("Bearer ")) {
+            String token = authHeader.substring(7);
+            if (jwtUtil.validateToken(token)) {
+                Long userId = jwtUtil.extractUserIdFromToken(token);
+                if (userId != null) {
+                    Optional<Usuario> userOpt = usuarioRepository.findById(userId);
+                    if (userOpt.isPresent()) {
+                        Usuario user = userOpt.get();
+                        return Boolean.TRUE.equals(user.getIsAdmin()) || Boolean.TRUE.equals(user.getIsBusiness());
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+    private Producto sanitizeProduct(Producto p, boolean canSeePrices) {
+        Producto copy = new Producto();
+        copy.setId(p.getId());
+        copy.setNombre(p.getNombre());
+        copy.setFamilia(p.getFamilia());
+        copy.setCategoria(p.getCategoria());
+        copy.setImagen(p.getImagen());
+        copy.setDescripcion(p.getDescripcion());
+        copy.setStock(p.getStock());
+        copy.setActivo(p.getActivo());
+        copy.setCreatedAt(p.getCreatedAt());
+        copy.setUpdatedAt(p.getUpdatedAt());
+        if (canSeePrices) {
+            copy.setPrecio(p.getPrecio());
+        } else {
+            copy.setPrecio(null);
+        }
+        return copy;
     }
 }
 

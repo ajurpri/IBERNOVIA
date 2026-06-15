@@ -7,7 +7,7 @@ import { useAuthStore } from '../stores/auth'
 const CarritoView = defineAsyncComponent(() => import('../views/CarritoView.vue'))
 const CheckoutView = defineAsyncComponent(() => import('../views/CheckoutView.vue'))
 const ConfirmacionView = defineAsyncComponent(() => import('../views/ConfirmacionView.vue'))
-const AuthView = defineAsyncComponent(() => import('../views/AuthView.old.vue'))
+const AuthView = defineAsyncComponent(() => import('../views/AuthView.vue'))
 const TiendaView = defineAsyncComponent(() => import('../views/TiendaView.vue'))
 const HomeView = defineAsyncComponent(() => import('../views/HomeView.vue'))
 const CuentaView = defineAsyncComponent(() => import('../views/CuentaView.vue'))
@@ -156,15 +156,45 @@ const router = createRouter({
 })
 
 router.afterEach((to) => {
-  if (to.meta?.title) {
-    document.title = to.meta.title
-  }
-  if (to.meta?.description) {
-    const description = document.querySelector('meta[name="description"]')
-    if (description) {
-      description.setAttribute('content', to.meta.description)
+  const defaultTitle = 'IBERNOVIA | Complementos Nupciales'
+  const defaultDesc = 'IBERNOVIA: complementos nupciales de alta costura en Andújar, Jaén. Tienda con asesoramiento personalizado y diseños exclusivos.'
+  const title = to.meta?.title || defaultTitle
+  const desc = to.meta?.description || defaultDesc
+
+  document.title = title
+
+  // Función auxiliar para actualizar o crear metaetiquetas
+  const updateMetaTag = (selector, attribute, value) => {
+    let el = document.querySelector(selector)
+    if (!el) {
+      el = document.createElement('meta')
+      if (selector.startsWith('meta[property=')) {
+        const prop = selector.match(/property="([^"]+)"/)[1]
+        el.setAttribute('property', prop)
+      } else if (selector.startsWith('meta[name=')) {
+        const name = selector.match(/name="([^"]+)"/)[1]
+        el.setAttribute('name', name)
+      }
+      document.head.appendChild(el)
     }
+    el.setAttribute(attribute, value)
   }
+
+  updateMetaTag('meta[name="description"]', 'content', desc)
+  updateMetaTag('meta[property="og:title"]', 'content', title)
+  updateMetaTag('meta[property="og:description"]', 'content', desc)
+  updateMetaTag('meta[property="og:url"]', 'content', 'https://www.ibernovia.es' + to.path)
+  updateMetaTag('meta[name="twitter:title"]', 'content', title)
+  updateMetaTag('meta[name="twitter:description"]', 'content', desc)
+
+  // Enlace Canónico Dinámico
+  let canonicalLink = document.querySelector('link[rel="canonical"]')
+  if (!canonicalLink) {
+    canonicalLink = document.createElement('link')
+    canonicalLink.setAttribute('rel', 'canonical')
+    document.head.appendChild(canonicalLink)
+  }
+  canonicalLink.setAttribute('href', 'https://www.ibernovia.es' + to.path)
 })
 
 // Guard para proteger rutas autenticadas

@@ -104,40 +104,65 @@
 
     <Teleport to="body">
       <div v-if="mobileOpen" class="fixed inset-0 z-[9998] bg-black/45 backdrop-blur-sm" @click.self="mobileOpen = false">
-        <div class="bg-[#ececec] w-11/12 max-w-sm mt-10 mx-auto rounded-md shadow-xl border border-black/10 max-h-[84vh] overflow-hidden">
+        <div class="bg-[#ececec] w-11/12 max-w-sm mt-10 mx-auto rounded-md shadow-xl border border-black/10 max-h-[84vh] overflow-hidden flex flex-col">
           <div class="p-4 border-b border-black/10 flex items-center justify-between">
-            <span class="font-semibold tracking-[0.2em] text-sm">MENU</span>
-            <button @click="mobileOpen = false" class="icon-btn" aria-label="Cerrar menu movil">X</button>
+            <span class="font-semibold tracking-[0.2em] text-sm">MENÚ</span>
+            <button @click="mobileOpen = false" class="icon-btn" aria-label="Cerrar menu movil">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
           </div>
-          <nav class="p-3 overflow-hidden">
-            <div class="flex gap-3">
-              <div class="w-1/3 min-w-[140px] max-w-[220px] border-r border-black/8 pr-2 overflow-y-auto max-h-[68vh]">
-                <p class="px-2 pb-2 text-xs uppercase tracking-[0.18em] text-black/60">Familias</p>
-                <div v-if="mobileCategories.length === 0" class="px-2 py-2 text-xs text-black/60">Cargando categorias...</div>
-                <ul class="space-y-1">
-                  <li v-for="family in mobileCategories" :key="family.name">
-                    <button @click="expandedFamily = family.name" :class="['w-full text-left px-3 py-2 rounded-md', expandedFamily === family.name ? 'bg-white/90 font-semibold' : 'hover:bg-white/60']">
-                      {{ family.name }}
-                    </button>
-                  </li>
-                </ul>
-              </div>
+          <nav class="p-4 overflow-y-auto max-h-[70vh] space-y-4">
+            <!-- Menú Navegación Rápida -->
+            <div class="border-b border-black/10 pb-4 space-y-1">
+              <router-link to="/" @click="mobileOpen = false" class="block px-3 py-2.5 rounded-lg text-sm uppercase tracking-wider font-semibold hover:bg-white/60">Inicio</router-link>
+              <router-link :to="{ path: '/tienda', hash: '#catalogo' }" @click="mobileOpen = false" class="block px-3 py-2.5 rounded-lg text-sm uppercase tracking-wider font-semibold hover:bg-white/60">Catálogo</router-link>
+              <button type="button" class="w-full text-left block px-3 py-2.5 rounded-lg text-sm uppercase tracking-wider font-semibold hover:bg-white/60" @click="openEventsFromMobile">Eventos</button>
+              <router-link to="/contacto" @click="mobileOpen = false" class="block px-3 py-2.5 rounded-lg text-sm uppercase tracking-wider font-semibold hover:bg-white/60">Contacto</router-link>
+            </div>
 
-              <div class="flex-1 pl-3 overflow-y-auto max-h-[68vh]">
-                <div v-if="!expandedFamily" class="text-sm text-black/60 px-2 py-4">Selecciona una familia para ver subfamilias</div>
-                <div v-else>
-                  <div class="flex items-center justify-between mb-3">
-                    <h4 class="font-semibold">{{ expandedFamily }}</h4>
-                    <router-link :to="{ path: '/tienda', hash: '#catalogo', query: { familia: expandedFamily } }" @click="mobileOpen = false" class="text-xs text-black/60">Ver todo</router-link>
+            <!-- Categorías en Acordeón -->
+            <div>
+              <p class="px-3 pb-3 text-xs uppercase tracking-[0.18em] text-black/60 font-bold">Colecciones</p>
+              <div v-if="mobileCategories.length === 0" class="px-3 py-2 text-xs text-black/60">Cargando categorías...</div>
+              <ul class="space-y-2">
+                <li v-for="family in mobileCategories" :key="family.name" class="bg-white/50 rounded-lg overflow-hidden border border-black/5">
+                  <button 
+                    @click="toggleFamily(family.name)" 
+                    class="w-full flex items-center justify-between px-4 py-3 text-sm font-semibold hover:bg-white/80 transition"
+                  >
+                    <span>{{ family.name }}</span>
+                    <svg 
+                      :class="['w-4 h-4 transition-transform duration-200', expandedFamily === family.name ? 'rotate-180' : '']" 
+                      fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                    >
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                    </svg>
+                  </button>
+                  
+                  <div v-if="expandedFamily === family.name" class="bg-white/80 border-t border-black/5 p-3 space-y-2">
+                    <div class="grid grid-cols-2 gap-2">
+                      <router-link 
+                        :to="{ path: '/tienda', hash: '#catalogo', query: { familia: family.name } }" 
+                        @click="mobileOpen = false"
+                        class="block px-3 py-2 bg-white/90 rounded border border-black/5 text-xs text-center font-bold text-luxury-gold uppercase tracking-wider hover:bg-luxury-gold hover:text-white transition"
+                      >
+                        Ver Todo
+                      </router-link>
+                      <router-link 
+                        v-for="cat in family.categories" 
+                        :key="cat" 
+                        :to="{ path: '/tienda', hash: '#catalogo', query: { familia: family.name, categoria: cat } }" 
+                        @click="mobileOpen = false" 
+                        class="block px-3 py-2 bg-white/70 hover:bg-white rounded border border-black/5 text-xs text-center text-black/80 truncate"
+                      >
+                        {{ cat }}
+                      </router-link>
+                    </div>
                   </div>
-
-                  <div class="grid grid-cols-2 gap-2">
-                    <router-link v-for="cat in (mobileCategories.find(f => f.name === expandedFamily)?.categories || [])" :key="cat" :to="{ path: '/tienda', hash: '#catalogo', query: { familia: expandedFamily, categoria: cat } }" @click="mobileOpen = false" class="block p-3 rounded-md bg-white/85 hover:bg-white/95 text-sm text-black/80">
-                      {{ cat }}
-                    </router-link>
-                  </div>
-                </div>
-              </div>
+                </li>
+              </ul>
             </div>
           </nav>
         </div>
@@ -492,8 +517,10 @@ onBeforeUnmount(() => {
 
 <style scoped>
 .header-shell {
-  background: #e1e1e1;
-  color: #232323;
+  background: rgba(253, 253, 252, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  color: #1a1a1a;
 }
 
 .wordmark {
@@ -504,10 +531,10 @@ onBeforeUnmount(() => {
 }
 
 .brand {
-  font-family: Georgia, 'Times New Roman', serif;
+  font-family: 'Fraunces', Georgia, serif;
   font-size: clamp(1.3rem, 2.8vw, 2rem);
-  letter-spacing: 0.18em;
-  font-weight: 600;
+  letter-spacing: 0.22em;
+  font-weight: 400;
 }
 
 .sub {
@@ -539,6 +566,13 @@ onBeforeUnmount(() => {
   justify-content: center;
   background: transparent;
   transition: all 0.18s ease;
+}
+
+@media (max-width: 768px) {
+  .icon-btn {
+    min-width: 48px;
+    height: 48px;
+  }
 }
 
 .icon-btn:hover {

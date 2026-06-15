@@ -317,6 +317,7 @@ import {
 } from 'firebase/auth'
 import { auth } from '../lib/firebase'
 import { useAuthStore } from '../stores/auth'
+import { apiClient } from '../lib/api'
 
 const router = useRouter()
 const authStore = useAuthStore()
@@ -367,10 +368,15 @@ const handleLogin = async () => {
       loginForm.value.password
     )
 
+    // Sincronizar con el backend
+    const firebaseIdToken = await userCredential.user.getIdToken()
+    const response = await apiClient.post('/api/auth/firebase-login', { token: firebaseIdToken })
+    authStore.setUser(response.data)
+
     successMessage.value = '¡Bienvenido!'
     
     setTimeout(() => {
-      if (userCredential.user.email?.includes('admin')) {
+      if (response.data?.isAdmin) {
         router.push('/admin')
       } else {
         router.push('/tienda')
@@ -388,9 +394,9 @@ const handleLogin = async () => {
     } else if (errorCode === 'auth/too-many-requests') {
       errorGlobal.value = 'Demasiados intentos. Intenta más tarde'
     } else {
-      errorGlobal.value = error.message || 'Error en el login'
+      errorGlobal.value = error.response?.data || error.message || 'Error en el login'
     }
-    console.error('Error Firebase:', error)
+    console.error('Error Login:', error)
   } finally {
     loadingLogin.value = false
   }
@@ -433,6 +439,11 @@ const handleRegister = async () => {
       displayName: `${registerForm.value.nombre} ${registerForm.value.apellido}`
     })
 
+    // Sincronizar con el backend
+    const firebaseIdToken = await userCredential.user.getIdToken()
+    const response = await apiClient.post('/api/auth/firebase-login', { token: firebaseIdToken })
+    authStore.setUser(response.data)
+
     successMessage.value = '¡Bienvenido a IBERNOVIA!'
     
     setTimeout(() => {
@@ -448,9 +459,9 @@ const handleRegister = async () => {
     } else if (errorCode === 'auth/invalid-email') {
       errorGlobal.value = 'El email no es válido'
     } else {
-      errorGlobal.value = error.message || 'Error en el registro'
+      errorGlobal.value = error.response?.data || error.message || 'Error en el registro'
     }
-    console.error('Error Firebase:', error)
+    console.error('Error Registro:', error)
   } finally {
     loadingRegister.value = false
   }
@@ -483,6 +494,11 @@ const handleAdminRegister = async () => {
       displayName: 'Administrador'
     })
 
+    // Sincronizar con el backend
+    const firebaseIdToken = await userCredential.user.getIdToken()
+    const response = await apiClient.post('/api/auth/firebase-login', { token: firebaseIdToken })
+    authStore.setUser(response.data)
+
     successMessage.value = '¡Cuenta admin creada! Redirigiendo...'
     
     setTimeout(() => {
@@ -496,9 +512,9 @@ const handleAdminRegister = async () => {
     } else if (errorCode === 'auth/weak-password') {
       errorGlobal.value = 'Contraseña demasiado débil'
     } else {
-      errorGlobal.value = error.message || 'Error al crear cuenta'
+      errorGlobal.value = error.response?.data || error.message || 'Error al crear cuenta'
     }
-    console.error('Error Firebase:', error)
+    console.error('Error Admin:', error)
   } finally {
     loadingAdmin.value = false
   }
@@ -524,10 +540,15 @@ const handleGoogleLogin = async () => {
       })
     }
 
+    // Sincronizar con el backend
+    const firebaseIdToken = await user.getIdToken()
+    const response = await apiClient.post('/api/auth/firebase-login', { token: firebaseIdToken })
+    authStore.setUser(response.data)
+
     successMessage.value = '¡Bienvenido!'
     
     setTimeout(() => {
-      if (user.email?.includes('admin')) {
+      if (response.data?.isAdmin) {
         router.push('/admin')
       } else {
         router.push('/tienda')
@@ -537,12 +558,11 @@ const handleGoogleLogin = async () => {
   } catch (error) {
     const errorCode = error.code
     if (errorCode === 'auth/popup-closed-by-user') {
-      // El usuario cerró el popup, no es un error grave
       return
     } else if (errorCode === 'auth/cancelled-popup-request') {
       return
     } else {
-      errorGlobal.value = error.message || 'Error al conectar con Google'
+      errorGlobal.value = error.response?.data || error.message || 'Error al conectar con Google'
       console.error('Error Google Auth:', error)
     }
   } finally {

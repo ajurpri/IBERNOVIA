@@ -23,16 +23,32 @@ apiClient.interceptors.request.use((config) => {
   if (token) {
     config.headers.Authorization = `Bearer ${token}`
   }
+  const businessCode = localStorage.getItem('business_code')
+  if (businessCode) {
+    config.headers['X-Business-Code'] = businessCode
+  }
   return config
 })
 
 export const apiFetch = (path, options = {}) => {
   const normalizedPath = path.startsWith('/') ? path : `/${path}`
+  const token = localStorage.getItem('token')
+  const businessCode = localStorage.getItem('business_code')
+  
+  const headers = {
+    'Content-Type': 'application/json',
+    ...(options.headers || {})
+  }
+  
+  if (token) {
+    headers['Authorization'] = `Bearer ${token}`
+  }
+  if (businessCode) {
+    headers['X-Business-Code'] = businessCode
+  }
+
   return fetch(`${API_BASE_URL}${normalizedPath}`, {
     ...options,
-    headers: {
-      'Content-Type': 'application/json',
-      ...(options.headers || {})
-    }
+    headers
   })
 }

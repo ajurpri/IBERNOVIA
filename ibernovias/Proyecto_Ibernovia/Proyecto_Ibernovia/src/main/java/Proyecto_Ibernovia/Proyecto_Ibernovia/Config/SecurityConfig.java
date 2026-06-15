@@ -48,12 +48,15 @@ public class SecurityConfig {
                 "/api/contacto",
                 "/api/contacto/",
                 "/api/admin/setup/check",
+                "/api/chat",
+                "/api/chat/",
                 "/images/**"
             ).permitAll()
             // Permitir crear el primer admin con X-Setup-Key (sin requerir ROLE_ADMIN)
             .requestMatchers(HttpMethod.POST, "/api/admin/setup/create-admin").permitAll()
             .requestMatchers(HttpMethod.GET, "/api/productos/**").permitAll()
             .requestMatchers(HttpMethod.GET, "/api/eventos", "/api/eventos/").permitAll()
+            .requestMatchers(HttpMethod.POST, "/api/admin/solicitudes").permitAll()
             .requestMatchers("/api/admin/**", "/api/contacto/admin/**").hasRole("ADMIN")
             .requestMatchers(HttpMethod.POST, "/api/productos/**").hasRole("ADMIN")
             .requestMatchers(HttpMethod.PUT, "/api/productos/**").hasRole("ADMIN")

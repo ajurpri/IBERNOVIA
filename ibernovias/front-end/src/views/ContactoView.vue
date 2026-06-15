@@ -1,130 +1,171 @@
 <template>
-  <div class="min-h-screen bg-gradient-to-b from-luxury-cream via-white to-luxury-gray py-12 px-4">
+  <div class="min-h-screen bg-[#fdfdfc] py-16 md:py-24 px-4 sm:px-6 lg:px-8">
     <div class="max-w-6xl mx-auto">
-      <div class="text-center mb-12">
-        <div class="inline-flex items-center gap-3 px-5 py-2 rounded-full bg-white/90 shadow-sm border border-white/70 mb-6">
-          <img
-            :src="logoSrc"
-            :srcset="logoSrcSet"
-            sizes="(max-width: 640px) 100px, 120px"
-            alt="IBERNOVIA"
-            class="h-8 w-auto"
-            loading="lazy"
-            decoding="async"
-            width="120"
-            height="48"
-          />
-          <span class="text-xs uppercase tracking-[0.3em] text-gray-500">Atención personalizada</span>
-        </div>
-        <h1 class="ib-title font-serif text-4xl md:text-5xl font-bold text-luxury-black mb-3">Contacto</h1>
-        <p class="text-gray-600">Soporte general y atención comercial. Si eres empresa, también puedes solicitar el alta profesional.</p>
+      
+      <!-- Elegant Header Section -->
+      <div class="text-center mb-16 md:mb-20 animate-fade-in-up">
+        <span class="text-[10px] uppercase tracking-[0.4em] text-luxury-gold font-bold block mb-4">ATELIER IBERNOVIA</span>
+        <h1 class="font-serif text-5xl md:text-6xl font-light text-luxury-black tracking-wide mb-6">Contacto</h1>
+        <p class="text-sm text-gray-500 max-w-xl mx-auto leading-relaxed text-balance">
+          Soporte general, consultas sobre colecciones y alta profesional para boutiques y tiendas del sector.
+        </p>
       </div>
 
-      <div class="grid grid-cols-1 lg:grid-cols-2 gap-10 mb-12">
-        <div class="bg-white/90 rounded-2xl p-8 ib-surface">
-          <div class="flex items-center justify-between gap-3 mb-6">
-            <h2 class="font-serif text-2xl font-bold text-luxury-black">Información de Contacto</h2>
-            <span class="text-xs px-3 py-1 rounded-full bg-luxury-gold/10 text-luxury-gold uppercase tracking-widest">Google</span>
-          </div>
-          <div class="space-y-6">
-            <div class="flex items-start gap-3">
-              <div class="w-10 h-10 rounded-full bg-luxury-gold/10 text-luxury-gold flex items-center justify-center">📍</div>
+      <!-- Two Column Layout (No boxes, clean typography) -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-24 items-start animate-fade-in-up delay-150">
+        
+        <!-- Left Column: Offices & Atelier Info -->
+        <div class="lg:col-span-5 space-y-10">
+          <h2 class="font-serif text-2xl font-light text-luxury-black tracking-wide border-b border-black/5 pb-4">Nuestras Oficinas</h2>
+          
+          <div class="space-y-8">
+            <!-- Dirección -->
+            <div class="flex gap-4">
+              <span class="w-5 h-5 shrink-0 text-luxury-gold mt-1">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.2" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"/>
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z"/>
+                </svg>
+              </span>
               <div>
-                <p class="font-bold text-luxury-black">Horario</p>
-                <p class="text-gray-700">Plaza de Abastos</p>
-                <p class="text-gray-600 mt-2">Dirección</p>
-                <p class="text-gray-700">C. Ollerías, 48, 23740 Andújar, Jaén</p>
-                <p class="text-gray-500 text-sm mt-1">Provincia: Jaén</p>
+                <h3 class="text-[10px] uppercase tracking-[0.2em] text-gray-400 font-bold mb-2">Dirección</h3>
+                <p class="text-luxury-black font-serif text-lg leading-relaxed">
+                  Plaza de Abastos<br>
+                  C. Ollerías, 48, 23740 Andújar, Jaén
+                </p>
               </div>
             </div>
-            <div class="flex items-start gap-3">
-              <div class="w-10 h-10 rounded-full bg-luxury-gold/10 text-luxury-gold flex items-center justify-center">☎</div>
+
+            <!-- Teléfono -->
+            <div class="flex gap-4">
+              <span class="w-5 h-5 shrink-0 text-luxury-gold mt-1">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.2" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 6.75c0 8.284 6.716 15 15 15h2.25a2.25 2.25 0 0 0 2.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106c-.44-.11-.902.055-1.173.417l-.97 1.293c-2.824-1.554-5.122-3.852-6.676-6.676l1.293-.97c.363-.271.527-.734.417-1.173L6.963 3.102a1.125 1.125 0 0 0-1.091-.852H4.5A2.25 2.25 0 0 0 2.25 4.5v2.25Z"/>
+                </svg>
+              </span>
               <div>
-                <p class="font-bold text-luxury-black">Teléfono</p>
-                <p class="text-gray-700">953 51 50 70</p>
+                <h3 class="text-[10px] uppercase tracking-[0.2em] text-gray-400 font-bold mb-1">Teléfono</h3>
+                <p class="text-luxury-black font-serif text-lg">953 51 50 70</p>
               </div>
             </div>
-            <div class="flex items-start gap-3">
-              <div class="w-10 h-10 rounded-full bg-luxury-gold/10 text-luxury-gold flex items-center justify-center">✉</div>
+
+            <!-- Correo -->
+            <div class="flex gap-4">
+              <span class="w-5 h-5 shrink-0 text-luxury-gold mt-1">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.2" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 0 1-2.25 2.25h-15a2.25 2.25 0 0 1-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25m19.5 0v.243a2.25 2.25 0 0 1-1.07 1.916l-7.5 4.615a2.25 2.25 0 0 1-2.36 0L3.32 8.91a2.25 2.25 0 0 1-1.07-1.916V6.75"/>
+                </svg>
+              </span>
               <div>
-                <p class="font-bold text-luxury-black">Correo Electrónico</p>
-                <p class="text-gray-700">info@ibernovia.es</p>
+                <h3 class="text-[10px] uppercase tracking-[0.2em] text-gray-400 font-bold mb-1">Contacto Digital</h3>
+                <p class="text-luxury-black font-serif text-lg hover:text-luxury-gold transition-colors">
+                  <a href="mailto:info@ibernovia.es">info@ibernovia.es</a>
+                </p>
               </div>
             </div>
-            <div class="flex items-start gap-3">
-              <div class="w-10 h-10 rounded-full bg-luxury-gold/10 text-luxury-gold flex items-center justify-center">⏰</div>
+
+            <!-- Horario -->
+            <div class="flex gap-4">
+              <span class="w-5 h-5 shrink-0 text-luxury-gold mt-1">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.2" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/>
+                </svg>
+              </span>
               <div>
-                <p class="font-bold text-luxury-black">Horario</p>
-                <p class="text-gray-700">De lunes a viernes: 9:00 - 14:00 y 17:00 - 20:00</p>
-                <p class="text-gray-700">Sábado y domingo: Cerrado</p>
+                <h3 class="text-[10px] uppercase tracking-[0.2em] text-gray-400 font-bold mb-2">Horarios de Atención</h3>
+                <p class="text-luxury-black font-serif text-base leading-relaxed">
+                  Lunes a Viernes<br>
+                  09:00 a 14:00 y 17:00 a 20:00
+                </p>
+                <p class="text-gray-400 text-xs mt-1">Sábados y Domingos cerrado</p>
               </div>
             </div>
           </div>
 
-          <div class="mt-8 rounded-xl bg-gradient-to-r from-luxury-black to-gray-800 text-white p-6">
-            <p class="text-sm uppercase tracking-widest text-white/70">Visítanos</p>
-            <p class="mt-2 text-lg font-semibold">Te esperamos en Plaza de Abastos</p>
-            <p class="text-white/70 text-sm mt-1">Atención personalizada para público general y clientes profesionales.</p>
+          <!-- Subtle Editorial Quote -->
+          <div class="pt-8 border-t border-black/5 mt-8">
+            <p class="font-serif italic text-gray-500 text-sm leading-relaxed text-balance">
+              "Diseñamos experiencias memorables para acompañarte en tu día más especial. Si deseas visitarnos de forma presencial o solicitar muestras de tejidos, te recomendamos concertar una cita previa."
+            </p>
           </div>
         </div>
 
-        <form @submit.prevent="submitForm" class="bg-white/90 rounded-2xl p-8 ib-surface">
-          <div class="mb-4">
-            <label class="block text-sm font-bold text-gray-700 mb-2">Nombre</label>
+        <!-- Right Column: Minimalist Contact Form -->
+        <form @submit.prevent="submitForm" class="lg:col-span-7 space-y-8 pt-4">
+          <h2 class="font-serif text-2xl font-light text-luxury-black tracking-wide border-b border-black/5 pb-4 mb-2">Escríbenos</h2>
+          
+          <div class="relative group">
+            <label class="block text-[10px] uppercase tracking-[0.25em] text-gray-400 font-bold mb-1 transition-colors group-focus-within:text-luxury-gold">
+              Nombre completo
+            </label>
             <input 
               v-model="form.nombre"
               type="text"
               required
               autocomplete="name"
-              class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:border-luxury-gold focus:ring-1 focus:ring-luxury-gold"
+              class="w-full pb-3 pt-1 border-b border-gray-300 bg-transparent rounded-none focus:outline-none focus:border-luxury-gold transition-colors text-sm text-luxury-black placeholder-gray-400/40"
+              placeholder="Introduce tu nombre"
             >
           </div>
 
-          <div class="mb-4">
-            <label class="block text-sm font-bold text-gray-700 mb-2">Email</label>
+          <div class="relative group">
+            <label class="block text-[10px] uppercase tracking-[0.25em] text-gray-400 font-bold mb-1 transition-colors group-focus-within:text-luxury-gold">
+              Correo electrónico
+            </label>
             <input 
               v-model="form.email"
               type="email"
               required
               autocomplete="email"
-              class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:border-luxury-gold focus:ring-1 focus:ring-luxury-gold"
+              class="w-full pb-3 pt-1 border-b border-gray-300 bg-transparent rounded-none focus:outline-none focus:border-luxury-gold transition-colors text-sm text-luxury-black placeholder-gray-400/40"
+              placeholder="Introduce tu dirección de correo"
             >
           </div>
 
-          <div class="mb-4">
-            <label class="block text-sm font-bold text-gray-700 mb-2">Asunto</label>
+          <div class="relative group">
+            <label class="block text-[10px] uppercase tracking-[0.25em] text-gray-400 font-bold mb-1 transition-colors group-focus-within:text-luxury-gold">
+              Asunto
+            </label>
             <input 
               v-model="form.asunto"
               type="text"
               required
               autocomplete="off"
-              class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:border-luxury-gold focus:ring-1 focus:ring-luxury-gold"
+              class="w-full pb-3 pt-1 border-b border-gray-300 bg-transparent rounded-none focus:outline-none focus:border-luxury-gold transition-colors text-sm text-luxury-black placeholder-gray-400/40"
+              placeholder="Motivo de tu consulta"
             >
           </div>
 
-          <div class="mb-6">
-            <label class="block text-sm font-bold text-gray-700 mb-2">Mensaje</label>
+          <div class="relative group">
+            <label class="block text-[10px] uppercase tracking-[0.25em] text-gray-400 font-bold mb-1 transition-colors group-focus-within:text-luxury-gold">
+              Mensaje
+            </label>
             <textarea 
               v-model="form.mensaje"
               required
-              rows="5"
+              rows="4"
               autocomplete="off"
-              class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:border-luxury-gold focus:ring-1 focus:ring-luxury-gold"
+              class="w-full pb-3 pt-1 border-b border-gray-300 bg-transparent rounded-none focus:outline-none focus:border-luxury-gold transition-colors text-sm text-luxury-black placeholder-gray-400/40 resize-none"
+              placeholder="Escribe aquí tu mensaje..."
             ></textarea>
           </div>
 
-          <button 
-            type="submit"
-            :disabled="enviando"
-            class="w-full bg-luxury-black text-white py-3 font-bold uppercase tracking-widest hover:bg-luxury-gold hover:text-luxury-black transition disabled:opacity-50 rounded-lg"
-          >
-            {{ enviando ? 'Enviando...' : 'Enviar Mensaje' }}
-          </button>
+          <div class="pt-4">
+            <button 
+              type="submit"
+              :disabled="enviando"
+              class="inline-flex justify-center items-center px-10 py-4 bg-luxury-black text-white hover:bg-luxury-gold hover:text-white text-[11px] font-bold uppercase tracking-[0.25em] transition-all duration-300 rounded-full shadow-md hover:shadow-lg hover:-translate-y-0.5 disabled:opacity-50"
+            >
+              {{ enviando ? 'Enviando...' : 'Enviar Mensaje' }}
+            </button>
+          </div>
 
-          <p v-if="mensaje" :class="{ 'text-luxury-gold': exito, 'text-red-600': !exito }" class="mt-4 text-center text-sm">
+          <!-- Alert Messages -->
+          <p v-if="mensaje" :class="{ 'text-luxury-gold': exito, 'text-red-600': !exito }" class="mt-4 text-sm font-medium tracking-wide">
             {{ mensaje }}
           </p>
         </form>
+        
       </div>
     </div>
   </div>
@@ -133,10 +174,6 @@
 <script setup>
 import { ref } from 'vue'
 import { apiFetch } from '../lib/api'
-
-const logoBase = import.meta.env.BASE_URL + 'logo/optimized/'
-const logoSrc = `${logoBase}logo-140.jpg`
-const logoSrcSet = `${logoBase}logo-80.jpg 80w, ${logoBase}logo-140.jpg 140w, ${logoBase}logo-280.jpg 280w`
 
 const form = ref({
   nombre: '',
@@ -167,7 +204,6 @@ const submitForm = async () => {
 
     const data = await response.json().catch(() => null)
     mensaje.value = data?.message || '¡Gracias por tu mensaje! Nos pondremos en contacto pronto.'
-    // Si el backend devuelve emailSent, úsalo para indicar si realmente se envió el correo.
     exito.value = typeof data?.emailSent === 'boolean' ? data.emailSent : true
     form.value = { nombre: '', email: '', asunto: '', mensaje: '' }
   } catch (error) {
@@ -178,3 +214,24 @@ const submitForm = async () => {
   }
 }
 </script>
+
+<style scoped>
+.animate-fade-in-up {
+  animation: fadeInUp 1.2s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.delay-150 {
+  animation-delay: 150ms;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+</style>

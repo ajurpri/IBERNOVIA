@@ -9,15 +9,17 @@ public class AdminUserResponse {
     private String apellido;
     private Boolean activo;
     private Boolean isAdmin;
+    private Boolean isBusiness;
     private LocalDateTime createdAt;
 
-    public AdminUserResponse(Long id, String email, String nombre, String apellido, Boolean activo, Boolean isAdmin, LocalDateTime createdAt) {
+    public AdminUserResponse(Long id, String email, String nombre, String apellido, Boolean activo, Boolean isAdmin, Boolean isBusiness, LocalDateTime createdAt) {
         this.id = id;
         this.email = email;
         this.nombre = nombre;
         this.apellido = apellido;
         this.activo = activo;
         this.isAdmin = isAdmin;
+        this.isBusiness = isBusiness;
         this.createdAt = createdAt;
     }
 
@@ -43,6 +45,10 @@ public class AdminUserResponse {
 
     public Boolean getIsAdmin() {
         return isAdmin;
+    }
+
+    public Boolean getIsBusiness() {
+        return isBusiness;
     }
 
     public LocalDateTime getCreatedAt() {

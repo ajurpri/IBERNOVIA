@@ -78,21 +78,23 @@ const closeModal = () => {
   error.value = ''
 }
 
-const handleSubmit = () => {
+const handleSubmit = async () => {
   error.value = ''
   loading.value = true
 
-  setTimeout(() => {
-    const success = authStore.activateBusinessAccess(businessCode.value.toUpperCase())
-    loading.value = false
-
+  try {
+    const success = await authStore.activateBusinessAccess(businessCode.value.trim())
     if (success) {
       showModal.value = false
       businessCode.value = ''
     } else {
       error.value = 'Código inválido o expirado. Intenta nuevamente.'
     }
-  }, 500)
+  } catch (err) {
+    error.value = 'Error de conexión con el servidor. Intenta de nuevo.'
+  } finally {
+    loading.value = false
+  }
 }
 
 // Exponer funciones públicas

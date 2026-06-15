@@ -4,14 +4,9 @@
     <div class="max-w-7xl mx-auto px-6 py-14 lg:py-16 relative z-10">
       <div class="grid grid-cols-1 lg:grid-cols-[1.15fr_0.85fr_0.9fr] gap-10 lg:gap-14 items-start">
         <section>
-          <div class="inline-flex items-center gap-4 mb-6">
-            <div class="logo-frame">
-              <img :src="logoSrc" alt="IBERNOVIA" class="logo-image" />
-            </div>
-            <div>
-              <p class="brand-kicker">IBERNOVIA</p>
-              <p class="brand-subtitle">Wedding Fashion</p>
-            </div>
+          <div class="mb-6">
+            <span class="brand-title">IBERNOVIA</span>
+            <span class="brand-subtitle">ATELIER</span>
           </div>
 
           <p class="footer-copy max-w-xl">
@@ -72,8 +67,6 @@
 </template>
 
 <script setup>
-const logoBase = import.meta.env.BASE_URL + 'logo/optimized/'
-const logoSrc = `${logoBase}logo-280.jpg`
 </script>
 
 <style scoped>
@@ -81,9 +74,9 @@ const logoSrc = `${logoBase}logo-280.jpg`
   position: relative;
   overflow: hidden;
   background:
-    radial-gradient(circle at top left, rgb(196 160 106 / 0.14), transparent 30%),
-    radial-gradient(circle at top right, rgb(255 255 255 / 0.06), transparent 22%),
-    #050505;
+    radial-gradient(circle at top left, rgb(196 160 106 / 0.12), transparent 35%),
+    radial-gradient(circle at top right, rgb(255 255 255 / 0.05), transparent 25%),
+    #171513;
   color: #f5f2ec;
 }
 
@@ -91,36 +84,28 @@ const logoSrc = `${logoBase}logo-280.jpg`
   position: absolute;
   inset: 0;
   pointer-events: none;
-  background: linear-gradient(180deg, rgb(255 255 255 / 0.03), transparent 18%, transparent 82%, rgb(196 160 106 / 0.06));
+  background: linear-gradient(180deg, rgb(255 255 255 / 0.02), transparent 20%, transparent 80%, rgb(168 117 71 / 0.04));
 }
 
-.logo-frame {
-  background: #f0dfca;
-  padding: 0.65rem;
-  border-radius: 1.25rem;
-  box-shadow: 0 18px 50px rgb(0 0 0 / 0.35);
-}
-
-.logo-image {
-  display: block;
-  height: 5.25rem;
-  width: auto;
-  object-fit: contain;
-}
-
-.brand-kicker {
-  font-family: Georgia, 'Times New Roman', serif;
-  font-size: 1.5rem;
-  letter-spacing: 0.16em;
+.brand-title {
+  font-family: 'Fraunces', Georgia, serif;
+  font-size: 1.85rem;
+  font-weight: 300;
+  letter-spacing: 0.22em;
   color: #ffffff;
+  display: block;
+  line-height: 1.2;
 }
 
 .brand-subtitle {
-  margin-top: 0.2rem;
-  font-size: 0.74rem;
-  letter-spacing: 0.28em;
+  margin-top: 0.25rem;
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.38em;
   text-transform: uppercase;
-  color: rgb(255 255 255 / 0.66);
+  color: #a87547;
+  display: block;
+  line-height: 1.2;
 }
 
 .footer-copy {
@@ -133,8 +118,8 @@ const logoSrc = `${logoBase}logo-280.jpg`
   font-size: 0.78rem;
   text-transform: uppercase;
   letter-spacing: 0.24em;
-  color: rgb(255 255 255 / 0.8);
-  margin-bottom: 1rem;
+  color: rgb(255 255 255 / 0.85);
+  margin-bottom: 1.25rem;
 }
 
 .footer-links {
@@ -145,22 +130,22 @@ const logoSrc = `${logoBase}logo-280.jpg`
 
 .footer-links a {
   color: rgb(255 255 255 / 0.72);
-  transition: color 0.2s ease, transform 0.2s ease;
+  transition: color 0.25s ease, transform 0.25s ease;
 }
 
 .footer-links a:hover {
-  color: #ffffff;
-  transform: translateX(2px);
+  color: #a87547;
+  transform: translateX(3px);
 }
 
 .footer-contact {
   display: grid;
-  gap: 1rem;
+  gap: 1.1rem;
 }
 
 .footer-contact li {
   display: grid;
-  gap: 0.3rem;
+  gap: 0.35rem;
 }
 
 .contact-label {
@@ -170,38 +155,48 @@ const logoSrc = `${logoBase}logo-280.jpg`
   color: rgb(255 255 255 / 0.48);
 }
 
-.footer-contact a,
+.footer-contact a {
+  color: #ffffff;
+  font-size: 0.98rem;
+  transition: color 0.25s ease;
+}
+
+.footer-contact a:hover {
+  color: #a87547;
+}
+
 .footer-contact span:last-child {
   color: #ffffff;
   font-size: 0.98rem;
 }
 
 .social-icon {
-  width: 2.9rem;
-  height: 2.9rem;
+  width: 2.8rem;
+  height: 2.8rem;
   border-radius: 999px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   border: 1px solid rgb(255 255 255 / 0.12);
   background: rgb(255 255 255 / 0.04);
-  color: #ffffff;
-  transition: transform 0.2s ease, background 0.2s ease, border-color 0.2s ease;
+  color: rgb(255 255 255 / 0.72);
+  transition: transform 0.25s ease, background 0.25s ease, border-color 0.25s ease, color 0.25s ease;
 }
 
 .social-icon svg {
-  width: 1.15rem;
-  height: 1.15rem;
+  width: 1.1rem;
+  height: 1.1rem;
 }
 
 .social-icon:hover {
   transform: translateY(-2px);
-  background: rgb(196 160 106 / 0.16);
-  border-color: rgb(196 160 106 / 0.35);
+  background: rgb(168 117 71 / 0.12);
+  border-color: rgb(168 117 71 / 0.45);
+  color: #a87547;
 }
 
 .footer-bottom {
-  border-top: 1px solid rgb(255 255 255 / 0.1);
+  border-top: 1px solid rgb(255 255 255 / 0.08);
   color: rgb(255 255 255 / 0.45);
   font-size: 0.78rem;
   letter-spacing: 0.12em;

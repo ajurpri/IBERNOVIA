@@ -47,6 +47,9 @@ public class Usuario {
     @Column(name = "is_admin", nullable = false)
     private Boolean isAdmin = false;
 
+    @Column(name = "is_business", nullable = false)
+    private Boolean isBusiness = false;
+
     // Constructores
     public Usuario() {}
 
@@ -58,6 +61,7 @@ public class Usuario {
         this.createdAt = LocalDateTime.now();
         this.updatedAt = LocalDateTime.now();
         this.activo = true;
+        this.isBusiness = false;
     }
 
     @PrePersist
@@ -174,5 +178,13 @@ public class Usuario {
 
     public void setIsAdmin(Boolean isAdmin) {
         this.isAdmin = isAdmin;
+    }
+
+    public Boolean getIsBusiness() {
+        return isBusiness;
+    }
+
+    public void setIsBusiness(Boolean isBusiness) {
+        this.isBusiness = isBusiness;
     }
 }

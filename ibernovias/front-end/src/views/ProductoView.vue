@@ -230,6 +230,39 @@ const loadProductData = async (id) => {
     const res = await apiClient.get(`/api/productos/${id}`)
     producto.value = res.data
     
+    if (producto.value) {
+      // Inyectar SEO dinámico del producto
+      const title = `${producto.value.nombre} | IBERNOVIA`
+      const desc = producto.value.descripcion || `Detalles de ${producto.value.nombre} (${producto.value.categoria}) en IBERNOVIA.`
+      document.title = title
+
+      const updateMetaTag = (selector, attribute, value) => {
+        let el = document.querySelector(selector)
+        if (!el) {
+          el = document.createElement('meta')
+          if (selector.startsWith('meta[property=')) {
+            const prop = selector.match(/property="([^"]+)"/)[1]
+            el.setAttribute('property', prop)
+          } else if (selector.startsWith('meta[name=')) {
+            const name = selector.match(/name="([^"]+)"/)[1]
+            el.setAttribute('name', name)
+          }
+          document.head.appendChild(el)
+        }
+        el.setAttribute(attribute, value)
+      }
+
+      updateMetaTag('meta[name="description"]', 'content', desc)
+      updateMetaTag('meta[property="og:title"]', 'content', title)
+      updateMetaTag('meta[property="og:description"]', 'content', desc)
+      updateMetaTag('meta[name="twitter:title"]', 'content', title)
+      updateMetaTag('meta[name="twitter:description"]', 'content', desc)
+      if (producto.value.imagen) {
+        updateMetaTag('meta[property="og:image"]', 'content', producto.value.imagen)
+        updateMetaTag('meta[name="twitter:image"]', 'content', producto.value.imagen)
+      }
+    }
+    
     // 2. Cargar relacionados (misma familia si existe; si no, por categoría)
     if (producto.value.familia) {
       const familiaEncoded = encodeURIComponent(producto.value.familia)

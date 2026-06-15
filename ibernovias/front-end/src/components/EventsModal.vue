@@ -1,54 +1,81 @@
 <template>
   <Teleport to="body">
-    <div
-      v-if="showModal"
-      class="fixed inset-0 z-[9999] bg-black/60 p-3 sm:p-5 flex items-center justify-center"
-      @click.self="closeModal"
-    >
-      <div class="w-full max-w-2xl max-h-[88dvh] rounded-2xl border border-luxury-gold/25 bg-white shadow-2xl overflow-hidden flex flex-col">
-        <div class="px-6 py-5 border-b border-gray-100 flex items-start justify-between gap-4">
-          <div>
-            <p class="text-xs uppercase tracking-[0.28em] text-luxury-gold font-semibold">Agenda Ibernovia</p>
-            <h2 class="mt-2 font-serif text-2xl sm:text-3xl text-luxury-black">Eventos profesionales</h2>
+    <transition name="modal-fade">
+      <div
+        v-if="showModal"
+        class="fixed inset-0 z-[9999] bg-black/50 backdrop-blur-sm p-4 flex items-center justify-center"
+        @click.self="closeModal"
+      >
+        <!-- Modal Card Container -->
+        <div class="w-full max-w-2xl max-h-[85dvh] rounded-2xl border border-black/5 bg-[#fdfdfc] shadow-2xl overflow-hidden flex flex-col animate-modal-slide">
+          
+          <!-- Header -->
+          <div class="px-6 py-5 border-b border-black/5 flex items-start justify-between gap-4">
+            <div>
+              <span class="text-[9px] uppercase tracking-[0.25em] text-gray-400 font-bold block mb-1">AGENDA IBERNOVIA</span>
+              <h2 class="font-serif text-2xl font-light text-luxury-black tracking-wide">Eventos Profesionales</h2>
+            </div>
+            <button
+              type="button"
+              class="w-10 h-10 rounded-full border border-gray-100 flex items-center justify-center text-gray-400 hover:text-luxury-black hover:border-luxury-gold transition-all duration-300 focus:outline-none"
+              aria-label="Cerrar ventana de eventos"
+              @click="closeModal"
+            >
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
+              </svg>
+            </button>
           </div>
-          <button
-            type="button"
-            class="shrink-0 w-10 h-10 rounded-full border border-gray-200 text-gray-500 hover:text-luxury-black hover:border-luxury-gold transition"
-            aria-label="Cerrar ventana de eventos"
-            @click="closeModal"
-          >
-            ✕
-          </button>
-        </div>
 
-        <div class="px-6 py-5 overflow-y-auto space-y-3">
-          <div v-if="loading" class="py-10 text-center text-gray-500">Cargando eventos...</div>
-          <div v-else-if="events.length === 0" class="py-10 text-center text-gray-500">No hay eventos próximos</div>
-          <article
-            v-for="eventItem in events"
-            v-else
-            :key="eventItem.id"
-            class="rounded-xl border border-gray-200 bg-white px-4 py-4"
-          >
-            <p class="text-[11px] uppercase tracking-[0.2em] text-luxury-gold font-semibold">{{ formatEventDate(eventItem.fecha) }}</p>
-            <h4 class="mt-2 text-base font-semibold text-luxury-black">{{ eventItem.titulo }}</h4>
-            <p class="mt-1 text-sm text-gray-600">{{ eventItem.descripcion }}</p>
-            <p class="mt-2 text-xs uppercase tracking-[0.12em] text-gray-500">{{ eventItem.lugar }}</p>
-          </article>
-        </div>
+          <!-- Body / List (Borderless editorial list) -->
+          <div class="px-8 py-4 overflow-y-auto flex-1 divide-y divide-black/5">
+            <div v-if="loading" class="py-12 text-center text-sm text-gray-400 font-light font-serif italic">
+              Cargando agenda de eventos...
+            </div>
+            
+            <div v-else-if="events.length === 0" class="py-12 text-center text-sm text-gray-400 font-light font-serif italic">
+              No hay eventos próximos programados en este momento.
+            </div>
+            
+            <article
+              v-else
+              v-for="eventItem in events"
+              :key="eventItem.id"
+              class="py-6 first:pt-2 last:pb-2"
+            >
+              <p class="text-[9px] uppercase tracking-[0.25em] text-luxury-gold font-bold mb-1.5">
+                {{ formatEventDate(eventItem.fecha) }}
+              </p>
+              <h4 class="font-serif text-xl text-luxury-black font-light leading-snug mb-2">
+                {{ eventItem.titulo }}
+              </h4>
+              <p class="text-xs text-gray-500 leading-relaxed text-balance mb-3">
+                {{ eventItem.descripcion }}
+              </p>
+              <div class="flex items-center gap-2 text-[9px] uppercase tracking-widest text-gray-400 font-bold">
+                <span class="w-1.5 h-1.5 rounded-full bg-luxury-gold"></span>
+                <span>{{ eventItem.lugar }}</span>
+              </div>
+            </article>
+          </div>
 
-        <div class="px-6 py-5 border-t border-gray-100 bg-gray-50 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-          <p class="text-sm text-gray-600">¿Quieres asistir? Solicita acceso y te informamos de próximas convocatorias.</p>
-          <router-link
-            to="/acceso-empresarial"
-            class="inline-flex items-center px-5 py-2.5 rounded-full bg-luxury-black text-white text-xs font-semibold uppercase tracking-[0.2em] hover:bg-luxury-gold hover:text-luxury-black transition"
-            @click="closeModal"
-          >
-            Solicitar acceso
-          </router-link>
+          <!-- Footer -->
+          <div class="px-6 py-5 border-t border-black/5 bg-transparent flex flex-col sm:flex-row items-center justify-between gap-4">
+            <p class="text-xs text-gray-400 text-center sm:text-left max-w-sm leading-relaxed text-balance">
+              ¿Deseas asistir a alguno de nuestros desfiles o presentaciones? Solicita tu acreditación profesional.
+            </p>
+            <router-link
+              to="/acceso-empresarial"
+              class="inline-flex justify-center items-center px-6 py-3 bg-luxury-black text-white hover:bg-luxury-gold hover:text-white text-[10px] font-bold uppercase tracking-[0.2em] transition-all duration-300 rounded-full shadow-md hover:shadow-lg hover:-translate-y-0.5"
+              @click="closeModal"
+            >
+              Solicitar acceso
+            </router-link>
+          </div>
+          
         </div>
       </div>
-    </div>
+    </transition>
   </Teleport>
 </template>
 
@@ -102,3 +129,27 @@ onMounted(() => {
 
 defineExpose({ openModal, closeModal })
 </script>
+
+<style scoped>
+/* Modal transition */
+.modal-fade-enter-active,
+.modal-fade-leave-active {
+  transition: opacity 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.modal-fade-enter-from,
+.modal-fade-leave-to {
+  opacity: 0;
+}
+
+.modal-fade-enter-active .animate-modal-slide,
+.modal-fade-leave-active .animate-modal-slide {
+  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.modal-fade-enter-from .animate-modal-slide,
+.modal-fade-leave-to .animate-modal-slide {
+  transform: translateY(16px) scale(0.97);
+  opacity: 0;
+}
+</style>

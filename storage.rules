@@ -1,0 +1,20 @@
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+    // Regla por defecto: Denegar acceso
+    match /{allPaths=**} {
+      allow read, write: if false;
+    }
+
+    // Imágenes públicas de catálogo: Cualquiera puede leerlas, solo los administradores pueden subirlas/modificarlas
+    match /productos/{imageId} {
+      allow read: if true;
+      allow write: if request.auth != null && request.auth.token.email.matches('.*admin.*');
+    }
+
+    // Archivos de usuario/documentos de empresa: Solo el propio usuario y los admins pueden acceder
+    match /users/{userId}/{allPaths=**} {
+      allow read, write: if request.auth != null && (request.auth.uid == userId || request.auth.token.email.matches('.*admin.*'));
+    }
+  }
+}
