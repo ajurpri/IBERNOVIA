@@ -52,3 +52,11 @@ export const apiFetch = (path, options = {}) => {
     headers
   })
 }
+
+export const getImageUrl = (img) => {
+  if (!img) return '/logo.jpg'
+  if (img.startsWith('http://') || img.startsWith('https://') || img.startsWith('data:')) {
+    return img
+  }
+  return `${API_BASE_URL}${img.startsWith('/') ? img : '/' + img}`
+}

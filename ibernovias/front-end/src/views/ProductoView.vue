@@ -28,7 +28,7 @@
           <!-- Imagen Principal -->
           <div class="bg-gray-50 aspect-[3/4] overflow-hidden">
               <img
-                :src="producto.imagen"
+                :src="getImageUrl(producto.imagen)"
                 :alt="producto.nombre"
                 @error="imagenError = true"
                 loading="lazy"
@@ -177,7 +177,7 @@
             <router-link :to="`/producto/${rel.id}`" class="block">
               <div class="aspect-[3/4] bg-gray-100 mb-3 overflow-hidden">
                 <img
-                  :src="rel.imagen"
+                  :src="getImageUrl(rel.imagen)"
                   :alt="rel.nombre"
                   class="w-full h-full object-cover group-hover:scale-105 transition duration-500"
                   loading="lazy"
@@ -200,7 +200,7 @@
 <script setup>
 import { ref, onMounted, watch, computed } from 'vue'
 import { useRoute } from 'vue-router'
-import { apiClient } from '../lib/api'
+import { apiClient, getImageUrl } from '../lib/api'
 import { useCartStore } from '../stores/cart'
 import { useAuthStore } from '../stores/auth'
 

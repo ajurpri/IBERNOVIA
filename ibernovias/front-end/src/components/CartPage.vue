@@ -54,7 +54,7 @@
               <!-- Imagen -->
               <router-link :to="`/producto/${item.id}`" class="flex-shrink-0">
                 <img 
-                  :src="item.imagen || 'https://placehold.co/100x100'" 
+                  :src="getImageUrl(item.imagen) || 'https://placehold.co/100x100'" 
                   :alt="item.nombre"
                   class="w-24 h-24 object-cover rounded hover:scale-105 transition"
                   loading="lazy"
@@ -133,6 +133,7 @@
 <script setup>
 import { inject } from 'vue'
 import { useCartStore } from '../stores/cart'
+import { getImageUrl } from '../lib/api'
 
 const cartStore = useCartStore()
 const toast = inject('toast')

@@ -106,7 +106,7 @@
                 <div class="w-20 h-24 bg-gray-100 rounded overflow-hidden flex-shrink-0">
                   <img
                     v-if="producto.imagen"
-                    :src="producto.imagen"
+                    :src="getImageUrl(producto.imagen)"
                     :alt="producto.nombre"
                     class="w-full h-full object-cover"
                     loading="lazy"
@@ -172,16 +172,28 @@
             </div>
 
             <div>
-              <label class="text-xs uppercase tracking-widest text-gray-500 block mb-1">Imagen</label>
-              <input 
-                type="file" 
-                ref="fileInput"
-                @change="handleImageUpload" 
-                accept="image/*" 
-                class="admin-input w-full text-sm"
-              >
-              <div v-if="form.imagen" class="mt-2 text-xs text-gray-600">
-                ✓ Imagen seleccionada: {{ form.imagenNombre }}
+              <label class="text-xs uppercase tracking-widest text-gray-500 block mb-1">Imagen (Subir archivo o pegar URL)</label>
+              <div class="space-y-2">
+                <input 
+                  type="file" 
+                  ref="fileInput"
+                  @change="handleImageUpload" 
+                  accept="image/*" 
+                  class="admin-input w-full text-sm"
+                >
+                <div class="text-center text-xs text-gray-400">— O —</div>
+                <input 
+                  v-model="form.imagen"
+                  type="text" 
+                  placeholder="Pegar URL de la imagen (ej: https://ibernovia.es/images/...)" 
+                  class="admin-input w-full"
+                >
+              </div>
+              <div v-if="form.imagen && form.imagen.startsWith('data:')" class="mt-2 text-xs text-gray-600">
+                ✓ Imagen cargada localmente: {{ form.imagenNombre }}
+              </div>
+              <div v-else-if="form.imagen" class="mt-2 text-xs text-gray-600 truncate">
+                ✓ Ruta/URL de imagen activa: {{ form.imagen }}
               </div>
             </div>
 
@@ -712,7 +724,7 @@
 
 <script setup>
 import { ref, computed, onMounted, inject } from 'vue'
-import { apiClient } from '../lib/api'
+import { apiClient, getImageUrl } from '../lib/api'
 import { useAuthStore } from '../stores/auth'
 
 const authStore = useAuthStore()

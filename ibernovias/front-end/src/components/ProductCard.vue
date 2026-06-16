@@ -7,7 +7,7 @@
       class="block overflow-hidden rounded-xl border border-black/5 bg-[#faf9f7] shadow-sm relative group-hover:shadow-md transition-shadow duration-500"
     >
       <img
-        :src="producto.imagen"
+        :src="getImageUrl(producto.imagen)"
         :alt="producto.nombre"
         @error="imageError = true"
         loading="lazy"
@@ -65,6 +65,7 @@
 import { ref, inject } from 'vue'
 import { useCartStore } from '../stores/cart'
 import { useAuthStore } from '../stores/auth'
+import { getImageUrl } from '../lib/api'
 
 const props = defineProps({
   producto: {

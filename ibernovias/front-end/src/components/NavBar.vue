@@ -268,7 +268,7 @@ import { computed, nextTick, onBeforeUnmount, onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useCartStore } from '../stores/cart'
 import { useAuthStore } from '../stores/auth'
-import { apiFetch } from '../lib/api'
+import { apiFetch, getImageUrl } from '../lib/api'
 import BusinessAccessModal from './BusinessAccessModal.vue'
 import EventsModal from './EventsModal.vue'
 
@@ -374,7 +374,7 @@ const mobileCategories = computed(() => {
 })
 
 const getProductImage = (product) => {
-  if (product && product.imagen) return product.imagen
+  if (product && product.imagen) return getImageUrl(product.imagen)
   return 'https://placehold.co/400x400/e5e5e5/3a3a3a?text=Ibernovia'
 }
 

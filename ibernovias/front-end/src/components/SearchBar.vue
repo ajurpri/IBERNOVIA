@@ -25,7 +25,7 @@
           @click="query = ''"
           class="text-center hover:bg-gray-50 p-2 rounded transition"
         >
-          <img :src="prod.imagen || 'https://placehold.co/100x100'" :alt="prod.nombre" class="w-full aspect-square object-cover rounded mb-2" loading="lazy" decoding="async">
+          <img :src="getImageUrl(prod.imagen) || 'https://placehold.co/100x100'" :alt="prod.nombre" class="w-full aspect-square object-cover rounded mb-2" loading="lazy" decoding="async">
           <p class="text-xs font-semibold truncate">{{ prod.nombre }}</p>
           <p class="text-xs text-luxury-gold">{{ prod.precio }}€</p>
         </router-link>
@@ -36,7 +36,7 @@
 
 <script setup>
 import { ref } from 'vue'
-import { apiClient } from '../lib/api'
+import { apiClient, getImageUrl } from '../lib/api'
 
 const query = ref('')
 const resultados = ref([])

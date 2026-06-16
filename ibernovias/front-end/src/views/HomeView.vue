@@ -140,14 +140,14 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
-import { apiClient } from '../lib/api'
+import { apiClient, getImageUrl } from '../lib/api'
 
 const router = useRouter()
 const products = ref([])
 const loading = ref(true)
 
 const getProductImage = (product) => {
-  if (product && product.imagen) return product.imagen
+  if (product && product.imagen) return getImageUrl(product.imagen)
   return 'https://placehold.co/400x400/e5e5e5/3a3a3a?text=Ibernovia'
 }
 

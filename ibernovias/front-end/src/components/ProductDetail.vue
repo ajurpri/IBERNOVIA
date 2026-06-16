@@ -28,7 +28,7 @@
       <div class="bg-gray-100 aspect-square rounded-lg overflow-hidden flex items-center justify-center sticky top-20">
         <img 
           v-if="producto.imagen" 
-          :src="producto.imagen" 
+          :src="getImageUrl(producto.imagen)" 
           :alt="producto.nombre"
           class="w-full h-full object-cover hover:scale-105 transition duration-500"
           loading="lazy"
@@ -128,7 +128,7 @@ import { ref, computed, onMounted, inject } from 'vue'
 import { useRoute } from 'vue-router'
 import { useCartStore } from '../stores/cart'
 import { useAuthStore } from '../stores/auth'
-import { apiClient } from '../lib/api'
+import { apiClient, getImageUrl } from '../lib/api'
 
 const route = useRoute()
 const cartStore = useCartStore()
