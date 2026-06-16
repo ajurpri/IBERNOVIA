@@ -49,7 +49,7 @@
           {{ producto.nombre }}
         </h1>
 
-        <p v-if="authStore.canSeePrices" class="text-3xl text-luxury-gold font-bold mb-8">
+        <p v-if="authStore.canSeePrices && producto.precio !== null && producto.precio !== undefined" class="text-3xl text-luxury-gold font-bold mb-8">
           {{ producto.precio }}€
         </p>
         <div v-else class="mb-8 rounded-lg border border-luxury-gold/30 bg-luxury-gray/60 px-4 py-3">
@@ -82,7 +82,7 @@
           </div>
         </div>
 
-        <div v-if="authStore.canRequestQuote" class="flex gap-4">
+        <div v-if="authStore.canRequestQuote && producto.precio !== null && producto.precio !== undefined" class="flex gap-4">
           <button 
             @click="agregarCarrito"
             :disabled="!producto.stock"

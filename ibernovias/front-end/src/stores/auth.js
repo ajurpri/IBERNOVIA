@@ -124,6 +124,38 @@ export const useAuthStore = defineStore('auth', () => {
     }
   }
 
+  const refreshUserSession = async () => {
+    if (!token.value) return false
+    try {
+      const response = await apiClient.get('/api/auth/verify')
+      const payload = response.data
+
+      const normalizedUser = {
+        userId: payload.userId,
+        email: payload.email,
+        nombre: payload.nombre,
+        apellido: payload.apellido,
+        isAdmin: Boolean(payload.isAdmin),
+        isBusiness: Boolean(payload.isBusiness)
+      }
+
+      user.value = normalizedUser
+      isAuthenticated.value = true
+      isAdmin.value = normalizedUser.isAdmin
+
+      const savedBusinessStatus = localStorage.getItem(`business_${normalizedUser.userId}`)
+      const hasGuestBusinessAccess = localStorage.getItem('guest_business_access') === 'true'
+      isBusinessUser.value = savedBusinessStatus === 'true' || hasGuestBusinessAccess || isAdmin.value || normalizedUser.isBusiness === true
+
+      localStorage.setItem('user', JSON.stringify(normalizedUser))
+      return true
+    } catch (e) {
+      console.error('Session refresh failed:', e)
+      await logout()
+      return false
+    }
+  }
+
   return {
     user,
     token,
@@ -137,6 +169,7 @@ export const useAuthStore = defineStore('auth', () => {
     loading,
     setUser,
     verifyAdminSession,
+    refreshUserSession,
     activateBusinessAccess,
     logout
   }

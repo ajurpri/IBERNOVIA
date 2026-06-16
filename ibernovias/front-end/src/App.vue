@@ -16,7 +16,7 @@
 </template>
 
 <script setup>
-import { ref, provide } from 'vue'
+import { ref, provide, onMounted } from 'vue'
 import NavBar from './components/NavBar.vue'
 import FooterSection from './components/FooterSection.vue'
 import CookieBanner from './components/CookieBanner.vue'
@@ -34,6 +34,12 @@ const showToast = (message, type = 'info', duration = 3000) => {
 }
 
 provide('toast', { show: showToast })
+
+onMounted(async () => {
+  if (authStore.isAuthenticated) {
+    await authStore.refreshUserSession()
+  }
+})
 </script>
 
 <style>

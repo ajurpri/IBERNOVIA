@@ -74,7 +74,7 @@
             <p class="text-gray-500 text-sm mb-5 sm:mb-6 leading-relaxed">
               {{ producto.descripcion }}
             </p>
-            <div v-if="authStore.canSeePrices" class="flex items-baseline gap-3">
+            <div v-if="authStore.canSeePrices && producto.precio !== null && producto.precio !== undefined" class="flex items-baseline gap-3">
               <span class="text-3xl sm:text-4xl font-bold text-luxury-gold">{{ producto.precio }}€</span>
               <span class="text-base sm:text-lg text-gray-400 line-through">{{ (producto.precio * 1.1).toFixed(2) }}€</span>
             </div>
@@ -118,7 +118,7 @@
 
           <!-- Botón Agregar al Carrito -->
           <button
-            v-if="authStore.canRequestQuote"
+            v-if="authStore.canRequestQuote && producto.precio !== null && producto.precio !== undefined"
             @click="agregarAlCarrito"
             :disabled="agregando"
             class="w-full bg-luxury-black text-white py-3.5 sm:py-4 font-bold uppercase tracking-widest text-sm sm:text-lg hover:bg-luxury-gold hover:text-luxury-black transition disabled:opacity-50 mb-3">
