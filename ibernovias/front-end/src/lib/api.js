@@ -58,5 +58,11 @@ export const getImageUrl = (img) => {
   if (img.startsWith('http://') || img.startsWith('https://') || img.startsWith('data:')) {
     return img
   }
-  return `${API_BASE_URL}${img.startsWith('/') ? img : '/' + img}`
+  const normalized = img.startsWith('/') ? img : '/' + img
+  // Solo las imágenes subidas por el admin se sirven desde el backend (Render)
+  if (normalized.startsWith('/images/productos/')) {
+    return `${API_BASE_URL}${normalized}`
+  }
+  // El catálogo estático se sirve desde el frontend (VPS)
+  return normalized
 }
