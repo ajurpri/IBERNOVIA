@@ -50,6 +50,8 @@ public class SecurityConfig {
                 "/api/admin/setup/check",
                 "/api/chat",
                 "/api/chat/",
+                "/api/health",
+                "/api/health/",
                 "/images/**"
             ).permitAll()
             // Permitir crear el primer admin con X-Setup-Key (sin requerir ROLE_ADMIN)
