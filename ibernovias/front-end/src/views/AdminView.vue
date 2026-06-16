@@ -257,11 +257,19 @@
               <div class="flex items-center gap-2 mb-1">
                 <p class="font-semibold text-luxury-black">{{ user.nombre || user.email }}</p>
                 <span v-if="user.isAdmin" class="text-xs bg-gray-100 text-gray-700 px-2 py-1 rounded font-bold">ADMIN</span>
+                <span v-if="user.isBusiness" class="text-xs bg-amber-100 text-amber-800 px-2 py-1 rounded font-bold">EMPRESA</span>
               </div>
               <p class="text-xs text-gray-500">{{ user.email }}</p>
               <p class="text-xs text-gray-400">Unido: {{ new Date(user.createdAt || Date.now()).toLocaleDateString() }}</p>
             </div>
             <div class="flex items-center gap-2">
+              <button
+                class="admin-secondary-btn px-3 py-2 text-xs uppercase tracking-widest border transition rounded"
+                :class="user.isBusiness ? 'border-amber-200 text-amber-600 hover:bg-amber-50' : 'border-gray-300 text-gray-700 hover:bg-gray-50'"
+                @click="toggleBusiness(user)"
+              >
+                {{ user.isBusiness ? 'Quitar Empresa' : 'Hacer Empresa' }}
+              </button>
               <button
                 class="admin-secondary-btn px-3 py-2 text-xs uppercase tracking-widest border transition rounded"
                 :class="user.isAdmin ? 'border-red-200 text-red-600 hover:bg-red-50' : 'border-gray-300 text-gray-700 hover:bg-gray-50'"
@@ -919,6 +927,21 @@ const toggleActive = async (user) => {
   } catch (e) {
     messageOk.value = false
     message.value = 'No se pudo actualizar el usuario.'
+  }
+}
+
+const toggleBusiness = async (user) => {
+  try {
+    const res = await apiClient.put(`/api/admin/users/${user.id}`, {
+      isBusiness: !user.isBusiness
+    })
+    users.value = users.value.map(u => (u.id === user.id ? res.data : u))
+    if (toast) {
+      const msg = res.data.isBusiness ? `✓ Acceso de empresa activado` : `✓ Acceso de empresa desactivado`
+      toast.show(msg, 'success', 2500)
+    }
+  } catch (e) {
+    if (toast) toast.show('✗ Error al actualizar acceso empresarial', 'error', 2500)
   }
 }
 

@@ -218,8 +218,8 @@ def main():
 
     plan.sort(key=lambda x: (x['family'], x['category'], x['ref']))
 
-    print(f'📦 Imágenes detectadas: {len(images)}')
-    print(f'🧾 Productos planificados: {len(plan)}')
+    print(f'INFO: Imagenes detectadas: {len(images)}')
+    print(f'INFO: Productos planificados: {len(plan)}')
 
     for (fam, cat), n in sorted(counts.items(), key=lambda t: (t[0][0], t[0][1])):
         print(f'  - {fam} / {cat}: {n}')
@@ -270,7 +270,7 @@ def main():
             else:
                 shutil.copy2(src, dest)
 
-        print(f'🖼️  Copiadas {len(plan)} imágenes a: {dest_root}')
+        print(f'INFO: Copiadas {len(plan)} imagenes a: {dest_root}')
 
     # Cambios en BD
     if args.apply:
@@ -285,7 +285,7 @@ def main():
                 json.dumps(existing, ensure_ascii=False, indent=2, default=_json_default),
                 encoding='utf-8',
             )
-            print(f'🧷 Backup guardado: {backup_path.name} (rows={len(existing)})')
+            print(f'INFO: Backup guardado: {backup_path.name} (rows={len(existing)})')
 
             with conn.cursor() as cursor:
                 cursor.execute('DELETE FROM productos')
@@ -314,7 +314,7 @@ def main():
                     )
 
             conn.commit()
-            print(f'✅ BD actualizada. Insertados: {len(plan)}')
+            print(f'SUCCESS: BD actualizada. Insertados: {len(plan)}')
 
         except Exception:
             conn.rollback()

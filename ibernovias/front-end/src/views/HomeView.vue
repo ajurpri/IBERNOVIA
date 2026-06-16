@@ -46,7 +46,7 @@
               <div class="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-black/5 z-10"></div>
               
               <img
-                src="/images/catalogo/novia/velos/17815-lentejuelas_3.webp"
+                src="/images/catalogo/novia/velos/17815-lentejuelas.webp"
                 alt="Colección Ibernovia Atelier"
                 class="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
                 loading="eager"

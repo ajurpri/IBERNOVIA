@@ -150,8 +150,12 @@
           </div>
           <div class="p-4 border rounded-lg">
             <p class="font-bold text-luxury-black">Horario</p>
-            <p class="text-gray-600">De lunes a viernes de 9 a 14 y 17 a 20</p>
+            <p class="text-gray-600 text-xs leading-relaxed">
+              Lunes a Jueves: 9:00 a 13:45 y 17:00 a 20:00<br>
+              Viernes: 9:00 a 13:45 (Tardes cerrado)
+            </p>
           </div>
+
         </div>
       </div>
       <div class="relative">

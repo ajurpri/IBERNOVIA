@@ -74,10 +74,13 @@
               <div>
                 <h3 class="text-[10px] uppercase tracking-[0.2em] text-gray-400 font-bold mb-2">Horarios de Atención</h3>
                 <p class="text-luxury-black font-serif text-base leading-relaxed">
-                  Lunes a Viernes<br>
-                  09:00 a 14:00 y 17:00 a 20:00
+                  Lunes a Jueves<br>
+                  09:00 a 13:45 y 17:00 a 20:00<br>
+                  Viernes<br>
+                  09:00 a 13:45 (Tardes cerrado)
                 </p>
                 <p class="text-gray-400 text-xs mt-1">Sábados y Domingos cerrado</p>
+
               </div>
             </div>
           </div>
