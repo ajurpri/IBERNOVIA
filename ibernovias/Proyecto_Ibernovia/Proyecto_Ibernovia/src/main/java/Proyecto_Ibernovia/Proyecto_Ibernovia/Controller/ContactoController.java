@@ -26,9 +26,7 @@ public class ContactoController {
         try {
             ContactMessageService.SaveResult result = contactMessageService.saveContactMessage(request);
 
-            String message = result.emailSent()
-                ? "Mensaje recibido y enviado por correo correctamente"
-                : "Mensaje recibido. Ahora mismo no se pudo enviar el correo (revisa configuración SMTP)";
+            String message = "Mensaje recibido correctamente. Nos pondremos en contacto pronto.";
 
             return ResponseEntity.ok(Map.of(
                 "message", message,

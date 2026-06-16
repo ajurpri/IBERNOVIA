@@ -207,7 +207,7 @@ const submitForm = async () => {
 
     const data = await response.json().catch(() => null)
     mensaje.value = data?.message || '¡Gracias por tu mensaje! Nos pondremos en contacto pronto.'
-    exito.value = typeof data?.emailSent === 'boolean' ? data.emailSent : true
+    exito.value = true
     form.value = { nombre: '', email: '', asunto: '', mensaje: '' }
   } catch (error) {
     mensaje.value = 'Error al enviar el mensaje. Intenta de nuevo.'
