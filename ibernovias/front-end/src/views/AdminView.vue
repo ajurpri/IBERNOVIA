@@ -21,7 +21,7 @@
           <button
             v-for="tab in tabs"
             :key="tab.id"
-            @click="activeTab = tab.id"
+            @click="changeTab(tab.id)"
             :class="activeTab === tab.id ? 'admin-tab-active' : 'admin-tab'"
             class="px-4 py-3 font-bold uppercase text-xs tracking-widest transition"
           >
@@ -242,6 +242,15 @@
 
       <!-- USUARIOS -->
       <div v-if="activeTab === 'users'" class="admin-card">
+        <div class="flex items-center justify-between mb-6">
+          <h2 class="admin-section-title">Listado de usuarios</h2>
+          <button
+            @click="loadUsers(true)"
+            class="admin-secondary-btn px-4 py-2 text-xs uppercase tracking-widest"
+          >
+            🔄 Actualizar
+          </button>
+        </div>
         <div class="flex flex-col md:flex-row gap-4 mb-6">
           <input
             v-model="userSearch"
@@ -895,9 +904,15 @@ const resetForm = (keepMessage = false) => {
   }
 }
 
-const loadUsers = async () => {
-  activeTab.value = 'users'
-  if (users.value.length > 0) return
+const changeTab = (tabId) => {
+  activeTab.value = tabId
+  if (tabId === 'users') {
+    loadUsers()
+  }
+}
+
+const loadUsers = async (force = false) => {
+  if (users.value.length > 0 && !force) return
   loadingUsers.value = true
   try {
     const res = await apiClient.get('/api/admin/users')
@@ -1216,6 +1231,7 @@ onMounted(() => {
   loadMessages()
   loadEventos()
   loadSolicitudes()
+  loadUsers()
 })
 
 </script>
