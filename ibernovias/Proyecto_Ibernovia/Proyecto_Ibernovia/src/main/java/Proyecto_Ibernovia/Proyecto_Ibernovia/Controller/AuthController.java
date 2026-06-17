@@ -191,6 +191,27 @@ public class AuthController {
             // Buscar o crear usuario
             Optional<Usuario> usuarioOptional = usuarioRepository.findByEmail(email);
             Usuario usuario;
+            
+            // Determinar si es admin predefinido
+            boolean isAdminEmail = false;
+            String adminEmailsEnv = System.getenv("VITE_ADMIN_EMAILS");
+            if (adminEmailsEnv == null) {
+                adminEmailsEnv = System.getenv("ADMIN_EMAILS");
+            }
+            if (adminEmailsEnv != null && !adminEmailsEnv.isBlank()) {
+                for (String adminEmail : adminEmailsEnv.split(",")) {
+                    if (adminEmail.trim().equalsIgnoreCase(email.trim())) {
+                        isAdminEmail = true;
+                        break;
+                    }
+                }
+            }
+            if (!isAdminEmail) {
+                isAdminEmail = "admin@ibernovia.com".equalsIgnoreCase(email)
+                        || "dam@ibernovia.com".equalsIgnoreCase(email)
+                        || "comercial@ibernovia.com".equalsIgnoreCase(email);
+            }
+
             if (usuarioOptional.isEmpty()) {
                 // Registro automático
                 String name = claims.get("name", String.class);
@@ -214,11 +235,20 @@ public class AuthController {
                         passwordEncoder.encode(randomPassword)
                 );
                 
+                if (isAdminEmail) {
+                    usuario.setIsAdmin(true);
+                }
+                
                 usuario = usuarioRepository.save(usuario);
             } else {
                 usuario = usuarioOptional.get();
                 if (!usuario.getActivo()) {
                     return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Usuario inactivo");
+                }
+                
+                if (isAdminEmail && !Boolean.TRUE.equals(usuario.getIsAdmin())) {
+                    usuario.setIsAdmin(true);
+                    usuario = usuarioRepository.save(usuario);
                 }
             }
 
