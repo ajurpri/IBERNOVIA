@@ -62,7 +62,7 @@
               height="1380"
             />
             <div class="mt-5 flex items-center justify-between gap-4 text-xs uppercase tracking-[0.25em] text-gray-500">
-              <span>Plaza de Abastos</span>
+              <span>Calle Forjadores, 1</span>
               <span class="text-luxury-gold">Desde 2015</span>
             </div>
             <div class="absolute -left-6 top-8 hidden sm:block">
@@ -146,13 +146,12 @@
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
           <div class="p-4 border rounded-lg">
             <p class="font-bold text-luxury-black">Ubicación</p>
-            <p class="text-gray-600">C. Ollerías, 48, 23740 Andújar, Jaén</p>
+            <p class="text-gray-600">Calle Forjadores, 1, 23740 Andújar, Jaén</p>
           </div>
           <div class="p-4 border rounded-lg">
             <p class="font-bold text-luxury-black">Horario</p>
             <p class="text-gray-600 text-xs leading-relaxed">
-              Lunes a Jueves: 9:00 a 13:45 y 17:00 a 20:00<br>
-              Viernes: 9:00 a 13:45 (Tardes cerrado)
+              Lunes a Viernes: 9:00 - 20:00
             </p>
           </div>
 

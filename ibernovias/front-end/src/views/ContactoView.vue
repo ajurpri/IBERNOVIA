@@ -30,8 +30,8 @@
               <div>
                 <h3 class="text-[10px] uppercase tracking-[0.2em] text-gray-400 font-bold mb-2">Dirección</h3>
                 <p class="text-luxury-black font-serif text-lg leading-relaxed">
-                  Plaza de Abastos<br>
-                  C. Ollerías, 48, 23740 Andújar, Jaén
+                  Calle Forjadores, 1<br>
+                  23740 Andújar, Jaén
                 </p>
               </div>
             </div>
@@ -74,10 +74,8 @@
               <div>
                 <h3 class="text-[10px] uppercase tracking-[0.2em] text-gray-400 font-bold mb-2">Horarios de Atención</h3>
                 <p class="text-luxury-black font-serif text-base leading-relaxed">
-                  Lunes a Jueves<br>
-                  09:00 a 13:45 y 17:00 a 20:00<br>
-                  Viernes<br>
-                  09:00 a 13:45 (Tardes cerrado)
+                  Lunes a Viernes<br>
+                  09:00 a 20:00
                 </p>
                 <p class="text-gray-400 text-xs mt-1">Sábados y Domingos cerrado</p>
 

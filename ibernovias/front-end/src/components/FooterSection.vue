@@ -53,7 +53,7 @@
             </li>
             <li>
               <span class="contact-label">Dirección</span>
-              <span>Plaza de Abastos · Andújar · Jaén</span>
+              <span>Calle Forjadores, 1 · Andújar · Jaén</span>
             </li>
           </ul>
         </section>

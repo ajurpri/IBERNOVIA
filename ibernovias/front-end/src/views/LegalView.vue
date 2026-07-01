@@ -6,7 +6,7 @@
 
       <div class="space-y-6 text-sm text-gray-700 leading-relaxed">
         <p><strong>Titular</strong>: IBERNOVIA</p>
-        <p><strong>Dirección</strong>: C. Ollerías, 48, 23740 Andújar, Jaén</p>
+        <p><strong>Dirección</strong>: Calle Forjadores, 1, 23740 Andújar, Jaén</p>
         <p><strong>Contacto</strong>: info@ibernovia.es · 953 51 50 70</p>
         <p>El acceso y uso del sitio web atribuye la condición de usuario y supone la aceptación de las condiciones aquí descritas.</p>
       </div>
