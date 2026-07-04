@@ -8,17 +8,19 @@ import io.jsonwebtoken.Jwts;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import java.math.BigInteger;
+import java.io.ByteArrayInputStream;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-import java.security.KeyFactory;
+import java.nio.charset.StandardCharsets;
 import java.security.PublicKey;
-import java.security.spec.RSAPublicKeySpec;
+import java.security.cert.CertificateFactory;
+import java.security.cert.X509Certificate;
 import java.time.Duration;
 import java.util.Base64;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 @Component
@@ -30,7 +32,8 @@ public class FirebaseTokenVerifier {
         }
     }
 
-    private static final String GOOGLE_JWK_URL = "https://www.googleapis.com/service_accounts/v1/jwk/securetoken@system.gserviceaccount.com";
+    private static final String GOOGLE_X509_URL =
+            "https://www.googleapis.com/robot/v1/metadata/x509/securetoken@system.gserviceaccount.com";
 
     private final Map<String, PublicKey> keyCache = new HashMap<>();
     private long cacheExpiryTime = 0;
@@ -51,8 +54,9 @@ public class FirebaseTokenVerifier {
                     .build();
 
             HttpRequest request = HttpRequest.newBuilder()
-                    .uri(URI.create(GOOGLE_JWK_URL))
+                    .uri(URI.create(GOOGLE_X509_URL))
                     .timeout(Duration.ofSeconds(10))
+                    .header("Accept", "application/json")
                     .GET()
                     .build();
 
@@ -63,28 +67,24 @@ public class FirebaseTokenVerifier {
 
             ObjectMapper mapper = new ObjectMapper();
             JsonNode root = mapper.readTree(response.body());
-            JsonNode keysNode = root.get("keys");
-            if (keysNode == null || !keysNode.isArray() || keysNode.isEmpty()) {
-                return "Google no devolvio claves publicas validas para verificar Firebase";
+            if (root == null || !root.fields().hasNext()) {
+                return "Google no devolvio certificados publicos validos para verificar Firebase";
             }
 
+            CertificateFactory certificateFactory = CertificateFactory.getInstance("X.509");
             keyCache.clear();
-            for (JsonNode keyNode : keysNode) {
-                String kid = keyNode.get("kid").asText();
-                String nStr = keyNode.get("n").asText();
-                String eStr = keyNode.get("e").asText();
 
-                byte[] nBytes = Base64.getUrlDecoder().decode(nStr);
-                byte[] eBytes = Base64.getUrlDecoder().decode(eStr);
+            Iterator<Map.Entry<String, JsonNode>> fields = root.fields();
+            while (fields.hasNext()) {
+                Map.Entry<String, JsonNode> entry = fields.next();
+                String kid = entry.getKey();
+                String certificatePem = entry.getValue().asText();
 
-                BigInteger modulus = new BigInteger(1, nBytes);
-                BigInteger exponent = new BigInteger(1, eBytes);
+                X509Certificate certificate = (X509Certificate) certificateFactory.generateCertificate(
+                        new ByteArrayInputStream(certificatePem.getBytes(StandardCharsets.UTF_8))
+                );
 
-                RSAPublicKeySpec spec = new RSAPublicKeySpec(modulus, exponent);
-                KeyFactory factory = KeyFactory.getInstance("RSA");
-                PublicKey publicKey = factory.generatePublic(spec);
-
-                keyCache.put(kid, publicKey);
+                keyCache.put(kid, certificate.getPublicKey());
             }
 
             cacheExpiryTime = System.currentTimeMillis() + 3600000;
@@ -111,7 +111,7 @@ public class FirebaseTokenVerifier {
                 return new VerificationResult(null, "El token de Firebase no tiene un formato JWT valido");
             }
 
-            String headerJson = new String(Base64.getUrlDecoder().decode(parts[0]));
+            String headerJson = new String(Base64.getUrlDecoder().decode(parts[0]), StandardCharsets.UTF_8);
             ObjectMapper mapper = new ObjectMapper();
             JsonNode header = mapper.readTree(headerJson);
             String kid = header.has("kid") ? header.get("kid").asText() : null;
