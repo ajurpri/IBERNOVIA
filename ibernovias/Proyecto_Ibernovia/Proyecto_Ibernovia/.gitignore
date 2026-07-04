@@ -33,5 +33,6 @@ build/
 .vscode/
 ### Firebase ###
 firebase-adminsdk.json
+!src/main/resources/firebase-adminsdk.json
 .env
 .env.local

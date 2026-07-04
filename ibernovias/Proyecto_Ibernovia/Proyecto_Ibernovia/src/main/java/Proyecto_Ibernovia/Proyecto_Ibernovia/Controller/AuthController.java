@@ -184,8 +184,7 @@ public class AuthController {
                         .body("No se pudo validar el token de Firebase. " + verificationResult.errorMessage());
             }
 
-            io.jsonwebtoken.Claims claims = verificationResult.claims();
-            String email = claims.get("email", String.class);
+            String email = verificationResult.email();
             if (email == null || email.isBlank()) {
                 return ResponseEntity.badRequest().body("El token no contiene un email válido");
             }
@@ -216,7 +215,7 @@ public class AuthController {
 
             if (usuarioOptional.isEmpty()) {
                 // Registro automático
-                String name = claims.get("name", String.class);
+                String name = verificationResult.name();
                 if (name == null || name.isBlank()) {
                     name = email.split("@")[0];
                 }
