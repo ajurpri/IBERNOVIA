@@ -1,42 +1,36 @@
 <template>
   <div class="min-h-screen bg-[#fdfdfc] flex items-center justify-center py-20 px-4 sm:px-6 lg:px-8">
     <div class="w-full max-w-md space-y-10 animate-fade-in-up">
-      
-      <!-- Brand Header -->
       <div class="text-center space-y-3">
         <span class="text-[10px] uppercase tracking-[0.4em] text-luxury-gold font-bold block">ATELIER IBERNOVIA</span>
         <h1 class="font-serif text-4xl md:text-5xl font-light text-luxury-black tracking-wide">Mi Cuenta</h1>
         <p class="text-xs text-gray-400 uppercase tracking-widest">Acceso Clientes y Profesionales</p>
       </div>
 
-      <!-- Auth Container (Minimalist, borderless, clean layout) -->
       <div class="bg-white border border-black/5 p-8 md:p-12 space-y-8 shadow-sm">
-        
-        <!-- Tab Selector -->
         <div class="flex border-b border-black/5 pb-4">
-          <button 
+          <button
             @click="activeTab = 'login'"
             :class="[
               'flex-1 text-center pb-2 text-[11px] font-bold uppercase tracking-[0.2em] transition-colors duration-300 border-b-2',
-              activeTab === 'login' 
-                ? 'border-luxury-gold text-luxury-black' 
+              activeTab === 'login'
+                ? 'border-luxury-gold text-luxury-black'
                 : 'border-transparent text-gray-400 hover:text-luxury-black'
             ]">
-            Iniciar Sesión
+            Iniciar Sesion
           </button>
-          <button 
+          <button
             @click="activeTab = 'register'"
             :class="[
               'flex-1 text-center pb-2 text-[11px] font-bold uppercase tracking-[0.2em] transition-colors duration-300 border-b-2',
-              activeTab === 'register' 
-                ? 'border-luxury-gold text-luxury-black' 
+              activeTab === 'register'
+                ? 'border-luxury-gold text-luxury-black'
                 : 'border-transparent text-gray-400 hover:text-luxury-black'
             ]">
             Crear Cuenta
           </button>
         </div>
 
-        <!-- Feedback Alert Messages -->
         <div v-if="errorGlobal" class="p-4 bg-red-50/50 border-l-2 border-red-500 text-red-700 text-xs tracking-wide">
           {{ errorGlobal }}
         </div>
@@ -44,47 +38,40 @@
           {{ successMessage }}
         </div>
 
-        <!-- FORM: LOGIN -->
         <form v-if="activeTab === 'login'" @submit.prevent="handleLogin" class="space-y-8">
-          <!-- Email Field -->
           <div class="relative group">
             <label class="block text-[10px] uppercase tracking-[0.25em] text-gray-400 font-bold mb-1 transition-colors group-focus-within:text-luxury-gold">
               Email
             </label>
-            <input 
+            <input
               v-model="loginForm.email"
-              type="email" 
+              type="email"
               required
               autocomplete="email"
               class="w-full pb-3 pt-1 border-b border-gray-300 bg-transparent rounded-none focus:outline-none focus:border-luxury-gold transition-colors text-sm text-luxury-black placeholder-gray-400/30"
-              placeholder="introduce tu email"
-            >
+              placeholder="introduce tu email">
           </div>
 
-          <!-- Password Field -->
           <div class="relative group">
             <label class="block text-[10px] uppercase tracking-[0.25em] text-gray-400 font-bold mb-1 transition-colors group-focus-within:text-luxury-gold">
-              Contraseña
+              Contrasena
             </label>
-            <input 
+            <input
               v-model="loginForm.password"
-              type="password" 
+              type="password"
               required
               autocomplete="current-password"
               class="w-full pb-3 pt-1 border-b border-gray-300 bg-transparent rounded-none focus:outline-none focus:border-luxury-gold transition-colors text-sm text-luxury-black placeholder-gray-400/30"
-              placeholder="••••••••"
-            >
+              placeholder="********">
           </div>
 
-          <!-- Forgot Password -->
           <div class="text-right">
-            <a href="#" class="text-[10px] text-gray-400 hover:text-luxury-gold transition-colors font-bold uppercase tracking-wider">
-              ¿Olvidaste tu contraseña?
-            </a>
+            <span class="text-[10px] text-gray-400 font-bold uppercase tracking-wider">
+              Acceso seguro
+            </span>
           </div>
 
-          <!-- Submit Button -->
-          <button 
+          <button
             type="submit"
             :disabled="loadingLogin"
             class="w-full py-4 bg-luxury-black text-white hover:bg-luxury-gold hover:text-white text-[11px] font-bold uppercase tracking-[0.25em] transition-all duration-300 rounded-full shadow-md hover:shadow-lg disabled:opacity-50 mt-6">
@@ -92,100 +79,86 @@
           </button>
         </form>
 
-        <!-- FORM: REGISTER -->
         <form v-if="activeTab === 'register'" @submit.prevent="handleRegister" class="space-y-8">
-          <!-- Nombre -->
           <div class="relative group">
             <label class="block text-[10px] uppercase tracking-[0.25em] text-gray-400 font-bold mb-1 transition-colors group-focus-within:text-luxury-gold">
               Nombre
             </label>
-            <input 
+            <input
               v-model="registerForm.nombre"
-              type="text" 
+              type="text"
               required
               autocomplete="given-name"
               class="w-full pb-3 pt-1 border-b border-gray-300 bg-transparent rounded-none focus:outline-none focus:border-luxury-gold transition-colors text-sm text-luxury-black placeholder-gray-400/30"
-              placeholder="tu nombre"
-            >
+              placeholder="tu nombre">
           </div>
 
-          <!-- Apellido -->
           <div class="relative group">
             <label class="block text-[10px] uppercase tracking-[0.25em] text-gray-400 font-bold mb-1 transition-colors group-focus-within:text-luxury-gold">
               Apellido
             </label>
-            <input 
+            <input
               v-model="registerForm.apellido"
-              type="text" 
+              type="text"
               required
               autocomplete="family-name"
               class="w-full pb-3 pt-1 border-b border-gray-300 bg-transparent rounded-none focus:outline-none focus:border-luxury-gold transition-colors text-sm text-luxury-black placeholder-gray-400/30"
-              placeholder="tu apellido"
-            >
+              placeholder="tu apellido">
           </div>
 
-          <!-- Email -->
           <div class="relative group">
             <label class="block text-[10px] uppercase tracking-[0.25em] text-gray-400 font-bold mb-1 transition-colors group-focus-within:text-luxury-gold">
               Email
             </label>
-            <input 
+            <input
               v-model="registerForm.email"
-              type="email" 
+              type="email"
               required
               autocomplete="email"
               class="w-full pb-3 pt-1 border-b border-gray-300 bg-transparent rounded-none focus:outline-none focus:border-luxury-gold transition-colors text-sm text-luxury-black placeholder-gray-400/30"
-              placeholder="tu@email.com"
-            >
+              placeholder="tu@email.com">
           </div>
 
-          <!-- Password -->
           <div class="relative group">
             <label class="block text-[10px] uppercase tracking-[0.25em] text-gray-400 font-bold mb-1 transition-colors group-focus-within:text-luxury-gold">
-              Contraseña
+              Contrasena
             </label>
-            <input 
+            <input
               v-model="registerForm.password"
-              type="password" 
+              type="password"
               required
               minlength="6"
               autocomplete="new-password"
               class="w-full pb-3 pt-1 border-b border-gray-300 bg-transparent rounded-none focus:outline-none focus:border-luxury-gold transition-colors text-sm text-luxury-black placeholder-gray-400/30"
-              placeholder="••••••••"
-            >
-            <p class="text-[9px] text-gray-400 tracking-wider uppercase mt-1">Mínimo 6 caracteres</p>
+              placeholder="********">
+            <p class="text-[9px] text-gray-400 tracking-wider uppercase mt-1">Minimo 6 caracteres</p>
           </div>
 
-          <!-- Confirmar Contraseña -->
           <div class="relative group">
             <label class="block text-[10px] uppercase tracking-[0.25em] text-gray-400 font-bold mb-1 transition-colors group-focus-within:text-luxury-gold">
-              Confirmar Contraseña
+              Confirmar Contrasena
             </label>
-            <input 
+            <input
               v-model="registerForm.confirmPassword"
-              type="password" 
+              type="password"
               required
               autocomplete="new-password"
               class="w-full pb-3 pt-1 border-b border-gray-300 bg-transparent rounded-none focus:outline-none focus:border-luxury-gold transition-colors text-sm text-luxury-black placeholder-gray-400/30"
-              placeholder="repite tu contraseña"
-            >
+              placeholder="repite tu contrasena">
           </div>
 
-          <!-- Accept Terms -->
           <div class="flex items-start gap-3 pt-2">
-            <input 
+            <input
               v-model="registerForm.acceptTerms"
-              type="checkbox" 
+              type="checkbox"
               id="terms"
-              class="mt-1 rounded-none border-gray-300 text-luxury-gold focus:ring-luxury-gold"
-            >
+              class="mt-1 rounded-none border-gray-300 text-luxury-gold focus:ring-luxury-gold">
             <label for="terms" class="text-[10px] text-gray-500 uppercase tracking-wider leading-relaxed">
-              Acepto los términos y condiciones y la política de privacidad de Ibernovia
+              Acepto los terminos y condiciones y la politica de privacidad de Ibernovia
             </label>
           </div>
 
-          <!-- Submit Button -->
-          <button 
+          <button
             type="submit"
             :disabled="loadingRegister"
             class="w-full py-4 bg-luxury-black text-white hover:bg-luxury-gold hover:text-white text-[11px] font-bold uppercase tracking-[0.25em] transition-all duration-300 rounded-full shadow-md hover:shadow-lg disabled:opacity-50 mt-6">
@@ -193,19 +166,17 @@
           </button>
         </form>
 
-        <!-- Divider for Google Auth -->
         <div class="flex items-center gap-3 my-6">
           <div class="flex-1 h-[1px] bg-black/5"></div>
           <span class="text-[9px] text-gray-400 uppercase tracking-[0.2em] font-bold">O CONECTA CON</span>
           <div class="flex-1 h-[1px] bg-black/5"></div>
         </div>
 
-        <!-- Google Auth Button -->
-        <button 
+        <button
           type="button"
           @click="handleGoogleLogin"
           :disabled="loadingGoogle"
-          class="w-full bg-white border border-black/10 text-luxury-black py-3 px-4 rounded-full text-[10px] font-bold uppercase tracking-[0.2em] hover:bg-[#fafafa] hover:border-luxury-gold transition-all duration-300 flex items-center justify-center gap-3">
+          class="w-full bg-white border border-black/10 text-luxury-black py-3 px-4 rounded-full text-[10px] font-bold uppercase tracking-[0.2em] hover:bg-[#fafafa] hover:border-luxury-gold transition-all duration-300 flex items-center justify-center gap-3 disabled:opacity-50">
           <svg class="w-4 h-4 shrink-0" viewBox="0 0 24 24">
             <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
             <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
@@ -214,15 +185,12 @@
           </svg>
           <span>{{ loadingGoogle ? 'Conectando...' : 'Google' }}</span>
         </button>
-
       </div>
 
-      <!-- Trust Badges -->
       <div class="text-center text-[10px] text-gray-400 uppercase tracking-widest space-y-1">
-        <p>🔒 Acceso seguro mediante protocolo SSL</p>
-        <p>Atelier Ibernovia • Garantía de confidencialidad</p>
+        <p>Acceso seguro mediante protocolo SSL</p>
+        <p>Atelier Ibernovia - Garantia de confidencialidad</p>
       </div>
-
     </div>
   </div>
 </template>
@@ -230,14 +198,6 @@
 <script setup>
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
-import { 
-  signInWithEmailAndPassword,
-  createUserWithEmailAndPassword,
-  updateProfile,
-  signInWithPopup,
-  GoogleAuthProvider
-} from 'firebase/auth'
-import { auth } from '../lib/firebase'
 import { useAuthStore } from '../stores/auth'
 import { apiClient } from '../lib/api'
 
@@ -268,7 +228,7 @@ const registerForm = ref({
 const handleLogin = async () => {
   errorGlobal.value = ''
   successMessage.value = ''
-  
+
   if (!loginForm.value.email || !loginForm.value.password) {
     errorGlobal.value = 'Por favor completa todos los campos'
     return
@@ -277,19 +237,14 @@ const handleLogin = async () => {
   loadingLogin.value = true
 
   try {
-    const userCredential = await signInWithEmailAndPassword(
-      auth,
-      loginForm.value.email,
-      loginForm.value.password
-    )
+    const response = await apiClient.post('/api/auth/login', {
+      email: loginForm.value.email,
+      password: loginForm.value.password
+    })
 
-    // Sincronizar con el backend
-    const firebaseIdToken = await userCredential.user.getIdToken()
-    const response = await apiClient.post('/api/auth/firebase-login', { token: firebaseIdToken })
     authStore.setUser(response.data)
+    successMessage.value = 'Acceso correcto. Iniciando sesion...'
 
-    successMessage.value = '¡Acceso correcto! Iniciando sesión...'
-    
     setTimeout(() => {
       if (response.data?.isAdmin) {
         router.push('/admin')
@@ -297,20 +252,8 @@ const handleLogin = async () => {
         router.push('/tienda')
       }
     }, 800)
-
   } catch (error) {
-    const errorCode = error.code
-    if (errorCode === 'auth/user-not-found') {
-      errorGlobal.value = 'No existe una cuenta con este email'
-    } else if (errorCode === 'auth/wrong-password') {
-      errorGlobal.value = 'Contraseña incorrecta'
-    } else if (errorCode === 'auth/invalid-email') {
-      errorGlobal.value = 'Email inválido'
-    } else if (errorCode === 'auth/too-many-requests') {
-      errorGlobal.value = 'Demasiados intentos. Intenta más tarde'
-    } else {
-      errorGlobal.value = error.response?.data || error.message || 'Error en el login'
-    }
+    errorGlobal.value = error.response?.data || error.message || 'Error en el login'
     console.error('Error Login:', error)
   } finally {
     loadingLogin.value = false
@@ -327,55 +270,39 @@ const handleRegister = async () => {
   }
 
   if (registerForm.value.password.length < 6) {
-    errorGlobal.value = 'La contraseña debe tener al menos 6 caracteres'
+    errorGlobal.value = 'La contrasena debe tener al menos 6 caracteres'
     return
   }
 
   if (registerForm.value.password !== registerForm.value.confirmPassword) {
-    errorGlobal.value = 'Las contraseñas no coinciden'
+    errorGlobal.value = 'Las contrasenas no coinciden'
     return
   }
 
   if (!registerForm.value.acceptTerms) {
-    errorGlobal.value = 'Debes aceptar los términos y condiciones'
+    errorGlobal.value = 'Debes aceptar los terminos y condiciones'
     return
   }
 
   loadingRegister.value = true
 
   try {
-    const userCredential = await createUserWithEmailAndPassword(
-      auth,
-      registerForm.value.email,
-      registerForm.value.password
-    )
-
-    await updateProfile(userCredential.user, {
-      displayName: `${registerForm.value.nombre} ${registerForm.value.apellido}`
+    const response = await apiClient.post('/api/auth/register', {
+      email: registerForm.value.email,
+      nombre: registerForm.value.nombre,
+      apellido: registerForm.value.apellido,
+      password: registerForm.value.password,
+      confirmPassword: registerForm.value.confirmPassword
     })
 
-    // Sincronizar con el backend
-    const firebaseIdToken = await userCredential.user.getIdToken()
-    const response = await apiClient.post('/api/auth/firebase-login', { token: firebaseIdToken })
     authStore.setUser(response.data)
+    successMessage.value = 'Bienvenido a IBERNOVIA'
 
-    successMessage.value = '¡Bienvenido a IBERNOVIA!'
-    
     setTimeout(() => {
       router.push('/tienda')
     }, 800)
-
   } catch (error) {
-    const errorCode = error.code
-    if (errorCode === 'auth/email-already-in-use') {
-      errorGlobal.value = 'Ya existe una cuenta con este email'
-    } else if (errorCode === 'auth/weak-password') {
-      errorGlobal.value = 'La contraseña es demasiado débil'
-    } else if (errorCode === 'auth/invalid-email') {
-      errorGlobal.value = 'El email no es válido'
-    } else {
-      errorGlobal.value = error.response?.data || error.message || 'Error en el registro'
-    }
+    errorGlobal.value = error.response?.data || error.message || 'Error en el registro'
     console.error('Error Registro:', error)
   } finally {
     loadingRegister.value = false
@@ -385,48 +312,10 @@ const handleRegister = async () => {
 const handleGoogleLogin = async () => {
   errorGlobal.value = ''
   successMessage.value = ''
-  
   loadingGoogle.value = true
 
   try {
-    const provider = new GoogleAuthProvider()
-    provider.addScope('profile email')
-    
-    const result = await signInWithPopup(auth, provider)
-    const user = result.user
-
-    // Actualizar perfil si no tiene displayName
-    if (!user.displayName) {
-      await updateProfile(user, {
-        displayName: user.email.split('@')[0]
-      })
-    }
-
-    // Sincronizar con el backend
-    const firebaseIdToken = await user.getIdToken()
-    const response = await apiClient.post('/api/auth/firebase-login', { token: firebaseIdToken })
-    authStore.setUser(response.data)
-
-    successMessage.value = '¡Acceso correcto! Iniciando sesión...'
-    
-    setTimeout(() => {
-      if (response.data?.isAdmin) {
-        router.push('/admin')
-      } else {
-        router.push('/tienda')
-      }
-    }, 800)
-
-  } catch (error) {
-    const errorCode = error.code
-    if (errorCode === 'auth/popup-closed-by-user') {
-      return
-    } else if (errorCode === 'auth/cancelled-popup-request') {
-      return
-    } else {
-      errorGlobal.value = error.response?.data || error.message || 'Error al conectar con Google'
-      console.error('Error Google Auth:', error)
-    }
+    errorGlobal.value = 'El acceso con Google esta temporalmente desactivado mientras resolvemos un bloqueo externo de Firebase en produccion. Usa email y contrasena.'
   } finally {
     loadingGoogle.value = false
   }
