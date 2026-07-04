@@ -23,6 +23,7 @@ Variables recomendadas en PowerShell:
 $env:DB_USERNAME="root"
 $env:DB_PASSWORD="toor"
 $env:APP_JWT_SECRET="IBERNOVIA_SUPER_SECRET_KEY_CHANGE_IN_PRODUCTION_2026_64_CHAR_MINIMUM_KEY"
+$env:APP_FIREBASE_PROJECT_ID="ibernovia"
 
 # SMTP Gmail (opcional pero recomendado para formularios de contacto)
 $env:SPRING_MAIL_HOST="smtp.gmail.com"
@@ -71,6 +72,10 @@ Variables clave:
 - `VITE_API_URL=http://localhost:8080`
 - Firebase (`VITE_FIREBASE_*`) si quieres usar login social
 - `VITE_ADMIN_EMAILS=admin@ibernovia.com,dam@ibernovia.com`
+
+Importante en despliegue:
+- El frontend y el backend deben apuntar al mismo proyecto Firebase.
+- Define `APP_FIREBASE_PROJECT_ID=ibernovia` en el backend para evitar rechazos del tipo `Token de Firebase invalido o expirado`.
 
 ## Seguridad aplicada
 

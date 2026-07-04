@@ -178,11 +178,13 @@ public class AuthController {
                 return ResponseEntity.badRequest().body("Token de Firebase requerido");
             }
 
-            io.jsonwebtoken.Claims claims = firebaseTokenVerifier.verifyToken(idToken);
-            if (claims == null) {
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Token de Firebase inválido o expirado");
+            FirebaseTokenVerifier.VerificationResult verificationResult = firebaseTokenVerifier.verifyToken(idToken);
+            if (!verificationResult.isValid()) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                        .body("No se pudo validar el token de Firebase. " + verificationResult.errorMessage());
             }
 
+            io.jsonwebtoken.Claims claims = verificationResult.claims();
             String email = claims.get("email", String.class);
             if (email == null || email.isBlank()) {
                 return ResponseEntity.badRequest().body("El token no contiene un email válido");
