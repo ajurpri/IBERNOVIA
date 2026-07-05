@@ -1,128 +1,310 @@
 <template>
-  <div>
-    <!-- Floating Trigger Button -->
-    <button 
-      @click="toggleChat" 
-      class="fixed bottom-6 right-6 z-[99] w-14 h-14 rounded-full bg-luxury-black text-white shadow-2xl flex items-center justify-center hover:bg-luxury-gold hover:scale-105 transition-all duration-300 group focus:outline-none focus:ring-2 focus:ring-luxury-gold focus:ring-offset-2"
-      aria-label="Abrir chat de asistencia"
-    >
-      <!-- Gold notification dot -->
-      <span class="absolute top-0 right-0 w-3.5 h-3.5 bg-luxury-gold rounded-full border-2 border-white animate-pulse"></span>
-      
-      <!-- Close icon if open, Chat bubble if closed -->
-      <svg v-if="isOpen" class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
-      </svg>
-      <svg v-else class="w-6 h-6 transition-transform group-hover:rotate-12" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" d="M8.625 12a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0H8.25m4.125 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0H12m4.125 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0h-.375M21 12c0 4.556-4.03 8.25-9 8.25a9.764 9.764 0 0 1-2.555-.337A5.972 5.972 0 0 1 5.41 20.97a.75.75 0 0 1-1.074-.765 5.99 5.99 0 0 1 1.402-2.983C3.524 15.655 3 13.896 3 12c0-4.556 4.03-8.25 9-8.25s9 3.694 9 8.25Z" />
-      </svg>
-    </button>
-
-    <!-- Chat Card Container -->
-    <div 
-      v-show="isOpen" 
-      class="fixed bottom-24 right-6 z-[99] w-[340px] sm:w-[385px] h-[500px] bg-[#fdfdfc] rounded-2xl border border-black/10 shadow-2xl flex flex-col overflow-hidden animate-slide-up"
-    >
-      <!-- Chat Header -->
-      <div class="bg-luxury-black text-white px-5 py-4 flex items-center justify-between">
-        <div class="flex items-center gap-3">
-          <div class="relative w-8 h-8 rounded-full bg-luxury-gold/20 text-luxury-gold flex items-center justify-center border border-luxury-gold/30">
-            <span class="text-sm font-serif">I</span>
-            <!-- Active online status dot -->
-            <span class="absolute bottom-0 right-0 w-2 h-2 bg-emerald-500 rounded-full border border-luxury-black"></span>
-          </div>
-          <div>
-            <h3 class="font-serif text-sm tracking-wider">Concierge Ibernovia</h3>
-            <span class="text-[9px] uppercase tracking-widest text-luxury-gold font-bold block mt-0.5">Asistente Virtual IA</span>
-          </div>
-        </div>
-        <button @click="isOpen = false" class="text-white/60 hover:text-white transition-colors focus:outline-none" aria-label="Cerrar chat">
-          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
-          </svg>
-        </button>
-      </div>
-
-      <!-- Messages View -->
-      <div 
-        ref="messagesContainer" 
-        class="flex-1 overflow-y-auto p-4 space-y-4 bg-gradient-to-b from-[#fcfaf6] to-[#fdfdfc]"
+  <div class="chat-shell">
+    <Transition name="chat-trigger">
+      <button
+        v-if="!isOpen"
+        @click="toggleChat"
+        class="chat-trigger"
+        aria-label="Abrir concierge de Ibernovia"
       >
-        <div 
-          v-for="(msg, idx) in messages" 
-          :key="idx" 
-          class="flex flex-col" 
-          :class="msg.role === 'user' ? 'items-end' : 'items-start'"
-        >
-          <!-- Bubble styling -->
-          <div 
-            class="max-w-[85%] rounded-2xl px-4 py-3 text-sm leading-relaxed"
-            :class="msg.role === 'user' 
-              ? 'bg-luxury-black text-white rounded-br-none font-sans' 
-              : 'bg-white border border-black/5 text-luxury-black rounded-bl-none font-serif font-light shadow-sm'"
+        <span class="chat-trigger-glow"></span>
+        <span class="chat-trigger-ring"></span>
+        <span class="chat-trigger-core">
+          <img :src="logoSrc" alt="Ibernovia" class="chat-trigger-logo" />
+        </span>
+        <span class="chat-trigger-badge">IA</span>
+      </button>
+    </Transition>
+
+    <Transition name="chat-panel">
+      <section v-if="isOpen" class="chat-panel" aria-label="Chat de Ibernovia">
+        <header class="chat-header">
+          <div class="chat-brand">
+            <div class="chat-brand-logo-wrap">
+              <img :src="logoSrc" alt="Logo Ibernovia" class="chat-brand-logo" />
+              <span class="chat-brand-status"></span>
+            </div>
+
+            <div class="chat-brand-copy">
+              <p class="chat-eyebrow">ATELIER IBERNOVIA</p>
+              <h3 class="chat-title">Concierge Privado</h3>
+              <p class="chat-subtitle">Asesora coleccion, cita previa y acceso profesional.</p>
+            </div>
+          </div>
+
+          <div class="chat-header-actions">
+            <button
+              v-if="canResetConversation"
+              @click="resetConversation"
+              class="chat-header-action"
+              type="button"
+              aria-label="Reiniciar conversación"
+            >
+              Reiniciar
+            </button>
+            <button @click="isOpen = false" class="chat-close" aria-label="Cerrar chat">
+              <svg class="chat-close-icon" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
+              </svg>
+            </button>
+          </div>
+        </header>
+
+        <div class="chat-overview">
+          <p class="chat-overview-label">Consulta directa</p>
+          <div class="chat-overview-grid">
+            <div class="chat-overview-card">
+              <span class="chat-overview-value">Catologo</span>
+              <span class="chat-overview-meta">recomendaciones guiadas</span>
+            </div>
+            <div class="chat-overview-card">
+              <span class="chat-overview-value">Cita</span>
+              <span class="chat-overview-meta">atelier y contacto</span>
+            </div>
+            <div class="chat-overview-card">
+              <span class="chat-overview-value">B2B</span>
+              <span class="chat-overview-meta">precios solo profesionales</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="chat-quick-links">
+          <router-link to="/tienda" class="chat-quick-link" @click="isOpen = false">Ver catalogo</router-link>
+          <router-link to="/contacto" class="chat-quick-link" @click="isOpen = false">Pedir cita</router-link>
+          <router-link to="/acceso-empresarial" class="chat-quick-link" @click="isOpen = false">Acceso profesional</router-link>
+        </div>
+
+        <div ref="messagesContainer" class="chat-messages">
+          <div v-if="showSuggestions" class="chat-suggestions-block">
+            <p class="chat-suggestions-label">Preguntas sugeridas</p>
+            <div class="chat-suggestions-list">
+              <button
+                v-for="suggestion in activeSuggestions"
+                :key="suggestion"
+                type="button"
+                class="chat-suggestion-chip"
+                @click="sendSuggestion(suggestion)"
+              >
+                {{ suggestion }}
+              </button>
+            </div>
+          </div>
+
+          <div v-if="profileSummary" class="chat-memory-banner">
+            <p class="chat-memory-label">Afinando tu perfil</p>
+            <p class="chat-memory-text">{{ profileSummary }}</p>
+          </div>
+
+          <article
+            v-for="(msg, idx) in messages"
+            :key="idx"
+            class="chat-message"
+            :class="msg.role === 'user' ? 'chat-message-user' : 'chat-message-model'"
           >
-            <p class="whitespace-pre-line">{{ msg.text }}</p>
+            <div v-if="msg.role === 'model'" class="chat-avatar">
+              <img :src="logoSrc" alt="Ibernovia" class="chat-avatar-logo" />
+            </div>
+
+            <div class="chat-bubble-wrap">
+              <p class="chat-message-label">
+                {{ msg.role === 'user' ? 'Tu consulta' : 'Concierge Ibernovia' }}
+              </p>
+              <div class="chat-bubble" :class="msg.role === 'user' ? 'chat-bubble-user' : 'chat-bubble-model'">
+                <p class="chat-bubble-text">{{ msg.text }}</p>
+              </div>
+
+              <div v-if="msg.products?.length" class="chat-product-grid">
+                <router-link
+                  v-for="product in msg.products"
+                  :key="product.id"
+                  :to="`/producto/${product.id}`"
+                  class="chat-product-card"
+                  @click="isOpen = false"
+                >
+                  <div class="chat-product-media">
+                    <img :src="getImageUrl(product.imagen)" :alt="product.nombre" class="chat-product-image" />
+                  </div>
+                  <div class="chat-product-content">
+                    <p class="chat-product-family">{{ product.familia || product.categoria }}</p>
+                    <h4 class="chat-product-name">{{ product.nombre }}</h4>
+                    <p v-if="product.descripcion" class="chat-product-description">{{ product.descripcion }}</p>
+                    <p v-if="showPrice(product)" class="chat-product-price">{{ product.precio }}€</p>
+                  </div>
+                </router-link>
+              </div>
+            </div>
+          </article>
+
+          <div v-if="loading" class="chat-message chat-message-model">
+            <div class="chat-avatar">
+              <img :src="logoSrc" alt="Ibernovia" class="chat-avatar-logo" />
+            </div>
+            <div class="chat-bubble-wrap">
+              <p class="chat-message-label">Concierge Ibernovia</p>
+              <div class="chat-bubble chat-bubble-model chat-bubble-loading">
+                <span class="chat-dot"></span>
+                <span class="chat-dot chat-dot-delay-1"></span>
+                <span class="chat-dot chat-dot-delay-2"></span>
+              </div>
+            </div>
           </div>
-          <span class="text-[9px] text-gray-400 mt-1 uppercase tracking-widest px-1">
-            {{ msg.role === 'user' ? 'Tú' : 'Concierge' }}
-          </span>
         </div>
 
-        <!-- Typing Indicator -->
-        <div v-if="loading" class="flex flex-col items-start animate-fade-in">
-          <div class="bg-white border border-black/5 text-luxury-black rounded-2xl rounded-bl-none px-4 py-3 shadow-sm flex items-center gap-1.5">
-            <span class="w-1.5 h-1.5 bg-luxury-gold rounded-full animate-bounce"></span>
-            <span class="w-1.5 h-1.5 bg-luxury-gold rounded-full animate-bounce [animation-delay:0.2s]"></span>
-            <span class="w-1.5 h-1.5 bg-luxury-gold rounded-full animate-bounce [animation-delay:0.4s]"></span>
+        <form @submit.prevent="sendMessage" class="chat-form">
+          <div class="chat-input-wrap">
+            <textarea
+              ref="textareaRef"
+              v-model="newMessage"
+              rows="1"
+              :disabled="loading"
+              placeholder="Preguntame por vestidos, complementos, horarios o acceso profesional"
+              class="chat-input"
+              @input="autoResize"
+              @keydown.enter.exact.prevent="sendMessage"
+            ></textarea>
           </div>
-          <span class="text-[9px] text-gray-400 mt-1 uppercase tracking-widest px-1">Escribiendo...</span>
-        </div>
-      </div>
 
-      <!-- Input Field -->
-      <form @submit.prevent="sendMessage" class="p-4 bg-white border-t border-black/5 flex items-center gap-2">
-        <input 
-          v-model="newMessage"
-          type="text"
-          placeholder="Haz una pregunta al concierge..."
-          :disabled="loading"
-          class="flex-1 pb-2 pt-1 border-b border-gray-200 bg-transparent rounded-none focus:outline-none focus:border-luxury-gold text-sm text-luxury-black placeholder-gray-400/40"
-          autocomplete="off"
-        />
-        <button 
-          type="submit" 
-          :disabled="loading || !newMessage.trim()"
-          class="w-9 h-9 rounded-full bg-luxury-black text-white hover:bg-luxury-gold hover:scale-105 transition-all flex items-center justify-center disabled:opacity-30 disabled:hover:bg-luxury-black disabled:scale-100 focus:outline-none"
-        >
-          <svg class="w-4 h-4 transform rotate-90" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M6 12 3.269 3.125A59.769 59.769 0 0 1 21.485 12 59.768 59.768 0 0 1 3.27 20.875L6 12Zm0 0h7.5" />
-          </svg>
-        </button>
-      </form>
-    </div>
+          <div class="chat-form-footer">
+            <p class="chat-form-note">Atencion guiada de producto y boutique</p>
+            <button
+              type="submit"
+              :disabled="loading || !newMessage.trim()"
+              class="chat-send"
+            >
+              Enviar
+            </button>
+          </div>
+        </form>
+      </section>
+    </Transition>
   </div>
 </template>
 
 <script setup>
-import { ref, nextTick, watch } from 'vue'
-import { apiClient } from '../lib/api'
+import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
+import { useAuthStore } from '../stores/auth'
+import { apiClient, getImageUrl } from '../lib/api'
+
+const CHAT_STORAGE_KEY = 'ibernovia_concierge_history_v3'
+const logoSrc = `${import.meta.env.BASE_URL}logo/optimized/logo-80.jpg`
+const authStore = useAuthStore()
+
+const initialMessage = {
+  role: 'model',
+  text: 'Bienvenida a Ibernovia. Puedo ayudarte a descubrir complementos, resolver dudas sobre el atelier y orientarte sobre acceso profesional o cita previa.',
+  products: []
+}
+
+const baseSuggestions = [
+  'Busco complementos para novia elegantes',
+  'Que horarios teneis y como pido cita',
+  'Como accedo a precios profesionales',
+  'Recomiendame algo para fiesta o comunion'
+]
 
 const isOpen = ref(false)
 const loading = ref(false)
 const newMessage = ref('')
 const messagesContainer = ref(null)
+const textareaRef = ref(null)
+const messages = ref(loadStoredMessages())
 
-const messages = ref([
-  {
-    role: 'model',
-    text: 'Bienvenido al Atelier Ibernovia. Soy tu asistente personal de concierge. ¿Deseas consultar nuestra colección 2026, conocer nuestros horarios o agendar una cita?'
+const showSuggestions = computed(() => !loading.value)
+const canResetConversation = computed(() => messages.value.length > 1)
+
+const profileSummary = computed(() => {
+  const normalized = normalize(messages.value
+    .filter((msg) => msg.role === 'user')
+    .map((msg) => msg.text)
+    .join(' '))
+
+  const tags = []
+  if (containsAny(normalized, 'novia', 'velo', 'tocado', 'tiara', 'liga')) tags.push('Interes principal en novia')
+  if (containsAny(normalized, 'fiesta', 'mantilla', 'pamela', 'bolso')) tags.push('Busca opciones de fiesta')
+  if (containsAny(normalized, 'comunion', 'corona', 'rosario', 'diadema')) tags.push('Valora referencias de comunion')
+  if (containsAny(normalized, 'novio', 'gemelo')) tags.push('Tambien contempla complementos de novio')
+  if (containsAny(normalized, 'elegante', 'clasico', 'refinado')) tags.push('Prefiere un estilo elegante y refinado')
+  if (containsAny(normalized, 'llamativo', 'especial', 'diferente')) tags.push('Quiere una propuesta con mas personalidad')
+  if (containsAny(normalized, 'precio', 'profesional', 'mayorista', 'empresa')) tags.push('Hay interes por condiciones profesionales')
+  if (containsAny(normalized, 'cita', 'horario', 'contacto', 'visita')) tags.push('Tambien necesita informacion de visita')
+
+  return tags.slice(0, 3).join(' · ')
+})
+
+const activeSuggestions = computed(() => {
+  const normalized = normalize(messages.value
+    .filter((msg) => msg.role === 'user')
+    .map((msg) => msg.text)
+    .join(' '))
+
+  if (containsAny(normalized, 'novia', 'velo', 'liga', 'tocado', 'tiara')) {
+    return [
+      'Busco algo delicado para novia',
+      'Recomiendame velos o tocados elegantes',
+      'Quiero un look clasico pero especial',
+      'Como pido cita para ver opciones'
+    ]
   }
-])
+
+  if (containsAny(normalized, 'fiesta', 'mantilla', 'pendiente', 'bolso', 'pamela')) {
+    return [
+      'Quiero complementos de fiesta elegantes',
+      'Recomiendame pendientes o bolsos',
+      'Busco algo para mantilla o invitada',
+      'Quiero ver opciones con mas presencia'
+    ]
+  }
+
+  if (containsAny(normalized, 'comunion', 'rosario', 'corona', 'diadema')) {
+    return [
+      'Busco complementos de comunion finos',
+      'Recomiendame coronas o diademas',
+      'Quiero opciones delicadas y clasicas',
+      'Que articulos teneis para comunion'
+    ]
+  }
+
+  if (containsAny(normalized, 'profesional', 'empresa', 'precio', 'mayorista')) {
+    return [
+      'Como solicito acceso profesional',
+      'Que necesito para ver precios',
+      'Quiero informacion para empresa',
+      'Como funciona el alta B2B'
+    ]
+  }
+
+  return baseSuggestions
+})
+
+function loadStoredMessages() {
+  if (typeof window === 'undefined') {
+    return [initialMessage]
+  }
+
+  try {
+    const raw = window.localStorage.getItem(CHAT_STORAGE_KEY)
+    if (!raw) return [initialMessage]
+
+    const parsed = JSON.parse(raw)
+    if (!Array.isArray(parsed) || parsed.length === 0) return [initialMessage]
+
+    return parsed
+      .filter((item) => item && typeof item.text === 'string' && typeof item.role === 'string')
+      .map((item) => ({
+        role: item.role,
+        text: item.text,
+        products: Array.isArray(item.products) ? item.products : []
+      }))
+  } catch {
+    return [initialMessage]
+  }
+}
 
 const toggleChat = () => {
   isOpen.value = !isOpen.value
   if (isOpen.value) {
     scrollToBottom()
+    autoResize()
   }
 }
 
@@ -133,73 +315,789 @@ const scrollToBottom = async () => {
   }
 }
 
-watch(messages, () => {
+const autoResize = async () => {
+  await nextTick()
+  if (!textareaRef.value) return
+  textareaRef.value.style.height = 'auto'
+  textareaRef.value.style.height = `${Math.min(textareaRef.value.scrollHeight, 110)}px`
+}
+
+watch(messages, (value) => {
   scrollToBottom()
+  if (typeof window !== 'undefined') {
+    window.localStorage.setItem(CHAT_STORAGE_KEY, JSON.stringify(value.slice(-18)))
+  }
 }, { deep: true })
+
+watch(isOpen, (open) => {
+  if (open) {
+    scrollToBottom()
+    autoResize()
+  }
+})
+
+watch(newMessage, () => {
+  autoResize()
+})
+
+const resetConversation = () => {
+  messages.value = [initialMessage]
+  newMessage.value = ''
+  if (typeof window !== 'undefined') {
+    window.localStorage.removeItem(CHAT_STORAGE_KEY)
+  }
+}
+
+const sendSuggestion = async (suggestion) => {
+  newMessage.value = suggestion
+  await sendMessage()
+}
+
+const showPrice = (product) => authStore.canSeePrices && product?.precio !== null && product?.precio !== undefined
+
+const handleExternalOpen = async (event) => {
+  isOpen.value = true
+
+  const requestedMessage = event?.detail?.message?.trim()
+  const autoSendRequested = Boolean(event?.detail?.autoSend)
+
+  if (requestedMessage) {
+    newMessage.value = requestedMessage
+    await nextTick()
+    await autoResize()
+
+    if (autoSendRequested) {
+      await sendMessage()
+    }
+  } else {
+    await scrollToBottom()
+    await autoResize()
+  }
+}
 
 const sendMessage = async () => {
   const text = newMessage.value.trim()
   if (!text || loading.value) return
 
-  // Agregar mensaje de usuario
   messages.value.push({
     role: 'user',
-    text
+    text,
+    products: []
   })
+
   newMessage.value = ''
   loading.value = true
-  
-  // Esperar a que se renderice el mensaje del usuario
   await scrollToBottom()
+  await autoResize()
 
   try {
     const response = await apiClient.post('/api/chat', {
-      history: messages.value
+      history: messages.value.map(({ role, text: content }) => ({ role, text: content }))
     })
-    
+
     messages.value.push({
       role: 'model',
-      text: response.data.reply
+      text: response.data.reply,
+      products: Array.isArray(response.data.suggestedProducts) ? response.data.suggestedProducts : []
     })
   } catch (error) {
     console.error('Error in chat request:', error)
     messages.value.push({
       role: 'model',
-      text: 'Disculpa, ha ocurrido un error al conectar con el servicio concierge de Ibernovia. Por favor, inténtalo de nuevo.'
+      text: 'No he podido conectar con el concierge ahora mismo. Si quieres, prueba de nuevo en unos segundos o escribe directamente a info@ibernovia.es.',
+      products: []
     })
   } finally {
     loading.value = false
     scrollToBottom()
+    autoResize()
   }
 }
+
+function normalize(value) {
+  return (value || '')
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase()
+}
+
+function containsAny(text, ...candidates) {
+  return candidates.some((candidate) => text.includes(candidate))
+}
+
+onMounted(() => {
+  window.addEventListener('ibernovia:open-chat', handleExternalOpen)
+})
+
+onBeforeUnmount(() => {
+  window.removeEventListener('ibernovia:open-chat', handleExternalOpen)
+})
 </script>
 
 <style scoped>
-.animate-slide-up {
-  animation: slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
+.chat-shell {
+  position: fixed;
+  right: 1rem;
+  bottom: 1rem;
+  z-index: 99;
 }
 
-.animate-fade-in {
-  animation: fadeIn 0.3s ease-out both;
+.chat-trigger {
+  position: relative;
+  width: 74px;
+  height: 74px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  padding: 0;
 }
 
-@keyframes slideUp {
-  from {
-    opacity: 0;
-    transform: translateY(20px) scale(0.95);
+.chat-trigger-glow,
+.chat-trigger-ring,
+.chat-trigger-core {
+  position: absolute;
+  inset: 0;
+  border-radius: 999px;
+}
+
+.chat-trigger-glow {
+  background:
+    radial-gradient(circle at 30% 30%, rgb(var(--luxury-gold-rgb) / 0.7), transparent 58%),
+    radial-gradient(circle at 70% 70%, rgb(var(--luxury-black-rgb) / 0.65), transparent 60%);
+  filter: blur(10px);
+  transform: scale(1.08);
+}
+
+.chat-trigger-ring {
+  border: 1px solid rgb(var(--luxury-gold-rgb) / 0.45);
+  background:
+    linear-gradient(135deg, rgb(255 255 255 / 0.78), rgb(255 255 255 / 0.18)),
+    rgb(253 250 246 / 0.85);
+  box-shadow:
+    0 24px 55px rgb(var(--luxury-black-rgb) / 0.26),
+    inset 0 1px 0 rgb(255 255 255 / 0.8);
+  backdrop-filter: blur(12px);
+}
+
+.chat-trigger-core {
+  inset: 7px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background:
+    linear-gradient(145deg, rgb(255 255 255 / 0.95), rgb(252 250 246 / 0.76));
+  overflow: hidden;
+}
+
+.chat-trigger-logo {
+  width: 42px;
+  height: 42px;
+  border-radius: 999px;
+  object-fit: cover;
+  box-shadow: 0 10px 25px rgb(var(--luxury-black-rgb) / 0.18);
+}
+
+.chat-trigger-badge {
+  position: absolute;
+  right: -2px;
+  bottom: -1px;
+  min-width: 24px;
+  height: 24px;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 7px;
+  background: var(--luxury-black);
+  color: #fff;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  text-indent: 0.22em;
+  border: 1px solid rgb(var(--luxury-gold-rgb) / 0.45);
+}
+
+.chat-panel {
+  width: min(420px, calc(100vw - 1.5rem));
+  height: min(720px, calc(100vh - 2rem));
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border-radius: 28px;
+  border: 1px solid rgb(var(--luxury-gold-rgb) / 0.18);
+  background:
+    radial-gradient(circle at top left, rgb(var(--luxury-gold-rgb) / 0.18), transparent 30%),
+    linear-gradient(180deg, #fffdfb 0%, #faf5ee 46%, #f8f3eb 100%);
+  box-shadow:
+    0 34px 100px rgb(var(--luxury-black-rgb) / 0.24),
+    inset 0 1px 0 rgb(255 255 255 / 0.92);
+  backdrop-filter: blur(12px);
+}
+
+.chat-header {
+  position: relative;
+  padding: 1.1rem 1.15rem 1rem;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  color: white;
+  background:
+    linear-gradient(135deg, rgb(22 18 15 / 0.96), rgb(48 39 31 / 0.94)),
+    var(--luxury-black);
+}
+
+.chat-header::after {
+  content: '';
+  position: absolute;
+  left: 1.15rem;
+  right: 1.15rem;
+  bottom: 0;
+  height: 1px;
+  background: linear-gradient(90deg, rgb(var(--luxury-gold-rgb) / 0), rgb(var(--luxury-gold-rgb) / 0.8), rgb(var(--luxury-gold-rgb) / 0));
+}
+
+.chat-brand {
+  display: flex;
+  gap: 0.9rem;
+  min-width: 0;
+}
+
+.chat-brand-logo-wrap {
+  position: relative;
+  flex-shrink: 0;
+}
+
+.chat-brand-logo {
+  width: 52px;
+  height: 52px;
+  border-radius: 18px;
+  object-fit: cover;
+  border: 1px solid rgb(var(--luxury-gold-rgb) / 0.35);
+  box-shadow: 0 12px 24px rgb(0 0 0 / 0.22);
+}
+
+.chat-brand-status {
+  position: absolute;
+  right: -2px;
+  bottom: -1px;
+  width: 13px;
+  height: 13px;
+  border-radius: 999px;
+  background: #36c28b;
+  border: 2px solid var(--luxury-black);
+  box-shadow: 0 0 0 4px rgb(54 194 139 / 0.18);
+}
+
+.chat-brand-copy {
+  min-width: 0;
+}
+
+.chat-eyebrow {
+  font-size: 10px;
+  letter-spacing: 0.28em;
+  color: rgb(var(--luxury-gold-rgb) / 0.9);
+  font-weight: 700;
+  margin-bottom: 0.18rem;
+}
+
+.chat-title {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: 1.5rem;
+  font-weight: 500;
+  line-height: 1;
+}
+
+.chat-subtitle {
+  margin-top: 0.28rem;
+  max-width: 25ch;
+  font-size: 12px;
+  line-height: 1.45;
+  color: rgb(255 255 255 / 0.72);
+}
+
+.chat-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.chat-header-action,
+.chat-close {
+  height: 38px;
+  border-radius: 999px;
+  border: 1px solid rgb(255 255 255 / 0.12);
+  background: rgb(255 255 255 / 0.05);
+  color: rgb(255 255 255 / 0.8);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: transform 0.25s ease, background 0.25s ease, color 0.25s ease;
+}
+
+.chat-header-action {
+  padding: 0 0.9rem;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.chat-header-action:hover,
+.chat-close:hover {
+  background: rgb(var(--luxury-gold-rgb) / 0.14);
+  color: white;
+}
+
+.chat-close {
+  width: 38px;
+}
+
+.chat-close:hover {
+  transform: rotate(90deg);
+}
+
+.chat-close-icon {
+  width: 18px;
+  height: 18px;
+}
+
+.chat-overview {
+  padding: 0.95rem 1.05rem 0.5rem;
+}
+
+.chat-overview-label,
+.chat-suggestions-label,
+.chat-memory-label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  color: rgb(var(--luxury-black-rgb) / 0.58);
+  margin-bottom: 0.6rem;
+}
+
+.chat-overview-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.55rem;
+}
+
+.chat-overview-card,
+.chat-memory-banner {
+  padding: 0.7rem 0.75rem;
+  border-radius: 16px;
+  background: rgb(255 255 255 / 0.64);
+  border: 1px solid rgb(var(--luxury-gold-rgb) / 0.16);
+  box-shadow: 0 10px 24px rgb(var(--luxury-black-rgb) / 0.05);
+}
+
+.chat-overview-value {
+  display: block;
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: 1.15rem;
+  color: var(--luxury-black);
+}
+
+.chat-overview-meta,
+.chat-memory-text {
+  display: block;
+  margin-top: 0.12rem;
+  font-size: 10px;
+  line-height: 1.35;
+  color: rgb(var(--luxury-black-rgb) / 0.62);
+}
+
+.chat-quick-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+  padding: 0 1.05rem 0.75rem;
+}
+
+.chat-quick-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  padding: 0.55rem 0.8rem;
+  border: 1px solid rgb(var(--luxury-gold-rgb) / 0.16);
+  background: rgb(255 255 255 / 0.72);
+  color: var(--luxury-black);
+  text-decoration: none;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  transition: transform 0.2s ease, border-color 0.2s ease;
+}
+
+.chat-quick-link:hover {
+  transform: translateY(-1px);
+  border-color: rgb(var(--luxury-gold-rgb) / 0.4);
+}
+
+.chat-messages {
+  flex: 1;
+  overflow-y: auto;
+  padding: 0.85rem 1.05rem 1.1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.95rem;
+  background:
+    radial-gradient(circle at top, rgb(255 255 255 / 0.76), transparent 30%),
+    linear-gradient(180deg, rgb(255 255 255 / 0.2), rgb(255 255 255 / 0));
+}
+
+.chat-suggestions-block {
+  padding: 0.15rem 0 0.1rem;
+}
+
+.chat-suggestions-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.chat-suggestion-chip {
+  border: 1px solid rgb(var(--luxury-gold-rgb) / 0.22);
+  background: rgb(255 255 255 / 0.76);
+  color: var(--luxury-black);
+  border-radius: 999px;
+  padding: 0.62rem 0.85rem;
+  font-size: 11px;
+  line-height: 1.35;
+  cursor: pointer;
+  transition: transform 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+}
+
+.chat-suggestion-chip:hover {
+  transform: translateY(-1px);
+  border-color: rgb(var(--luxury-gold-rgb) / 0.5);
+  background: rgb(var(--luxury-gold-rgb) / 0.1);
+}
+
+.chat-message {
+  display: flex;
+  gap: 0.7rem;
+  align-items: flex-end;
+}
+
+.chat-message-user {
+  justify-content: flex-end;
+}
+
+.chat-message-model {
+  justify-content: flex-start;
+}
+
+.chat-avatar {
+  width: 34px;
+  height: 34px;
+  border-radius: 14px;
+  background: linear-gradient(145deg, rgb(255 255 255 / 0.88), rgb(var(--luxury-gold-rgb) / 0.18));
+  border: 1px solid rgb(var(--luxury-gold-rgb) / 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.chat-avatar-logo {
+  width: 24px;
+  height: 24px;
+  border-radius: 999px;
+  object-fit: cover;
+}
+
+.chat-bubble-wrap {
+  max-width: min(84%, 302px);
+}
+
+.chat-message-user .chat-bubble-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.chat-message-label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: rgb(var(--luxury-black-rgb) / 0.48);
+  margin-bottom: 0.3rem;
+}
+
+.chat-bubble {
+  padding: 0.92rem 1rem;
+  border-radius: 22px;
+  box-shadow: 0 14px 34px rgb(var(--luxury-black-rgb) / 0.07);
+}
+
+.chat-bubble-model {
+  border-top-left-radius: 8px;
+  background:
+    linear-gradient(180deg, rgb(255 255 255 / 0.96), rgb(252 248 241 / 0.92));
+  border: 1px solid rgb(var(--luxury-gold-rgb) / 0.16);
+}
+
+.chat-bubble-user {
+  border-top-right-radius: 8px;
+  background:
+    linear-gradient(135deg, rgb(35 30 25), rgb(58 47 37));
+  color: white;
+}
+
+.chat-bubble-text {
+  white-space: pre-line;
+  font-size: 13.5px;
+  line-height: 1.62;
+}
+
+.chat-product-grid {
+  display: grid;
+  gap: 0.65rem;
+  margin-top: 0.7rem;
+}
+
+.chat-product-card {
+  display: grid;
+  grid-template-columns: 74px 1fr;
+  gap: 0.7rem;
+  align-items: stretch;
+  padding: 0.55rem;
+  border-radius: 18px;
+  text-decoration: none;
+  background: rgb(255 255 255 / 0.84);
+  border: 1px solid rgb(var(--luxury-gold-rgb) / 0.16);
+  box-shadow: 0 12px 24px rgb(var(--luxury-black-rgb) / 0.06);
+  transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.chat-product-card:hover {
+  transform: translateY(-1px);
+  border-color: rgb(var(--luxury-gold-rgb) / 0.45);
+  box-shadow: 0 18px 28px rgb(var(--luxury-black-rgb) / 0.1);
+}
+
+.chat-product-media {
+  overflow: hidden;
+  border-radius: 14px;
+  background: rgb(var(--luxury-gold-rgb) / 0.08);
+}
+
+.chat-product-image {
+  width: 100%;
+  height: 100%;
+  min-height: 88px;
+  object-fit: cover;
+  display: block;
+}
+
+.chat-product-content {
+  min-width: 0;
+}
+
+.chat-product-family {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--luxury-gold);
+  margin-bottom: 0.25rem;
+}
+
+.chat-product-name {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: 1.05rem;
+  line-height: 1.05;
+  color: var(--luxury-black);
+  margin-bottom: 0.25rem;
+}
+
+.chat-product-description {
+  font-size: 11px;
+  line-height: 1.35;
+  color: rgb(var(--luxury-black-rgb) / 0.64);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.chat-product-price {
+  margin-top: 0.35rem;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--luxury-black);
+}
+
+.chat-bubble-loading {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.32rem;
+  min-width: 78px;
+}
+
+.chat-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 999px;
+  background: var(--luxury-gold);
+  animation: chat-bounce 1s infinite ease-in-out;
+}
+
+.chat-dot-delay-1 {
+  animation-delay: 0.15s;
+}
+
+.chat-dot-delay-2 {
+  animation-delay: 0.3s;
+}
+
+.chat-form {
+  padding: 0.95rem 1rem 1rem;
+  border-top: 1px solid rgb(var(--luxury-gold-rgb) / 0.12);
+  background:
+    linear-gradient(180deg, rgb(255 255 255 / 0.65), rgb(255 255 255 / 0.92));
+}
+
+.chat-input-wrap {
+  padding: 0.85rem 0.95rem;
+  border-radius: 22px;
+  border: 1px solid rgb(var(--luxury-gold-rgb) / 0.16);
+  background: rgb(255 255 255 / 0.78);
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.9);
+}
+
+.chat-input {
+  width: 100%;
+  min-height: 22px;
+  max-height: 110px;
+  border: none;
+  resize: none;
+  background: transparent;
+  color: var(--luxury-black);
+  font-size: 13.5px;
+  line-height: 1.55;
+  outline: none;
+}
+
+.chat-input::placeholder {
+  color: rgb(var(--luxury-black-rgb) / 0.36);
+}
+
+.chat-form-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-top: 0.8rem;
+}
+
+.chat-form-note {
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: rgb(var(--luxury-black-rgb) / 0.46);
+}
+
+.chat-send {
+  min-width: 96px;
+  border: none;
+  border-radius: 999px;
+  padding: 0.8rem 1.2rem;
+  background:
+    linear-gradient(135deg, rgb(34 29 24), rgb(71 59 48));
+  color: white;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: transform 0.22s ease, box-shadow 0.22s ease, opacity 0.22s ease;
+  box-shadow: 0 14px 30px rgb(var(--luxury-black-rgb) / 0.16);
+}
+
+.chat-send:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 18px 36px rgb(var(--luxury-black-rgb) / 0.2);
+}
+
+.chat-send:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+.chat-panel-enter-active,
+.chat-panel-leave-active,
+.chat-trigger-enter-active,
+.chat-trigger-leave-active {
+  transition: opacity 0.28s ease, transform 0.28s ease;
+}
+
+.chat-panel-enter-from,
+.chat-panel-leave-to,
+.chat-trigger-enter-from,
+.chat-trigger-leave-to {
+  opacity: 0;
+  transform: translateY(16px) scale(0.97);
+}
+
+@keyframes chat-bounce {
+  0%, 80%, 100% {
+    transform: translateY(0);
+    opacity: 0.45;
   }
-  to {
+  40% {
+    transform: translateY(-3px);
     opacity: 1;
-    transform: translateY(0) scale(1);
   }
 }
 
-@keyframes fadeIn {
-  from {
-    opacity: 0;
+@media (max-width: 640px) {
+  .chat-shell {
+    left: 0.75rem;
+    right: 0.75rem;
+    bottom: 0.75rem;
   }
-  to {
-    opacity: 1;
+
+  .chat-panel {
+    width: 100%;
+    height: min(78vh, 700px);
+    margin-left: auto;
+  }
+
+  .chat-overview-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .chat-bubble-wrap {
+    max-width: calc(100% - 2.8rem);
+  }
+
+  .chat-form-footer {
+    align-items: flex-end;
+    flex-direction: column;
+  }
+
+  .chat-form-note {
+    width: 100%;
+  }
+
+  .chat-send {
+    width: 100%;
+  }
+
+  .chat-quick-links,
+  .chat-header-actions {
+    flex-wrap: wrap;
+  }
+
+  .chat-product-card {
+    grid-template-columns: 66px 1fr;
   }
 }
 </style>
