@@ -68,7 +68,7 @@ npm run dev
 Para crear una cuenta admin:
 1. Ve a `/auth`
 2. Pestaña "Admin"
-3. Crea cuenta con email que contenga "admin"
+3. Crea la cuenta administradora con el email `admin@ibernovia.com`
 4. Acceso automático al `/admin`
 
 ## Seguridad Implementada

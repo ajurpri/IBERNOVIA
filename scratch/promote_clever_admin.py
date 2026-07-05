@@ -1,3 +1,4 @@
+import os
 import pymysql
 import sys
 
@@ -5,10 +6,13 @@ email = 'ajupr06@gmail.com'
 if len(sys.argv) > 1:
     email = sys.argv[1]
 
-host = 'bbmd7ggskeyrsryrrz1x-mysql.services.clever-cloud.com'
-user = 'ugcvowu3hsekr0fm'
-password = 'ioHzPRomuRQcBPSPTFMV'
-database = 'bbmd7ggskeyrsryrrz1x'
+host = os.getenv('DB_HOST', '')
+user = os.getenv('DB_USER', '')
+password = os.getenv('DB_PASSWORD', '')
+database = os.getenv('DB_NAME', '')
+
+if not all([host, user, password, database]):
+    raise SystemExit('Define DB_HOST, DB_USER, DB_PASSWORD y DB_NAME antes de ejecutar este script.')
 
 print(f"Connecting to Clever Cloud MySQL to promote '{email}' to admin...")
 try:

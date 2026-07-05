@@ -23,17 +23,20 @@ public class AdminSetupController {
     private final UsuarioRepository usuarioRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
+    private final boolean setupAdminEnabled;
     private final String setupAdminKey;
 
     public AdminSetupController(
             UsuarioRepository usuarioRepository,
             PasswordEncoder passwordEncoder,
             JwtUtil jwtUtil,
+            @Value("${app.admin.setup-enabled:false}") boolean setupAdminEnabled,
             @Value("${app.admin.setup-key:}") String setupAdminKey
     ) {
         this.usuarioRepository = usuarioRepository;
         this.passwordEncoder = passwordEncoder;
         this.jwtUtil = jwtUtil;
+        this.setupAdminEnabled = setupAdminEnabled;
         this.setupAdminKey = setupAdminKey;
     }
 
@@ -63,6 +66,11 @@ public class AdminSetupController {
             @RequestHeader(value = "X-Setup-Key", required = false) String requestSetupKey
         ) {
         try {
+            if (!setupAdminEnabled) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                .body(Map.of("success", false, "message", "Setup admin deshabilitado"));
+            }
+
             if (setupAdminKey == null || setupAdminKey.isBlank()) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN)
                 .body(Map.of("success", false, "message", "Setup admin deshabilitado"));
@@ -133,6 +141,11 @@ public class AdminSetupController {
     // Verificar si hay admins
     @GetMapping("/check")
     public ResponseEntity<Map<String, Object>> checkAdminExists() {
+        if (!setupAdminEnabled) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                    .body(Map.of("success", false, "message", "Setup admin deshabilitado"));
+        }
+
         long adminCount = usuarioRepository.findAll().stream()
                 .filter(Usuario::getIsAdmin)
                 .count();

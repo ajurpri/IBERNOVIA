@@ -20,10 +20,11 @@ Ubicacion:
 Variables recomendadas en PowerShell:
 
 ```powershell
-$env:DB_USERNAME="root"
-$env:DB_PASSWORD="toor"
-$env:APP_JWT_SECRET="IBERNOVIA_SUPER_SECRET_KEY_CHANGE_IN_PRODUCTION_2026_64_CHAR_MINIMUM_KEY"
+$env:DB_USERNAME="tu_usuario_mysql"
+$env:DB_PASSWORD="tu_password_mysql"
+$env:APP_JWT_SECRET="cambia-esto-por-un-secreto-jwt-largo-unico-y-de-64-caracteres-o-mas"
 $env:APP_FIREBASE_PROJECT_ID="ibernovia"
+$env:APP_ADMIN_SETUP_KEY="cambia-esto-por-una-clave-larga-y-unica"
 
 # SMTP Gmail (opcional pero recomendado para formularios de contacto)
 $env:SPRING_MAIL_HOST="smtp.gmail.com"
@@ -71,7 +72,10 @@ Usa como base:
 Variables clave:
 - `VITE_API_URL=http://localhost:8080`
 - `VITE_ENABLE_GOOGLE_AUTH=true` y Firebase (`VITE_FIREBASE_*`) si quieres usar login social
-- `VITE_ADMIN_EMAILS=admin@ibernovia.com,dam@ibernovia.com`
+- `VITE_ADMIN_EMAILS=admin@ibernovia.com`
+- `ADMIN_EMAILS=admin@ibernovia.com` en el backend solo si quieres auto-promocion con login social
+- `APP_ADMIN_SETUP_KEY` debe definirse para habilitar la creacion inicial del admin
+- `APP_ADMIN_SETUP_ENABLED=false` por defecto; actívalo solo de forma temporal para el alta inicial
 
 Importante en despliegue:
 - El frontend y el backend deben apuntar al mismo proyecto Firebase.
@@ -83,6 +87,7 @@ Importante en despliegue:
 - Operaciones de escritura de productos protegidas
 - Setup de admin con password hasheada (BCrypt)
 - Credenciales externalizadas por variables de entorno
+- No existe una contrasena admin por defecto en el codigo
 
 ## Notas
 

@@ -32,3 +32,6 @@ target/
 *.env.local
 *.env.development
 *.env.production.local
+
+# Secrets and service accounts
+**/firebase-adminsdk.json

@@ -30,7 +30,7 @@
               v-model="form.email"
               type="email"
               required
-              placeholder="admin@ibernovia.es"
+              placeholder="admin@ibernovia.com"
               class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:border-luxury-gold focus:ring-2 focus:ring-luxury-gold/20 transition"
             />
             <p class="text-xs text-gray-500 mt-1">Usa tu correo profesional</p>

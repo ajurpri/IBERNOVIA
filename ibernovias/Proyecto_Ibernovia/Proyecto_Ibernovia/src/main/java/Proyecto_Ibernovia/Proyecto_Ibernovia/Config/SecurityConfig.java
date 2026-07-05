@@ -47,7 +47,6 @@ public class SecurityConfig {
                 "/api/auth/**",
                 "/api/contacto",
                 "/api/contacto/",
-                "/api/admin/setup/check",
                 "/api/chat",
                 "/api/chat/",
                 "/api/health",

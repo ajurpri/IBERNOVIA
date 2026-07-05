@@ -202,9 +202,9 @@ public class AuthController {
             
             // Determinar si es admin predefinido
             boolean isAdminEmail = false;
-            String adminEmailsEnv = System.getenv("VITE_ADMIN_EMAILS");
+            String adminEmailsEnv = System.getenv("ADMIN_EMAILS");
             if (adminEmailsEnv == null) {
-                adminEmailsEnv = System.getenv("ADMIN_EMAILS");
+                adminEmailsEnv = System.getenv("VITE_ADMIN_EMAILS");
             }
             if (adminEmailsEnv != null && !adminEmailsEnv.isBlank()) {
                 for (String adminEmail : adminEmailsEnv.split(",")) {
@@ -213,11 +213,6 @@ public class AuthController {
                         break;
                     }
                 }
-            }
-            if (!isAdminEmail) {
-                isAdminEmail = "admin@ibernovia.com".equalsIgnoreCase(email)
-                        || "dam@ibernovia.com".equalsIgnoreCase(email)
-                        || "comercial@ibernovia.com".equalsIgnoreCase(email);
             }
 
             if (usuarioOptional.isEmpty()) {

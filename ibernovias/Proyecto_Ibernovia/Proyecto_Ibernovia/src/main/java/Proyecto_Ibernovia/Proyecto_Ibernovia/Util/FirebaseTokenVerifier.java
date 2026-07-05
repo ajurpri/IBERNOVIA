@@ -49,13 +49,13 @@ public class FirebaseTokenVerifier {
     public FirebaseTokenVerifier(
             @Value("${app.firebase.enabled:false}") boolean firebaseEnabled,
             @Value("${app.firebase.project-id:}") String projectId,
-            @Value("${app.firebase.credentials-resource:firebase-adminsdk.json}") String credentialsResource,
+            @Value("${app.firebase.credentials-resource:}") String credentialsResource,
             @Value("${app.firebase.credentials-json:}") String credentialsJson,
             @Value("${app.firebase.credentials-base64:}") String credentialsBase64
     ) {
         this.firebaseEnabled = firebaseEnabled;
         this.projectId = projectId == null ? "" : projectId.trim();
-        this.credentialsResource = credentialsResource == null ? "firebase-adminsdk.json" : credentialsResource.trim();
+        this.credentialsResource = credentialsResource == null ? "" : credentialsResource.trim();
         this.credentialsJson = credentialsJson == null ? "" : credentialsJson.trim();
         this.credentialsBase64 = credentialsBase64 == null ? "" : credentialsBase64.trim();
         this.httpClient = HttpClient.newBuilder()
@@ -176,6 +176,10 @@ public class FirebaseTokenVerifier {
         if (!credentialsBase64.isBlank()) {
             byte[] decoded = Base64.getDecoder().decode(credentialsBase64);
             return new ByteArrayInputStream(decoded);
+        }
+
+        if (credentialsResource.isBlank()) {
+            throw new IllegalStateException("Configura APP_FIREBASE_CREDENTIALS_JSON, APP_FIREBASE_CREDENTIALS_BASE64 o APP_FIREBASE_CREDENTIALS_RESOURCE.");
         }
 
         return new ClassPathResource(credentialsResource).getInputStream();

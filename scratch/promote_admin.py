@@ -1,23 +1,25 @@
+import os
 import pymysql
 import sys
 
+email = os.getenv('ADMIN_EMAIL', 'admin@ibernovia.com')
+
 try:
     conn = pymysql.connect(
-        host='127.0.0.1',
-        port=3306,
-        user='root',
-        password='toor',
-        database='ibernovia',
+        host=os.getenv('DB_HOST', '127.0.0.1'),
+        port=int(os.getenv('DB_PORT', '3306')),
+        user=os.getenv('DB_USER', 'root'),
+        password=os.getenv('DB_PASSWORD', ''),
+        database=os.getenv('DB_NAME', 'ibernovia'),
         charset='utf8mb4'
     )
     print("Connection established")
     
     cursor = conn.cursor()
-    # Promote ajupr06@gmail.com to admin
-    cursor.execute("UPDATE usuario SET is_admin = 1 WHERE email = 'ajupr06@gmail.com'")
+    cursor.execute("UPDATE usuario SET is_admin = 1 WHERE email = %s", (email,))
     conn.commit()
     
-    print("User ajupr06@gmail.com promoted to admin.")
+    print(f"User {email} promoted to admin.")
             
     cursor.close()
     conn.close()
