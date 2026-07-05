@@ -289,7 +289,9 @@ public class AuthController {
                 "configuredProjectId", status.configuredProjectId(),
                 "credentialsProjectId", status.credentialsProjectId(),
                 "resolvedProjectId", status.resolvedProjectId(),
-                "message", status.message()
+                "message", status.message(),
+                "certsHttpStatus", status.certsHttpStatus(),
+                "certsProbeMessage", status.certsProbeMessage()
         ));
     }
 
