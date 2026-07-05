@@ -365,17 +365,33 @@ const sendMessage = async () => {
       history: messages.value.map(({ role, text: content }) => ({ role, text: content }))
     })
 
+    const backendReply = typeof response?.data?.reply === 'string'
+      ? response.data.reply.trim()
+      : ''
+    const backendProducts = Array.isArray(response?.data?.suggestedProducts)
+      ? response.data.suggestedProducts
+      : []
+
+    if (isBackendFailureReply(backendReply)) {
+      messages.value.push({
+        role: 'model',
+        text: buildFallbackReply(text),
+        products: backendProducts
+      })
+      return
+    }
+
     messages.value.push({
       role: 'model',
-      text: response.data.reply,
-      products: Array.isArray(response.data.suggestedProducts) ? response.data.suggestedProducts : []
+      text: backendReply || buildFallbackReply(text),
+      products: backendProducts
     })
   } catch (error) {
     console.error('Error in chat request:', error)
     const responseReply = error?.response?.data?.reply
     const responseProducts = error?.response?.data?.suggestedProducts
 
-    if (typeof responseReply === 'string' && responseReply.trim()) {
+    if (typeof responseReply === 'string' && responseReply.trim() && !isBackendFailureReply(responseReply)) {
       messages.value.push({
         role: 'model',
         text: responseReply,
@@ -405,6 +421,16 @@ function normalize(value) {
 
 function containsAny(text, ...candidates) {
   return candidates.some((candidate) => text.includes(candidate))
+}
+
+function isBackendFailureReply(reply) {
+  const normalized = normalize(reply)
+  return containsAny(
+    normalized,
+    'ha ocurrido un error al procesar tu consulta con el servicio de asistencia de ibernovia',
+    'ha ocurrido un error inesperado al procesar el chat',
+    'lo siento ha ocurrido un error al procesar tu consulta'
+  )
 }
 
 function buildFallbackReply(text) {
