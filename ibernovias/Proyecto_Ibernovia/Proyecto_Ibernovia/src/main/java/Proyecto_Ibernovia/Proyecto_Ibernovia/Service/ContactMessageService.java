@@ -15,7 +15,7 @@ public class ContactMessageService {
 
     private static final Logger logger = LoggerFactory.getLogger(ContactMessageService.class);
 
-    public record SaveResult(ContactMessage saved, boolean emailSent) {}
+    public record SaveResult(ContactMessage saved, boolean companyEmailSent, boolean customerConfirmationSent) {}
 
     private final ContactMessageRepository contactMessageRepository;
     private final EmailService emailService;
@@ -33,15 +33,19 @@ public class ContactMessageService {
         message.setMensaje(request.getMensaje());
 
         ContactMessage saved = contactMessageRepository.save(message);
-        logger.info("✅ Mensaje guardado en BD - ID: {}, De: {}, Asunto: {}",
-            saved.getId(), saved.getEmail(), saved.getAsunto());
+        logger.info("Mensaje guardado en BD - ID: {}, De: {}, Asunto: {}", saved.getId(), saved.getEmail(), saved.getAsunto());
 
-        boolean emailSent = emailService.sendContactEmail(request);
-        if (!emailSent) {
-            logger.warn("⚠️ Mensaje guardado, pero el correo NO se pudo enviar para ID {}", saved.getId());
+        boolean companyEmailSent = emailService.sendContactEmailToCompany(request);
+        if (!companyEmailSent) {
+            logger.warn("Mensaje guardado, pero el correo a empresa NO se pudo enviar para ID {}", saved.getId());
         }
 
-        return new SaveResult(saved, emailSent);
+        boolean customerConfirmationSent = emailService.sendContactConfirmationToCustomer(request);
+        if (!customerConfirmationSent) {
+            logger.warn("Mensaje guardado, pero la confirmacion al cliente NO se pudo enviar para ID {}", saved.getId());
+        }
+
+        return new SaveResult(saved, companyEmailSent, customerConfirmationSent);
     }
 
     public List<ContactMessage> getAllMessages() {
@@ -79,6 +83,6 @@ public class ContactMessageService {
 
     public void deleteMessage(Long id) {
         contactMessageRepository.deleteById(id);
-        logger.info("🗑️ Mensaje eliminado - ID: {}", id);
+        logger.info("Mensaje eliminado - ID: {}", id);
     }
 }

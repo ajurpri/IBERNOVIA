@@ -16,12 +16,10 @@ public class EmailService {
     private final JavaMailSender mailSender;
     private final String contactTo;
     private final String contactFrom;
-
     private final String smtpHost;
     private final String smtpPort;
     private final String smtpUsername;
     private final String smtpPassword;
-
     private final boolean smtpSslEnabled;
     private final boolean smtpStartTlsEnabled;
     private final boolean smtpCheckServerIdentity;
@@ -56,16 +54,13 @@ public class EmailService {
     private boolean smtpConfigured() {
         if (smtpUsername == null || smtpUsername.isBlank()) return false;
         if (smtpPassword == null || smtpPassword.isBlank()) return false;
-
-        // Evitar intentar enviar con valores de ejemplo del application.properties
         if ("tu-email@gmail.com".equalsIgnoreCase(smtpUsername.trim())) return false;
         if ("tu-app-password".equals(smtpPassword.trim())) return false;
-
         return true;
     }
 
     private void logConfiguration() {
-        logger.info("📧 Email Service Initialized");
+        logger.info("Email Service Initialized");
         logger.info("  - Contact To: {}", contactTo);
         logger.info("  - Contact From: {}", contactFrom);
         logger.info("  - SMTP Host: {}:{}", smtpHost, smtpPort);
@@ -77,11 +72,10 @@ public class EmailService {
         logger.info("  - SMTP Configured: {}", smtpConfigured());
     }
 
-    public boolean sendContactEmail(ContactRequest request) {
+    public boolean sendContactEmailToCompany(ContactRequest request) {
         if (!smtpConfigured()) {
-            logger.warn("⚠️  SMTP not configured. Email would be sent to: {} with subject: {}",
-                contactTo, "Contacto: " + request.getAsunto());
-            logger.warn("📝 Message preview:\n{}", buildBody(request));
+            logger.warn("SMTP not configured. Email would be sent to: {} with subject: {}", contactTo, "Contacto: " + request.getAsunto());
+            logger.warn("Message preview:\n{}", buildCompanyBody(request));
             return false;
         }
 
@@ -91,21 +85,54 @@ public class EmailService {
             message.setFrom(contactFrom);
             message.setReplyTo(request.getEmail());
             message.setSubject("Contacto: " + request.getAsunto());
-            message.setText(buildBody(request));
+            message.setText(buildCompanyBody(request));
             mailSender.send(message);
-            logger.info("✅ Email sent successfully to {} from {}", contactTo, request.getEmail());
+            logger.info("Company contact email sent successfully to {} from {}", contactTo, request.getEmail());
             return true;
         } catch (Exception e) {
-            logger.error("❌ Error sending email: {}", e.getMessage(), e);
+            logger.error("Error sending company contact email: {}", e.getMessage(), e);
             return false;
         }
     }
 
-    private String buildBody(ContactRequest request) {
+    public boolean sendContactConfirmationToCustomer(ContactRequest request) {
+        if (!smtpConfigured()) {
+            logger.warn("SMTP not configured. Confirmation email not sent to {}", request.getEmail());
+            return false;
+        }
+
+        try {
+            SimpleMailMessage message = new SimpleMailMessage();
+            message.setTo(request.getEmail());
+            message.setFrom(contactFrom);
+            message.setReplyTo(contactTo);
+            message.setSubject("Hemos recibido tu consulta en IBERNOVIA");
+            message.setText(buildCustomerConfirmationBody(request));
+            mailSender.send(message);
+            logger.info("Customer confirmation email sent successfully to {}", request.getEmail());
+            return true;
+        } catch (Exception e) {
+            logger.error("Error sending customer confirmation email: {}", e.getMessage(), e);
+            return false;
+        }
+    }
+
+    private String buildCompanyBody(ContactRequest request) {
         return "Nuevo mensaje desde el formulario de contacto" +
                 "\n\nNombre: " + request.getNombre() +
                 "\nEmail: " + request.getEmail() +
                 "\nAsunto: " + request.getAsunto() +
                 "\n\nMensaje:\n" + request.getMensaje();
+    }
+
+    private String buildCustomerConfirmationBody(ContactRequest request) {
+        return "Hola " + request.getNombre() + "," +
+                "\n\nHemos recibido correctamente tu consulta en IBERNOVIA." +
+                "\nNuestro equipo revisara tu mensaje y te respondera lo antes posible." +
+                "\n\nResumen de tu consulta:" +
+                "\nAsunto: " + request.getAsunto() +
+                "\nMensaje: " + request.getMensaje() +
+                "\n\nSi necesitas ampliar informacion, puedes responder directamente a este correo o escribir a " + contactTo + "." +
+                "\n\nGracias por contactar con IBERNOVIA.";
     }
 }

@@ -29,9 +29,11 @@ public class ContactoController {
             String message = "Mensaje recibido correctamente. Nos pondremos en contacto pronto.";
 
             return ResponseEntity.ok(Map.of(
-                "message", message,
-                "id", result.saved().getId().toString(),
-                "emailSent", result.emailSent()
+                    "message", message,
+                    "id", result.saved().getId().toString(),
+                    "emailSent", result.companyEmailSent(),
+                    "companyEmailSent", result.companyEmailSent(),
+                    "customerConfirmationSent", result.customerConfirmationSent()
             ));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -39,19 +41,16 @@ public class ContactoController {
         }
     }
 
-    // Endpoint para admin - listar todos los mensajes
     @GetMapping("/admin/all")
     public ResponseEntity<List<ContactMessage>> getAllMessages() {
         return ResponseEntity.ok(contactMessageService.getAllMessages());
     }
 
-    // Endpoint para admin - listar sin leer
     @GetMapping("/admin/unread")
     public ResponseEntity<List<ContactMessage>> getUnreadMessages() {
         return ResponseEntity.ok(contactMessageService.getUnreadMessages());
     }
 
-    // Endpoint para admin - obtener detalle
     @GetMapping("/admin/{id}")
     public ResponseEntity<ContactMessage> getMessageDetail(@PathVariable Long id) {
         return contactMessageService.getMessageById(id)
@@ -59,7 +58,6 @@ public class ContactoController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    // Endpoint para admin - marcar como leído
     @PutMapping("/admin/{id}/read")
     public ResponseEntity<ContactMessage> markAsRead(@PathVariable Long id) {
         ContactMessage updated = contactMessageService.markAsRead(id);
@@ -69,7 +67,6 @@ public class ContactoController {
         return ResponseEntity.notFound().build();
     }
 
-    // Endpoint para admin - agregar nota
     @PutMapping("/admin/{id}/note")
     public ResponseEntity<ContactMessage> addNote(@PathVariable Long id, @RequestBody Map<String, String> body) {
         String note = body.get("nota");

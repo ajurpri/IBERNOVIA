@@ -224,7 +224,7 @@ const loadingGoogle = ref(false)
 const googleLoginReady = ref(false)
 const googleAvailabilityMessage = ref(firebaseStatus.message)
 
-const showGoogleSection = computed(() => canUseGoogleAuth || Boolean(googleAvailabilityMessage.value))
+const showGoogleSection = computed(() => canUseGoogleAuth)
 
 const loginForm = ref({
   email: '',
