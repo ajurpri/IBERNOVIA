@@ -166,25 +166,34 @@
           </button>
         </form>
 
-        <div class="flex items-center gap-3 my-6">
-          <div class="flex-1 h-[1px] bg-black/5"></div>
-          <span class="text-[9px] text-gray-400 uppercase tracking-[0.2em] font-bold">O CONECTA CON</span>
-          <div class="flex-1 h-[1px] bg-black/5"></div>
-        </div>
+        <template v-if="showGoogleSection">
+          <div class="flex items-center gap-3 my-6">
+            <div class="flex-1 h-[1px] bg-black/5"></div>
+            <span class="text-[9px] text-gray-400 uppercase tracking-[0.2em] font-bold">O CONECTA CON</span>
+            <div class="flex-1 h-[1px] bg-black/5"></div>
+          </div>
 
-        <button
-          type="button"
-          @click="handleGoogleLogin"
-          :disabled="loadingGoogle"
-          class="w-full bg-white border border-black/10 text-luxury-black py-3 px-4 rounded-full text-[10px] font-bold uppercase tracking-[0.2em] hover:bg-[#fafafa] hover:border-luxury-gold transition-all duration-300 flex items-center justify-center gap-3 disabled:opacity-50">
-          <svg class="w-4 h-4 shrink-0" viewBox="0 0 24 24">
-            <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
-            <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
-            <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
-            <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
-          </svg>
-          <span>{{ loadingGoogle ? 'Conectando...' : 'Google' }}</span>
-        </button>
+          <button
+            v-if="googleLoginReady"
+            type="button"
+            @click="handleGoogleLogin"
+            :disabled="loadingGoogle"
+            class="w-full bg-white border border-black/10 text-luxury-black py-3 px-4 rounded-full text-[10px] font-bold uppercase tracking-[0.2em] hover:bg-[#fafafa] hover:border-luxury-gold transition-all duration-300 flex items-center justify-center gap-3 disabled:opacity-50">
+            <svg class="w-4 h-4 shrink-0" viewBox="0 0 24 24">
+              <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+              <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+              <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+              <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+            </svg>
+            <span>{{ loadingGoogle ? 'Conectando...' : 'Google' }}</span>
+          </button>
+
+          <div
+            v-else
+            class="rounded-3xl border border-amber-200 bg-amber-50/70 px-5 py-4 text-[11px] uppercase tracking-[0.16em] text-amber-800">
+            {{ googleAvailabilityMessage }}
+          </div>
+        </template>
       </div>
 
       <div class="text-center text-[10px] text-gray-400 uppercase tracking-widest space-y-1">
@@ -196,10 +205,12 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
+import { GoogleAuthProvider, signInWithPopup, updateProfile } from 'firebase/auth'
 import { useAuthStore } from '../stores/auth'
 import { apiClient } from '../lib/api'
+import { auth, canUseGoogleAuth, firebaseStatus } from '../lib/firebase'
 
 const router = useRouter()
 const authStore = useAuthStore()
@@ -210,6 +221,10 @@ const successMessage = ref('')
 const loadingLogin = ref(false)
 const loadingRegister = ref(false)
 const loadingGoogle = ref(false)
+const googleLoginReady = ref(false)
+const googleAvailabilityMessage = ref(firebaseStatus.message)
+
+const showGoogleSection = computed(() => canUseGoogleAuth || Boolean(googleAvailabilityMessage.value))
 
 const loginForm = ref({
   email: '',
@@ -224,6 +239,32 @@ const registerForm = ref({
   confirmPassword: '',
   acceptTerms: false
 })
+
+const redirectAfterAuth = (payload) => {
+  if (payload?.isAdmin) {
+    router.push('/admin')
+    return
+  }
+  router.push('/tienda')
+}
+
+const loadFirebaseStatus = async () => {
+  if (!canUseGoogleAuth) {
+    googleLoginReady.value = false
+    googleAvailabilityMessage.value = firebaseStatus.message
+    return
+  }
+
+  try {
+    const response = await apiClient.get('/api/auth/firebase-status')
+    googleLoginReady.value = response.data?.available === true
+    googleAvailabilityMessage.value = response.data?.message || ''
+  } catch (error) {
+    googleLoginReady.value = false
+    googleAvailabilityMessage.value = 'El acceso con Google no esta disponible temporalmente. Usa email y contrasena.'
+    console.error('Error consultando estado de Firebase:', error)
+  }
+}
 
 const handleLogin = async () => {
   errorGlobal.value = ''
@@ -246,11 +287,7 @@ const handleLogin = async () => {
     successMessage.value = 'Acceso correcto. Iniciando sesion...'
 
     setTimeout(() => {
-      if (response.data?.isAdmin) {
-        router.push('/admin')
-      } else {
-        router.push('/tienda')
-      }
+      redirectAfterAuth(response.data)
     }, 800)
   } catch (error) {
     errorGlobal.value = error.response?.data || error.message || 'Error en el login'
@@ -315,11 +352,48 @@ const handleGoogleLogin = async () => {
   loadingGoogle.value = true
 
   try {
-    errorGlobal.value = 'El acceso con Google esta temporalmente desactivado mientras resolvemos un bloqueo externo de Firebase en produccion. Usa email y contrasena.'
+    if (!googleLoginReady.value || !auth) {
+      errorGlobal.value = googleAvailabilityMessage.value || 'El acceso con Google no esta disponible temporalmente.'
+      return
+    }
+
+    const provider = new GoogleAuthProvider()
+    provider.addScope('profile email')
+
+    const result = await signInWithPopup(auth, provider)
+    const firebaseUser = result.user
+
+    if (!firebaseUser.displayName) {
+      await updateProfile(firebaseUser, {
+        displayName: firebaseUser.email?.split('@')[0] || 'Cliente Ibernovia'
+      })
+    }
+
+    const firebaseIdToken = await firebaseUser.getIdToken()
+    const response = await apiClient.post('/api/auth/firebase-login', { token: firebaseIdToken })
+
+    authStore.setUser(response.data)
+    successMessage.value = 'Acceso correcto. Iniciando sesion...'
+
+    setTimeout(() => {
+      redirectAfterAuth(response.data)
+    }, 800)
+  } catch (error) {
+    const errorCode = error?.code
+    if (errorCode === 'auth/popup-closed-by-user' || errorCode === 'auth/cancelled-popup-request') {
+      return
+    }
+
+    errorGlobal.value = error.response?.data || error.message || 'Error al conectar con Google'
+    console.error('Error Google Auth:', error)
   } finally {
     loadingGoogle.value = false
   }
 }
+
+onMounted(() => {
+  loadFirebaseStatus()
+})
 </script>
 
 <style scoped>

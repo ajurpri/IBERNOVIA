@@ -7,6 +7,8 @@ import {
 } from 'firebase/auth'
 import { getFirestore, connectFirestoreEmulator } from 'firebase/firestore'
 
+const parseBooleanEnv = (value) => typeof value === 'string' && value.trim().toLowerCase() === 'true'
+
 const configuredFirebase = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY?.trim() || '',
   authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN?.trim() || '',
@@ -16,47 +18,53 @@ const configuredFirebase = {
   appId: import.meta.env.VITE_FIREBASE_APP_ID?.trim() || ''
 }
 
-const hasCompleteFirebaseConfig = Object.values(configuredFirebase).every(Boolean)
+const missingFirebaseKeys = Object.entries(configuredFirebase)
+  .filter(([, value]) => !value)
+  .map(([key]) => key)
 
-if (import.meta.env.PROD && !hasCompleteFirebaseConfig) {
-  throw new Error(
-    'Firebase no esta configurado correctamente en produccion. Revisa las variables VITE_FIREBASE_* del frontend.'
-  )
+const hasCompleteFirebaseConfig = missingFirebaseKeys.length === 0
+const requestedGoogleAuth = parseBooleanEnv(import.meta.env.VITE_ENABLE_GOOGLE_AUTH ?? 'false')
+
+const firebaseStatus = {
+  requestedGoogleAuth,
+  hasCompleteFirebaseConfig,
+  missingKeys: missingFirebaseKeys,
+  canUseGoogleAuth: requestedGoogleAuth && hasCompleteFirebaseConfig,
+  message: requestedGoogleAuth
+    ? hasCompleteFirebaseConfig
+      ? ''
+      : `Faltan variables de Firebase en frontend: ${missingFirebaseKeys.join(', ')}`
+    : 'El acceso con Google/Firebase esta desactivado por configuracion.'
 }
 
-if (!import.meta.env.PROD && !hasCompleteFirebaseConfig) {
+if (requestedGoogleAuth && !hasCompleteFirebaseConfig) {
   console.warn(
-    'Firebase no esta completamente configurado en desarrollo. El registro/login con Firebase puede fallar hasta definir VITE_FIREBASE_*.'
+    `Firebase no esta completamente configurado. Faltan: ${missingFirebaseKeys.join(', ')}`
   )
 }
 
-const firebaseConfig = hasCompleteFirebaseConfig
-  ? configuredFirebase
-  : {
-      apiKey: 'AIzaSyDemoKeyForDevelopment',
-      authDomain: 'ibernovia-demo.firebaseapp.com',
-      projectId: 'ibernovia-demo',
-      storageBucket: 'ibernovia-demo.appspot.com',
-      messagingSenderId: '123456789',
-      appId: '1:123456789:web:abcdef123456'
+let app = null
+let auth = null
+let db = null
+
+if (firebaseStatus.canUseGoogleAuth) {
+  app = initializeApp(configuredFirebase)
+  auth = getAuth(app)
+  db = getFirestore(app)
+
+  setPersistence(auth, browserLocalPersistence)
+    .catch((error) => console.error('Error configurando persistencia:', error))
+
+  if (import.meta.env.MODE === 'development' && window.location.hostname === 'localhost') {
+    try {
+      // Descomenta las lineas siguientes si usas emuladores locales
+      // connectAuthEmulator(auth, 'http://localhost:9099', { disableWarnings: true })
+      // connectFirestoreEmulator(db, 'localhost', 8080)
+    } catch {
+      // El emulador ya esta configurado
     }
-
-const app = initializeApp(firebaseConfig)
-
-const auth = getAuth(app)
-setPersistence(auth, browserLocalPersistence)
-  .catch((error) => console.error('Error configurando persistencia:', error))
-
-const db = getFirestore(app)
-
-if (import.meta.env.MODE === 'development' && window.location.hostname === 'localhost') {
-  try {
-    // Descomenta las lineas siguientes si usas emuladores locales
-    // connectAuthEmulator(auth, 'http://localhost:9099', { disableWarnings: true })
-    // connectFirestoreEmulator(db, 'localhost', 8080)
-  } catch {
-    // El emulador ya esta configurado
   }
 }
 
-export { auth, db, app }
+export { auth, db, app, firebaseStatus }
+export const canUseGoogleAuth = firebaseStatus.canUseGoogleAuth

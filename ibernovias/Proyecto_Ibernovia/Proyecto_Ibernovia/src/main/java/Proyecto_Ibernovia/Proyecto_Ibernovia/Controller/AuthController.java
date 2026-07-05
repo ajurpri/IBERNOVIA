@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
 import java.util.Optional;
 
 @RestController
@@ -173,6 +174,12 @@ public class AuthController {
     @PostMapping("/firebase-login")
     public ResponseEntity<?> firebaseLogin(@RequestBody java.util.Map<String, String> body) {
         try {
+            FirebaseTokenVerifier.FirebaseStatus status = firebaseTokenVerifier.getStatus();
+            if (!status.available()) {
+                return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE)
+                        .body(status.message());
+            }
+
             String idToken = body.get("token");
             if (idToken == null || idToken.isBlank()) {
                 return ResponseEntity.badRequest().body("Token de Firebase requerido");
@@ -271,6 +278,19 @@ public class AuthController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body("Error en la autenticación con Firebase: " + e.getMessage());
         }
+    }
+
+    @GetMapping("/firebase-status")
+    public ResponseEntity<?> firebaseStatus() {
+        FirebaseTokenVerifier.FirebaseStatus status = firebaseTokenVerifier.getStatus();
+        return ResponseEntity.ok(Map.of(
+                "enabled", status.enabled(),
+                "available", status.available(),
+                "configuredProjectId", status.configuredProjectId(),
+                "credentialsProjectId", status.credentialsProjectId(),
+                "resolvedProjectId", status.resolvedProjectId(),
+                "message", status.message()
+        ));
     }
 
     @PostMapping("/validar-codigo")

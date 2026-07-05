@@ -70,12 +70,12 @@ Usa como base:
 
 Variables clave:
 - `VITE_API_URL=http://localhost:8080`
-- Firebase (`VITE_FIREBASE_*`) si quieres usar login social
+- `VITE_ENABLE_GOOGLE_AUTH=true` y Firebase (`VITE_FIREBASE_*`) si quieres usar login social
 - `VITE_ADMIN_EMAILS=admin@ibernovia.com,dam@ibernovia.com`
 
 Importante en despliegue:
 - El frontend y el backend deben apuntar al mismo proyecto Firebase.
-- Define `APP_FIREBASE_PROJECT_ID=ibernovia` en el backend para evitar rechazos del tipo `Token de Firebase invalido o expirado`.
+- Define `APP_FIREBASE_ENABLED=true` y `APP_FIREBASE_PROJECT_ID=ibernovia` en el backend para evitar rechazos del tipo `Token de Firebase invalido o expirado`.
 
 ## Seguridad aplicada
 
