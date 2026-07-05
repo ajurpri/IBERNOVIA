@@ -24,7 +24,7 @@
               <div>
                 <h3 class="text-[10px] uppercase tracking-[0.2em] text-gray-400 font-bold mb-2">Direccion</h3>
                 <p class="text-luxury-black font-serif text-lg leading-relaxed">
-                  Calle Forjadores, 1<br>
+                  Plaza de Abastos, C. Ollerias, 48<br>
                   23740 Andujar, Jaen
                 </p>
               </div>
@@ -66,7 +66,7 @@
                 <h3 class="text-[10px] uppercase tracking-[0.2em] text-gray-400 font-bold mb-2">Horarios de Atencion</h3>
                 <p class="text-luxury-black font-serif text-base leading-relaxed">
                   Lunes a Viernes<br>
-                  09:00 a 20:00
+                  09:00 a 14:00 · 17:00 a 20:00
                 </p>
                 <p class="text-gray-400 text-xs mt-1">Sabados y Domingos cerrado</p>
               </div>
@@ -75,7 +75,7 @@
 
           <div class="pt-8 border-t border-black/5 mt-8">
             <p class="font-serif italic text-gray-500 text-sm leading-relaxed text-balance">
-              "Disenamos experiencias memorables para acompanarte en tu dia mas especial. Si deseas visitarnos de forma presencial o solicitar muestras de tejidos, te recomendamos concertar una cita previa."
+              Si deseas visitarnos o realizar una consulta mas concreta sobre la coleccion, te recomendamos contactarnos previamente.
             </p>
           </div>
         </div>
@@ -133,10 +133,6 @@
               autocomplete="off"
               class="w-full pb-3 pt-1 border-b border-gray-300 bg-transparent rounded-none focus:outline-none focus:border-luxury-gold transition-colors text-sm text-luxury-black placeholder-gray-400/40 resize-none"
               placeholder="Escribe aqui tu mensaje..."></textarea>
-          </div>
-
-          <div class="rounded-3xl border border-black/5 bg-[#faf8f4] px-5 py-4 text-xs tracking-wide text-gray-600">
-            Recibiremos tu consulta en el correo de empresa y, cuando el servidor de correo este configurado, tambien te enviaremos una confirmacion automatica.
           </div>
 
           <div class="pt-4">

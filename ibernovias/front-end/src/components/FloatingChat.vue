@@ -12,7 +12,6 @@
         <span class="chat-trigger-core">
           <img :src="logoSrc" alt="Ibernovia" class="chat-trigger-logo" />
         </span>
-        <span class="chat-trigger-badge">IA</span>
       </button>
     </Transition>
 
@@ -26,9 +25,9 @@
             </div>
 
             <div class="chat-brand-copy">
-              <p class="chat-eyebrow">ATELIER IBERNOVIA</p>
-              <h3 class="chat-title">Concierge Privado</h3>
-              <p class="chat-subtitle">Asesora coleccion, cita previa y acceso profesional.</p>
+              <p class="chat-eyebrow">IBERNOVIA</p>
+              <h3 class="chat-title">Asistente</h3>
+              <p class="chat-subtitle">Productos, contacto y acceso profesional.</p>
             </div>
           </div>
 
@@ -50,33 +49,9 @@
           </div>
         </header>
 
-        <div class="chat-overview">
-          <p class="chat-overview-label">Consulta directa</p>
-          <div class="chat-overview-grid">
-            <div class="chat-overview-card">
-              <span class="chat-overview-value">Catologo</span>
-              <span class="chat-overview-meta">recomendaciones guiadas</span>
-            </div>
-            <div class="chat-overview-card">
-              <span class="chat-overview-value">Cita</span>
-              <span class="chat-overview-meta">atelier y contacto</span>
-            </div>
-            <div class="chat-overview-card">
-              <span class="chat-overview-value">B2B</span>
-              <span class="chat-overview-meta">precios solo profesionales</span>
-            </div>
-          </div>
-        </div>
-
-        <div class="chat-quick-links">
-          <router-link to="/tienda" class="chat-quick-link" @click="isOpen = false">Ver catalogo</router-link>
-          <router-link to="/contacto" class="chat-quick-link" @click="isOpen = false">Pedir cita</router-link>
-          <router-link to="/acceso-empresarial" class="chat-quick-link" @click="isOpen = false">Acceso profesional</router-link>
-        </div>
-
         <div ref="messagesContainer" class="chat-messages">
           <div v-if="showSuggestions" class="chat-suggestions-block">
-            <p class="chat-suggestions-label">Preguntas sugeridas</p>
+            <p class="chat-suggestions-label">Consultas frecuentes</p>
             <div class="chat-suggestions-list">
               <button
                 v-for="suggestion in activeSuggestions"
@@ -88,11 +63,6 @@
                 {{ suggestion }}
               </button>
             </div>
-          </div>
-
-          <div v-if="profileSummary" class="chat-memory-banner">
-            <p class="chat-memory-label">Afinando tu perfil</p>
-            <p class="chat-memory-text">{{ profileSummary }}</p>
           </div>
 
           <article
@@ -191,15 +161,15 @@ const authStore = useAuthStore()
 
 const initialMessage = {
   role: 'model',
-  text: 'Bienvenida a Ibernovia. Puedo ayudarte a descubrir complementos, resolver dudas sobre el atelier y orientarte sobre acceso profesional o cita previa.',
+  text: 'Hola. Puedo ayudarte con productos, horarios, contacto o acceso profesional.',
   products: []
 }
 
 const baseSuggestions = [
-  'Busco complementos para novia elegantes',
-  'Que horarios teneis y como pido cita',
+  'Busco algo para novia',
+  'Que horario teneis',
   'Como accedo a precios profesionales',
-  'Recomiendame algo para fiesta o comunion'
+  'Busco algo para fiesta'
 ]
 
 const isOpen = ref(false)
@@ -209,7 +179,7 @@ const messagesContainer = ref(null)
 const textareaRef = ref(null)
 const messages = ref(loadStoredMessages())
 
-const showSuggestions = computed(() => !loading.value)
+const showSuggestions = computed(() => !loading.value && messages.value.length < 4)
 const canResetConversation = computed(() => messages.value.length > 1)
 
 const profileSummary = computed(() => {
@@ -404,7 +374,7 @@ const sendMessage = async () => {
     console.error('Error in chat request:', error)
     messages.value.push({
       role: 'model',
-      text: 'No he podido conectar con el concierge ahora mismo. Si quieres, prueba de nuevo en unos segundos o escribe directamente a info@ibernovia.es.',
+      text: buildFallbackReply(text),
       products: []
     })
   } finally {
@@ -423,6 +393,28 @@ function normalize(value) {
 
 function containsAny(text, ...candidates) {
   return candidates.some((candidate) => text.includes(candidate))
+}
+
+function buildFallbackReply(text) {
+  const normalized = normalize(text)
+
+  if (containsAny(normalized, 'horario', 'abierto', 'cerrado')) {
+    return 'Nuestro horario es de lunes a viernes de 9:00 a 14:00 y de 17:00 a 20:00.'
+  }
+
+  if (containsAny(normalized, 'contacto', 'telefono', 'email', 'correo')) {
+    return 'Puedes escribir a info@ibernovia.es o llamar al 953 51 50 70.'
+  }
+
+  if (containsAny(normalized, 'precio', 'profesional', 'empresa', 'b2b')) {
+    return 'Las tarifas estan reservadas a clientes profesionales validados. Puedes solicitar acceso desde la pagina de acceso profesional.'
+  }
+
+  if (containsAny(normalized, 'novia', 'fiesta', 'comunion', 'novio', 'producto', 'catalogo', 'velo', 'tocado')) {
+    return 'Ahora mismo no puedo cargar la respuesta completa, pero puedes revisar el catalogo o probar de nuevo con una familia concreta.'
+  }
+
+  return 'Ahora mismo no puedo responder con normalidad. Si quieres, prueba otra vez en unos segundos o contacta con Ibernovia en info@ibernovia.es.'
 }
 
 onMounted(() => {
@@ -523,15 +515,10 @@ onBeforeUnmount(() => {
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  border-radius: 28px;
-  border: 1px solid rgb(var(--luxury-gold-rgb) / 0.18);
-  background:
-    radial-gradient(circle at top left, rgb(var(--luxury-gold-rgb) / 0.18), transparent 30%),
-    linear-gradient(180deg, #fffdfb 0%, #faf5ee 46%, #f8f3eb 100%);
-  box-shadow:
-    0 34px 100px rgb(var(--luxury-black-rgb) / 0.24),
-    inset 0 1px 0 rgb(255 255 255 / 0.92);
-  backdrop-filter: blur(12px);
+  border-radius: 18px;
+  border: 1px solid rgb(var(--luxury-black-rgb) / 0.1);
+  background: #fffdf9;
+  box-shadow: 0 20px 48px rgb(var(--luxury-black-rgb) / 0.18);
 }
 
 .chat-header {
@@ -542,19 +529,8 @@ onBeforeUnmount(() => {
   justify-content: space-between;
   gap: 1rem;
   color: white;
-  background:
-    linear-gradient(135deg, rgb(22 18 15 / 0.96), rgb(48 39 31 / 0.94)),
-    var(--luxury-black);
-}
-
-.chat-header::after {
-  content: '';
-  position: absolute;
-  left: 1.15rem;
-  right: 1.15rem;
-  bottom: 0;
-  height: 1px;
-  background: linear-gradient(90deg, rgb(var(--luxury-gold-rgb) / 0), rgb(var(--luxury-gold-rgb) / 0.8), rgb(var(--luxury-gold-rgb) / 0));
+  background: var(--luxury-black);
+  border-bottom: 1px solid rgb(255 255 255 / 0.08);
 }
 
 .chat-brand {
@@ -571,10 +547,9 @@ onBeforeUnmount(() => {
 .chat-brand-logo {
   width: 52px;
   height: 52px;
-  border-radius: 18px;
+  border-radius: 12px;
   object-fit: cover;
-  border: 1px solid rgb(var(--luxury-gold-rgb) / 0.35);
-  box-shadow: 0 12px 24px rgb(0 0 0 / 0.22);
+  border: 1px solid rgb(var(--luxury-gold-rgb) / 0.28);
 }
 
 .chat-brand-status {
@@ -663,11 +638,6 @@ onBeforeUnmount(() => {
   height: 18px;
 }
 
-.chat-overview {
-  padding: 0.95rem 1.05rem 0.5rem;
-}
-
-.chat-overview-label,
 .chat-suggestions-label,
 .chat-memory-label {
   font-size: 10px;
@@ -677,66 +647,6 @@ onBeforeUnmount(() => {
   margin-bottom: 0.6rem;
 }
 
-.chat-overview-grid {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 0.55rem;
-}
-
-.chat-overview-card,
-.chat-memory-banner {
-  padding: 0.7rem 0.75rem;
-  border-radius: 16px;
-  background: rgb(255 255 255 / 0.64);
-  border: 1px solid rgb(var(--luxury-gold-rgb) / 0.16);
-  box-shadow: 0 10px 24px rgb(var(--luxury-black-rgb) / 0.05);
-}
-
-.chat-overview-value {
-  display: block;
-  font-family: 'Cormorant Garamond', Georgia, serif;
-  font-size: 1.15rem;
-  color: var(--luxury-black);
-}
-
-.chat-overview-meta,
-.chat-memory-text {
-  display: block;
-  margin-top: 0.12rem;
-  font-size: 10px;
-  line-height: 1.35;
-  color: rgb(var(--luxury-black-rgb) / 0.62);
-}
-
-.chat-quick-links {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.45rem;
-  padding: 0 1.05rem 0.75rem;
-}
-
-.chat-quick-link {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 999px;
-  padding: 0.55rem 0.8rem;
-  border: 1px solid rgb(var(--luxury-gold-rgb) / 0.16);
-  background: rgb(255 255 255 / 0.72);
-  color: var(--luxury-black);
-  text-decoration: none;
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  transition: transform 0.2s ease, border-color 0.2s ease;
-}
-
-.chat-quick-link:hover {
-  transform: translateY(-1px);
-  border-color: rgb(var(--luxury-gold-rgb) / 0.4);
-}
-
 .chat-messages {
   flex: 1;
   overflow-y: auto;
@@ -744,9 +654,7 @@ onBeforeUnmount(() => {
   display: flex;
   flex-direction: column;
   gap: 0.95rem;
-  background:
-    radial-gradient(circle at top, rgb(255 255 255 / 0.76), transparent 30%),
-    linear-gradient(180deg, rgb(255 255 255 / 0.2), rgb(255 255 255 / 0));
+  background: #fffdf9;
 }
 
 .chat-suggestions-block {
@@ -760,21 +668,21 @@ onBeforeUnmount(() => {
 }
 
 .chat-suggestion-chip {
-  border: 1px solid rgb(var(--luxury-gold-rgb) / 0.22);
-  background: rgb(255 255 255 / 0.76);
+  border: none;
+  background: transparent;
   color: var(--luxury-black);
-  border-radius: 999px;
-  padding: 0.62rem 0.85rem;
+  border-radius: 0;
+  padding: 0.3rem 0;
   font-size: 11px;
   line-height: 1.35;
   cursor: pointer;
-  transition: transform 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+  transition: color 0.2s ease;
+  text-decoration: underline;
+  text-underline-offset: 3px;
 }
 
 .chat-suggestion-chip:hover {
-  transform: translateY(-1px);
-  border-color: rgb(var(--luxury-gold-rgb) / 0.5);
-  background: rgb(var(--luxury-gold-rgb) / 0.1);
+  color: var(--luxury-gold);
 }
 
 .chat-message {
@@ -794,9 +702,9 @@ onBeforeUnmount(() => {
 .chat-avatar {
   width: 34px;
   height: 34px;
-  border-radius: 14px;
-  background: linear-gradient(145deg, rgb(255 255 255 / 0.88), rgb(var(--luxury-gold-rgb) / 0.18));
-  border: 1px solid rgb(var(--luxury-gold-rgb) / 0.2);
+  border-radius: 999px;
+  background: #f6f1e8;
+  border: 1px solid rgb(var(--luxury-gold-rgb) / 0.14);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -830,22 +738,19 @@ onBeforeUnmount(() => {
 }
 
 .chat-bubble {
-  padding: 0.92rem 1rem;
-  border-radius: 22px;
-  box-shadow: 0 14px 34px rgb(var(--luxury-black-rgb) / 0.07);
+  padding: 0.85rem 0.95rem;
+  border-radius: 16px;
 }
 
 .chat-bubble-model {
-  border-top-left-radius: 8px;
-  background:
-    linear-gradient(180deg, rgb(255 255 255 / 0.96), rgb(252 248 241 / 0.92));
-  border: 1px solid rgb(var(--luxury-gold-rgb) / 0.16);
+  border-top-left-radius: 6px;
+  background: #f7f4ee;
+  border: 1px solid rgb(var(--luxury-black-rgb) / 0.08);
 }
 
 .chat-bubble-user {
-  border-top-right-radius: 8px;
-  background:
-    linear-gradient(135deg, rgb(35 30 25), rgb(58 47 37));
+  border-top-right-radius: 6px;
+  background: var(--luxury-black);
   color: white;
 }
 
@@ -866,24 +771,21 @@ onBeforeUnmount(() => {
   grid-template-columns: 74px 1fr;
   gap: 0.7rem;
   align-items: stretch;
-  padding: 0.55rem;
-  border-radius: 18px;
+  padding: 0.55rem 0 0.75rem;
+  border-radius: 0;
   text-decoration: none;
-  background: rgb(255 255 255 / 0.84);
-  border: 1px solid rgb(var(--luxury-gold-rgb) / 0.16);
-  box-shadow: 0 12px 24px rgb(var(--luxury-black-rgb) / 0.06);
-  transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+  background: transparent;
+  border-bottom: 1px solid rgb(var(--luxury-black-rgb) / 0.08);
+  transition: border-color 0.2s ease;
 }
 
 .chat-product-card:hover {
-  transform: translateY(-1px);
-  border-color: rgb(var(--luxury-gold-rgb) / 0.45);
-  box-shadow: 0 18px 28px rgb(var(--luxury-black-rgb) / 0.1);
+  border-color: rgb(var(--luxury-gold-rgb) / 0.4);
 }
 
 .chat-product-media {
   overflow: hidden;
-  border-radius: 14px;
+  border-radius: 10px;
   background: rgb(var(--luxury-gold-rgb) / 0.08);
 }
 
@@ -958,17 +860,17 @@ onBeforeUnmount(() => {
 
 .chat-form {
   padding: 0.95rem 1rem 1rem;
-  border-top: 1px solid rgb(var(--luxury-gold-rgb) / 0.12);
-  background:
-    linear-gradient(180deg, rgb(255 255 255 / 0.65), rgb(255 255 255 / 0.92));
+  border-top: 1px solid rgb(var(--luxury-black-rgb) / 0.08);
+  background: white;
 }
 
 .chat-input-wrap {
-  padding: 0.85rem 0.95rem;
-  border-radius: 22px;
-  border: 1px solid rgb(var(--luxury-gold-rgb) / 0.16);
-  background: rgb(255 255 255 / 0.78);
-  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.9);
+  padding: 0.75rem 0;
+  border-radius: 0;
+  border: none;
+  border-bottom: 1px solid rgb(var(--luxury-black-rgb) / 0.14);
+  background: transparent;
+  box-shadow: none;
 }
 
 .chat-input {
@@ -1008,21 +910,18 @@ onBeforeUnmount(() => {
   border: none;
   border-radius: 999px;
   padding: 0.8rem 1.2rem;
-  background:
-    linear-gradient(135deg, rgb(34 29 24), rgb(71 59 48));
+  background: var(--luxury-black);
   color: white;
   font-size: 11px;
   font-weight: 700;
   letter-spacing: 0.18em;
   text-transform: uppercase;
   cursor: pointer;
-  transition: transform 0.22s ease, box-shadow 0.22s ease, opacity 0.22s ease;
-  box-shadow: 0 14px 30px rgb(var(--luxury-black-rgb) / 0.16);
+  transition: opacity 0.22s ease, background 0.22s ease;
 }
 
 .chat-send:hover:not(:disabled) {
-  transform: translateY(-1px);
-  box-shadow: 0 18px 36px rgb(var(--luxury-black-rgb) / 0.2);
+  background: var(--luxury-gold);
 }
 
 .chat-send:disabled {
@@ -1070,10 +969,6 @@ onBeforeUnmount(() => {
     margin-left: auto;
   }
 
-  .chat-overview-grid {
-    grid-template-columns: 1fr;
-  }
-
   .chat-bubble-wrap {
     max-width: calc(100% - 2.8rem);
   }
@@ -1091,7 +986,6 @@ onBeforeUnmount(() => {
     width: 100%;
   }
 
-  .chat-quick-links,
   .chat-header-actions {
     flex-wrap: wrap;
   }
