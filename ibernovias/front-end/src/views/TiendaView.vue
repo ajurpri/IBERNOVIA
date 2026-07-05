@@ -16,88 +16,75 @@
 
     <section id="catalogo" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-14">
       <div class="grid grid-cols-1 gap-6 border-b border-black/6 pb-8">
-          <div>
-            <label for="search" class="block text-[10px] uppercase tracking-[0.25em] text-gray-400 font-bold mb-2">
-              Buscar en catalogo
-            </label>
-            <input
-              id="search"
-              v-model="searchTerm"
-              type="search"
-              placeholder="Ej. velo, tocado, novia..."
-              class="w-full h-12 px-4 rounded-2xl border border-gray-200 bg-[#fcfaf6] text-sm text-luxury-black placeholder-gray-400/70 focus:outline-none focus:border-luxury-gold transition-colors"
-              aria-label="Buscar productos"
+        <div>
+          <label for="search" class="block text-[10px] uppercase tracking-[0.25em] text-gray-400 font-bold mb-2">
+            Buscar en catalogo
+          </label>
+          <input
+            id="search"
+            v-model="searchTerm"
+            type="search"
+            placeholder="Ej. velo, tocado, novia..."
+            class="w-full h-12 px-4 rounded-2xl border border-gray-200 bg-[#fcfaf6] text-sm text-luxury-black placeholder-gray-400/70 focus:outline-none focus:border-luxury-gold transition-colors"
+            aria-label="Buscar productos"
+          >
+        </div>
+
+        <div>
+          <p class="text-[10px] uppercase tracking-[0.25em] text-gray-400 font-bold mb-3">
+            Familias
+          </p>
+          <div class="flex flex-wrap gap-x-5 gap-y-3">
+            <button
+              type="button"
+              @click="selectedFamily = 'Todas'"
+              class="text-sm transition-colors"
+              :class="selectedFamily === 'Todas' ? 'text-luxury-black font-semibold' : 'text-gray-500 hover:text-luxury-black'"
             >
+              Todas <span class="text-gray-400">({{ productos.length }})</span>
+            </button>
+            <button
+              v-for="fam in familias"
+              :key="fam"
+              type="button"
+              @click="selectedFamily = fam"
+              class="text-sm transition-colors"
+              :class="selectedFamily === fam ? 'text-luxury-black font-semibold' : 'text-gray-500 hover:text-luxury-black'"
+            >
+              {{ fam }} <span class="text-gray-400">({{ familyCounts[fam] || 0 }})</span>
+            </button>
           </div>
+        </div>
 
-          <div>
-            <label class="block text-[10px] uppercase tracking-[0.25em] text-gray-400 font-bold mb-2">
-              Familia
-            </label>
-            <div class="flex flex-wrap gap-2">
-              <button
-                type="button"
-                @click="selectedFamily = 'Todas'"
-                class="px-4 py-2 rounded-full border text-[11px] uppercase tracking-[0.18em] font-semibold transition-colors"
-                :class="selectedFamily === 'Todas' ? 'bg-luxury-black text-white border-luxury-black' : 'bg-[#fcfaf6] text-luxury-black border-gray-200 hover:border-luxury-gold'"
-              >
-                Todas
-              </button>
-              <button
-                v-for="fam in familias"
-                :key="fam"
-                type="button"
-                @click="selectedFamily = fam"
-                class="px-4 py-2 rounded-full border text-[11px] uppercase tracking-[0.18em] font-semibold transition-colors"
-                :class="selectedFamily === fam ? 'bg-luxury-black text-white border-luxury-black' : 'bg-[#fcfaf6] text-luxury-black border-gray-200 hover:border-luxury-gold'"
-              >
-                {{ fam }}
-              </button>
-            </div>
-          </div>
-
-          <div>
-            <label class="block text-[10px] uppercase tracking-[0.25em] text-gray-400 font-bold mb-2">
-              Categoria
-            </label>
-            <div class="flex flex-wrap gap-2">
-              <button
-                type="button"
-                @click="selectedCategory = 'Todos'"
-                class="px-4 py-2 rounded-full border text-[11px] uppercase tracking-[0.18em] font-semibold transition-colors"
-                :class="selectedCategory === 'Todos' ? 'bg-luxury-black text-white border-luxury-black' : 'bg-[#fcfaf6] text-luxury-black border-gray-200 hover:border-luxury-gold'"
-              >
-                Todas
-              </button>
-              <button
-                v-for="cat in categorias"
-                :key="cat"
-                type="button"
-                @click="selectedCategory = cat"
-                class="px-4 py-2 rounded-full border text-[11px] uppercase tracking-[0.18em] font-semibold transition-colors"
-                :class="selectedCategory === cat ? 'bg-luxury-black text-white border-luxury-black' : 'bg-[#fcfaf6] text-luxury-black border-gray-200 hover:border-luxury-gold'"
-              >
-                {{ cat }}
-              </button>
-            </div>
-          </div>
-
-          <div class="max-w-xs">
-            <label class="block text-[10px] uppercase tracking-[0.25em] text-gray-400 font-bold mb-2">
-              Ordenar
-            </label>
-            <select v-model="sortOrder" class="w-full h-12 px-4 rounded-2xl border border-gray-200 bg-[#fcfaf6] text-sm text-luxury-black focus:outline-none focus:border-luxury-gold transition-colors">
-              <option value="destacados">Destacados</option>
-              <option value="nombre-asc">Nombre</option>
-              <option v-if="authStore.canSeePrices" value="precio-asc">Precio ascendente</option>
-              <option v-if="authStore.canSeePrices" value="precio-desc">Precio descendente</option>
-            </select>
+        <div v-if="selectedFamily !== 'Todas' && categorias.length">
+          <p class="text-[10px] uppercase tracking-[0.25em] text-gray-400 font-bold mb-3">
+            Categorias dentro de {{ selectedFamily }}
+          </p>
+          <div class="flex flex-wrap gap-x-5 gap-y-3">
+            <button
+              type="button"
+              @click="selectedCategory = 'Todos'"
+              class="text-sm transition-colors"
+              :class="selectedCategory === 'Todos' ? 'text-luxury-black font-semibold' : 'text-gray-500 hover:text-luxury-black'"
+            >
+              Todas <span class="text-gray-400">({{ familyCounts[selectedFamily] || 0 }})</span>
+            </button>
+            <button
+              v-for="cat in categorias"
+              :key="cat"
+              type="button"
+              @click="selectedCategory = cat"
+              class="text-sm transition-colors"
+              :class="selectedCategory === cat ? 'text-luxury-black font-semibold' : 'text-gray-500 hover:text-luxury-black'"
+            >
+              {{ cat }} <span class="text-gray-400">({{ categoryCounts[cat] || 0 }})</span>
+            </button>
           </div>
         </div>
 
         <div class="mt-2 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 pt-2">
           <p class="text-[11px] uppercase tracking-[0.18em] text-gray-500 font-semibold" aria-live="polite">
-            {{ sortedProducts.length }} productos encontrados
+            {{ visibleProducts.length }} productos encontrados
           </p>
 
           <div class="flex flex-wrap gap-3 items-center">
@@ -109,7 +96,7 @@
             </router-link>
 
             <button
-              v-if="searchTerm || selectedFamily !== 'Todas' || selectedCategory !== 'Todos' || sortOrder !== 'destacados'"
+              v-if="searchTerm || selectedFamily !== 'Todas' || selectedCategory !== 'Todos'"
               type="button"
               @click="resetFilters"
               class="text-[11px] uppercase tracking-[0.18em] font-semibold text-luxury-black hover:text-luxury-gold transition-colors"
@@ -118,6 +105,8 @@
             </button>
           </div>
         </div>
+      </div>
+
       <div v-if="isLoading" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-8 gap-y-12 mt-10" role="status" aria-live="polite">
         <div v-for="n in 8" :key="n" class="aspect-[3/4] rounded-2xl bg-white border border-black/5 animate-pulse"></div>
       </div>
@@ -135,14 +124,14 @@
       </div>
 
       <div v-else class="mt-10">
-        <div v-if="sortedProducts.length === 0" class="rounded-2xl border border-black/5 bg-white p-10 text-center">
+        <div v-if="visibleProducts.length === 0" class="rounded-2xl border border-black/5 bg-white p-10 text-center">
           <p class="font-serif text-2xl text-luxury-black">No hay productos con esos filtros</p>
           <p class="text-sm text-gray-500 mt-2">Prueba otra busqueda o vuelve a la vista general.</p>
         </div>
 
         <div v-else class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-8 gap-y-12 items-stretch">
           <ProductCard
-            v-for="prod in sortedProducts"
+            v-for="prod in visibleProducts"
             :key="prod.id"
             :producto="prod"
           />
@@ -195,23 +184,9 @@ const loadError = ref('')
 const searchTerm = ref('')
 const selectedFamily = ref('Todas')
 const selectedCategory = ref('Todos')
-const sortOrder = ref('destacados')
 const syncFromRoute = ref(false)
 
-const familias = computed(() => {
-  const set = new Set(productos.value.map((p) => p.familia).filter(Boolean))
-  const list = Array.from(set)
-
-  const preferred = ['Novia', 'Novio', 'Fiesta', 'ComuniÃ³n', 'Arras']
-  return list.sort((a, b) => {
-    const ia = preferred.indexOf(a)
-    const ib = preferred.indexOf(b)
-    if (ia !== -1 || ib !== -1) {
-      return (ia === -1 ? 999 : ia) - (ib === -1 ? 999 : ib)
-    }
-    return a.localeCompare(b)
-  })
-})
+const familyOrder = ['novia', 'novio', 'fiesta', 'comunion', 'arras']
 
 const fold = (v) => (v ?? '').toString()
   .replace(/\uFFFD/g, '')
@@ -224,6 +199,20 @@ const normalizeForSearch = (v) => fold(v)
   .trim()
   .replace(/\s+/g, ' ')
 
+const familySortIndex = (family) => {
+  const index = familyOrder.indexOf(fold(family))
+  return index === -1 ? 999 : index
+}
+
+const familias = computed(() => {
+  const set = new Set(productos.value.map((p) => p.familia).filter(Boolean))
+  return Array.from(set).sort((a, b) => {
+    const diff = familySortIndex(a) - familySortIndex(b)
+    if (diff !== 0) return diff
+    return a.localeCompare(b)
+  })
+})
+
 const categorias = computed(() => {
   const list = selectedFamily.value === 'Todas'
     ? productos.value
@@ -231,6 +220,28 @@ const categorias = computed(() => {
 
   const set = new Set(list.map((p) => p.categoria).filter(Boolean))
   return Array.from(set).sort()
+})
+
+const familyCounts = computed(() => {
+  return productos.value.reduce((acc, product) => {
+    if (product?.familia) {
+      acc[product.familia] = (acc[product.familia] || 0) + 1
+    }
+    return acc
+  }, {})
+})
+
+const categoryCounts = computed(() => {
+  const base = selectedFamily.value === 'Todas'
+    ? productos.value
+    : productos.value.filter((p) => p.familia === selectedFamily.value)
+
+  return base.reduce((acc, product) => {
+    if (product?.categoria) {
+      acc[product.categoria] = (acc[product.categoria] || 0) + 1
+    }
+    return acc
+  }, {})
 })
 
 watch(selectedFamily, () => {
@@ -294,43 +305,32 @@ const scoredProducts = computed(() => {
   return strict.length ? strict : loose
 })
 
-const sortedProducts = computed(() => {
+const visibleProducts = computed(() => {
   const term = normalizeForSearch(searchTerm.value)
   const hasTerm = term.length > 0
-
   const list = scoredProducts.value.map((x) => x)
 
   if (hasTerm) {
     list.sort((a, b) => {
       if (b.score !== a.score) return b.score - a.score
-
-      if (authStore.canSeePrices) {
-        if (sortOrder.value === 'precio-asc') return (a.producto.precio || 0) - (b.producto.precio || 0)
-        if (sortOrder.value === 'precio-desc') return (b.producto.precio || 0) - (a.producto.precio || 0)
-        if (sortOrder.value === 'nombre-asc') return (a.producto.nombre || '').localeCompare(b.producto.nombre || '')
-      }
-
+      const familyDiff = familySortIndex(a.producto.familia) - familySortIndex(b.producto.familia)
+      if (familyDiff !== 0) return familyDiff
+      const categoryDiff = (a.producto.categoria || '').localeCompare(b.producto.categoria || '')
+      if (categoryDiff !== 0) return categoryDiff
       return (a.producto.nombre || '').localeCompare(b.producto.nombre || '')
     })
-
     return list.map((x) => x.producto)
   }
 
-  const products = list.map((x) => x.producto)
-
-  if (!authStore.canSeePrices) {
-    return products.sort((a, b) => (a.nombre || '').localeCompare(b.nombre || ''))
-  }
-  if (sortOrder.value === 'precio-asc') {
-    return products.sort((a, b) => (a.precio || 0) - (b.precio || 0))
-  }
-  if (sortOrder.value === 'precio-desc') {
-    return products.sort((a, b) => (b.precio || 0) - (a.precio || 0))
-  }
-  if (sortOrder.value === 'nombre-asc') {
-    return products.sort((a, b) => (a.nombre || '').localeCompare(b.nombre || ''))
-  }
-  return products
+  return list
+    .map((x) => x.producto)
+    .sort((a, b) => {
+      const familyDiff = familySortIndex(a.familia) - familySortIndex(b.familia)
+      if (familyDiff !== 0) return familyDiff
+      const categoryDiff = (a.categoria || '').localeCompare(b.categoria || '')
+      if (categoryDiff !== 0) return categoryDiff
+      return (a.nombre || '').localeCompare(b.nombre || '')
+    })
 })
 
 const applyQueryFilters = () => {
@@ -339,13 +339,10 @@ const applyQueryFilters = () => {
   const q = route.query
   const querySearch = typeof q.q === 'string' ? q.q : ''
   const queryFamily = typeof q.familia === 'string' ? q.familia : 'Todas'
-  const querySort = typeof q.sort === 'string' ? q.sort : 'destacados'
+  const queryCategory = typeof q.categoria === 'string' ? q.categoria : 'Todos'
 
   searchTerm.value = querySearch
   selectedFamily.value = familias.value.includes(queryFamily) ? queryFamily : 'Todas'
-  sortOrder.value = ['destacados', 'precio-asc', 'precio-desc', 'nombre-asc'].includes(querySort) ? querySort : 'destacados'
-
-  const queryCategory = typeof q.categoria === 'string' ? q.categoria : 'Todos'
   selectedCategory.value = categorias.value.includes(queryCategory) ? queryCategory : 'Todos'
 
   syncFromRoute.value = false
@@ -358,7 +355,6 @@ const updateRouteQuery = () => {
   if (searchTerm.value.trim()) query.q = searchTerm.value.trim()
   if (selectedFamily.value !== 'Todas') query.familia = selectedFamily.value
   if (selectedCategory.value !== 'Todos') query.categoria = selectedCategory.value
-  if (sortOrder.value !== 'destacados') query.sort = sortOrder.value
 
   router.replace({
     path: route.path,
@@ -371,7 +367,6 @@ const resetFilters = () => {
   searchTerm.value = ''
   selectedFamily.value = 'Todas'
   selectedCategory.value = 'Todos'
-  sortOrder.value = 'destacados'
 }
 
 const fetchProductos = async () => {
@@ -398,7 +393,7 @@ watch(() => route.query, () => {
   applyQueryFilters()
 }, { deep: true })
 
-watch([searchTerm, selectedFamily, selectedCategory, sortOrder], () => {
+watch([searchTerm, selectedFamily, selectedCategory], () => {
   if (isLoading.value) return
   updateRouteQuery()
 })

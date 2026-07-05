@@ -154,19 +154,29 @@ public class ChatController {
 
             System.err.println("Gemini API Error Status: " + response.statusCode());
             System.err.println("Gemini API Error Body: " + response.body());
-            return ResponseEntity.status(response.statusCode()).body(buildChatResponse(
-                    "Lo siento, ha ocurrido un error al procesar tu consulta con el servicio de asistencia de Ibernovia.",
+            return ResponseEntity.ok(buildChatResponse(
+                    buildDemoReply(latestUserMessage, productos, canSeePrices, intent),
                     suggestedProducts,
                     canSeePrices
             ));
         } catch (Exception e) {
             System.err.println("ERROR EN CHAT CONTROLLER:");
             e.printStackTrace();
-            return ResponseEntity.status(500).body(Map.of(
-                    "reply",
-                    "Ha ocurrido un error inesperado al procesar el chat. Si quieres, vuelve a intentarlo en unos instantes.",
-                    "suggestedProducts",
-                    List.of()
+            List<Producto> productos = productoRepository.findAll();
+            String latestUserMessage = "";
+            @SuppressWarnings("unchecked")
+            List<Map<String, String>> history = (List<Map<String, String>>) body.get("history");
+            if (history != null) {
+                latestUserMessage = extractLatestUserMessage(sanitizeHistory(history));
+            }
+            boolean canSeePrices = checkCanSeePrices(authHeader, businessCodeHeader);
+            String intent = detectIntent(latestUserMessage);
+            List<Producto> suggestedProducts = selectPriorityProducts(productos, latestUserMessage).stream().limit(4).collect(Collectors.toList());
+
+            return ResponseEntity.ok(buildChatResponse(
+                    buildDemoReply(latestUserMessage, productos, canSeePrices, intent),
+                    suggestedProducts,
+                    canSeePrices
             ));
         }
     }

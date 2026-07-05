@@ -372,6 +372,18 @@ const sendMessage = async () => {
     })
   } catch (error) {
     console.error('Error in chat request:', error)
+    const responseReply = error?.response?.data?.reply
+    const responseProducts = error?.response?.data?.suggestedProducts
+
+    if (typeof responseReply === 'string' && responseReply.trim()) {
+      messages.value.push({
+        role: 'model',
+        text: responseReply,
+        products: Array.isArray(responseProducts) ? responseProducts : []
+      })
+      return
+    }
+
     messages.value.push({
       role: 'model',
       text: buildFallbackReply(text),
