@@ -29,6 +29,12 @@ public class Promocion {
     // Ruta de la imagen (ej: /images/promociones/promo_123.jpg)
     private String imagen;
 
+    @Column(name = "precio_original")
+    private Double precioOriginal;
+
+    @Column(name = "precio_oferta")
+    private Double precioOferta;
+
     // Indica si la promoción está habilitada
     @Column(nullable = false)
     private Boolean activo = true;

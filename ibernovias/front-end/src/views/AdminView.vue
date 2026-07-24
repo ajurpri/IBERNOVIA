@@ -480,6 +480,10 @@
                     <span v-if="promo.codigo" class="text-xs bg-gray-900 text-white font-mono px-2 py-0.5 rounded font-semibold">
                       {{ promo.codigo }}
                     </span>
+                    <span v-if="promo.precioOferta" class="text-xs text-luxury-black font-bold">
+                      <span v-if="promo.precioOriginal" class="line-through text-gray-400 font-normal mr-1">{{ promo.precioOriginal }}€</span>
+                      {{ promo.precioOferta }}€
+                    </span>
                     <span :class="promo.activo ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-700'" class="text-[10px] font-bold px-1.5 py-0.5 rounded uppercase tracking-wider">
                       {{ promo.activo ? 'Activa' : 'Inactiva' }}
                     </span>
@@ -528,6 +532,31 @@
                   type="text"
                   placeholder="Ej: BIENVENIDA26"
                   class="admin-input w-full font-mono uppercase"
+                >
+              </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-3">
+              <div>
+                <label class="text-xs uppercase tracking-widest text-gray-500 block mb-1">Precio Original (€)</label>
+                <input
+                  v-model.number="promotionForm.precioOriginal"
+                  type="number"
+                  step="0.01"
+                  min="0"
+                  placeholder="Ej: 1200"
+                  class="admin-input w-full"
+                >
+              </div>
+              <div>
+                <label class="text-xs uppercase tracking-widest text-gray-500 block mb-1">Precio de Oferta (€)</label>
+                <input
+                  v-model.number="promotionForm.precioOferta"
+                  type="number"
+                  step="0.01"
+                  min="0"
+                  placeholder="Ej: 999"
+                  class="admin-input w-full"
                 >
               </div>
             </div>
@@ -978,6 +1007,8 @@ const promotionForm = ref({
   codigo: '',
   imagen: '',
   imagenNombre: '',
+  precioOriginal: null,
+  precioOferta: null,
   activo: true,
   fechaFin: ''
 })
@@ -1415,6 +1446,8 @@ const editPromotion = (promo) => {
     codigo: promo.codigo || '',
     imagen: promo.imagen || '',
     imagenNombre: promo.imagen ? promo.imagen.substring(promo.imagen.lastIndexOf('/') + 1) : '',
+    precioOriginal: promo.precioOriginal || null,
+    precioOferta: promo.precioOferta || null,
     activo: promo.activo !== false,
     fechaFin: promo.fechaFin ? formatDateForInput(promo.fechaFin) : ''
   }
@@ -1430,6 +1463,8 @@ const resetPromotionForm = () => {
     codigo: '',
     imagen: '',
     imagenNombre: '',
+    precioOriginal: null,
+    precioOferta: null,
     activo: true,
     fechaFin: ''
   }
@@ -1470,6 +1505,8 @@ const savePromotion = async () => {
       descuento: promotionForm.value.descuento,
       codigo: promotionForm.value.codigo,
       imagen: promotionForm.value.imagen,
+      precioOriginal: promotionForm.value.precioOriginal ? Number(promotionForm.value.precioOriginal) : null,
+      precioOferta: promotionForm.value.precioOferta ? Number(promotionForm.value.precioOferta) : null,
       activo: promotionForm.value.activo,
       fechaFin: promotionForm.value.fechaFin ? promotionForm.value.fechaFin : null
     }

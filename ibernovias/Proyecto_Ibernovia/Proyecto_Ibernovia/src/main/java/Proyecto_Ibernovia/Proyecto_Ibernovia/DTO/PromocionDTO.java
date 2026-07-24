@@ -15,6 +15,8 @@ public class PromocionDTO {
     private String descuento;
     private String codigo;
     private String imagen;
+    private Double precioOriginal;
+    private Double precioOferta;
     private Boolean activo;
     private LocalDateTime fechaFin;
     private LocalDateTime createdAt;

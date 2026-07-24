@@ -190,6 +190,14 @@
                 <p class="text-xs sm:text-sm text-gray-600 leading-relaxed">
                   {{ promo.descripcion }}
                 </p>
+                <div v-if="promo.precioOriginal || promo.precioOferta" class="flex items-center gap-3 pt-2">
+                  <span v-if="promo.precioOriginal" class="text-sm line-through text-gray-400 font-light">
+                    {{ promo.precioOriginal }}€
+                  </span>
+                  <span v-if="promo.precioOferta" class="text-base font-bold text-luxury-gold tracking-wide">
+                    {{ promo.precioOferta }}€
+                  </span>
+                </div>
               </div>
             </div>
 

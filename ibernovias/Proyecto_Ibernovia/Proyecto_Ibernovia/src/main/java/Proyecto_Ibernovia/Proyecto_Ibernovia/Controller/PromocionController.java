@@ -32,6 +32,8 @@ public class PromocionController {
                             p.getDescuento(),
                             p.getCodigo(),
                             p.getImagen(),
+                            p.getPrecioOriginal(),
+                            p.getPrecioOferta(),
                             p.getActivo(),
                             p.getFechaFin(),
                             p.getCreatedAt(),

@@ -251,6 +251,8 @@ public class AdminController {
                         p.getDescuento(),
                         p.getCodigo(),
                         p.getImagen(),
+                        p.getPrecioOriginal(),
+                        p.getPrecioOferta(),
                         p.getActivo(),
                         p.getFechaFin(),
                         p.getCreatedAt(),
@@ -275,6 +277,8 @@ public class AdminController {
         promo.setDescripcion(dto.getDescripcion());
         promo.setDescuento(dto.getDescuento());
         promo.setCodigo(dto.getCodigo());
+        promo.setPrecioOriginal(dto.getPrecioOriginal());
+        promo.setPrecioOferta(dto.getPrecioOferta());
         promo.setActivo(dto.getActivo() != null ? dto.getActivo() : true);
         promo.setFechaFin(dto.getFechaFin());
 
@@ -309,6 +313,8 @@ public class AdminController {
         promo.setDescripcion(dto.getDescripcion());
         promo.setDescuento(dto.getDescuento());
         promo.setCodigo(dto.getCodigo());
+        promo.setPrecioOriginal(dto.getPrecioOriginal());
+        promo.setPrecioOferta(dto.getPrecioOferta());
         if (dto.getActivo() != null) {
             promo.setActivo(dto.getActivo());
         }
@@ -353,6 +359,8 @@ public class AdminController {
                 p.getDescuento(),
                 p.getCodigo(),
                 p.getImagen(),
+                p.getPrecioOriginal(),
+                p.getPrecioOferta(),
                 p.getActivo(),
                 p.getFechaFin(),
                 p.getCreatedAt(),
