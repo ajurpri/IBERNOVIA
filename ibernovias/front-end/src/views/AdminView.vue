@@ -429,6 +429,191 @@
         </div>
       </div>
 
+      <!-- PROMOCIONES -->
+      <div v-if="activeTab === 'promotions'" class="grid grid-cols-1 lg:grid-cols-[2fr_1fr] gap-8">
+        <div class="admin-card">
+          <div class="flex items-center justify-between mb-6">
+            <div>
+              <h2 class="admin-section-title">Promociones Activas e Inactivas</h2>
+              <p class="text-xs text-gray-500 mt-1">Total: {{ promotions.length }} promociones</p>
+            </div>
+            <button
+              @click="resetPromotionForm"
+              class="admin-secondary-btn px-4 py-2 text-xs uppercase tracking-widest"
+            >
+              ➕ Nueva promoción
+            </button>
+          </div>
+
+          <div v-if="loadingPromotions" class="py-10 text-center text-gray-500">Cargando promociones...</div>
+          <div v-else-if="promotions.length === 0" class="py-10 text-center text-gray-500">Sin promociones registradas</div>
+
+          <div v-else class="space-y-3 max-h-[600px] overflow-y-auto">
+            <article
+              v-for="promo in promotions"
+              :key="promo.id"
+              @click="editPromotion(promo)"
+              :class="[
+                promotionForm.id === promo.id ? 'bg-gray-100 border-gray-300' : 'hover:shadow-md',
+                !promo.activo ? 'opacity-60 border-dashed border-gray-300' : ''
+              ]"
+              class="admin-list-row cursor-pointer transition"
+            >
+              <div class="flex items-start gap-4">
+                <div class="w-16 h-16 bg-gray-50 rounded overflow-hidden flex-shrink-0 border border-gray-200">
+                  <img
+                    v-if="promo.imagen"
+                    :src="getImageUrl(promo.imagen)"
+                    :alt="promo.titulo"
+                    class="w-full h-full object-cover"
+                    loading="lazy"
+                  >
+                  <div v-else class="w-full h-full flex items-center justify-center bg-gray-100 text-luxury-gold text-xs font-serif">
+                    %
+                  </div>
+                </div>
+                <div class="flex-1 min-w-0">
+                  <div class="flex items-center gap-2 flex-wrap">
+                    <span v-if="promo.descuento" class="text-xs bg-luxury-gold/10 text-luxury-gold px-2 py-0.5 rounded font-bold uppercase tracking-wider">
+                      {{ promo.descuento }}
+                    </span>
+                    <span v-if="promo.codigo" class="text-xs bg-gray-900 text-white font-mono px-2 py-0.5 rounded font-semibold">
+                      {{ promo.codigo }}
+                    </span>
+                    <span :class="promo.activo ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-700'" class="text-[10px] font-bold px-1.5 py-0.5 rounded uppercase tracking-wider">
+                      {{ promo.activo ? 'Activa' : 'Inactiva' }}
+                    </span>
+                  </div>
+                  <h3 class="font-semibold text-luxury-black text-sm mt-1.5 truncate">{{ promo.titulo }}</h3>
+                  <p class="text-xs text-gray-600 mt-1 line-clamp-2">{{ promo.descripcion }}</p>
+                  <p v-if="promo.fechaFin" class="text-[10px] text-gray-400 mt-2 uppercase">
+                    📅 Expira: {{ formatDateForDisplay(promo.fechaFin) }}
+                  </p>
+                </div>
+              </div>
+            </article>
+          </div>
+        </div>
+
+        <!-- Formulario de promociones -->
+        <div class="admin-card h-fit">
+          <h2 class="admin-section-title">{{ promotionForm.id ? 'Editar promoción' : 'Nueva promoción' }}</h2>
+
+          <form class="space-y-4" @submit.prevent="savePromotion">
+            <div>
+              <label class="text-xs uppercase tracking-widest text-gray-500 block mb-1">Título *</label>
+              <input
+                v-model="promotionForm.titulo"
+                required
+                type="text"
+                placeholder="Ej: Descuento de Inauguración"
+                class="admin-input w-full"
+              >
+            </div>
+
+            <div class="grid grid-cols-2 gap-3">
+              <div>
+                <label class="text-xs uppercase tracking-widest text-gray-500 block mb-1">Descuento (Etiqueta)</label>
+                <input
+                  v-model="promotionForm.descuento"
+                  type="text"
+                  placeholder="Ej: 15% DTO"
+                  class="admin-input w-full"
+                >
+              </div>
+              <div>
+                <label class="text-xs uppercase tracking-widest text-gray-500 block mb-1">Código de Cupón</label>
+                <input
+                  v-model="promotionForm.codigo"
+                  type="text"
+                  placeholder="Ej: BIENVENIDA26"
+                  class="admin-input w-full font-mono uppercase"
+                >
+              </div>
+            </div>
+
+            <div>
+              <label class="text-xs uppercase tracking-widest text-gray-500 block mb-1">Imagen (Subir archivo o pegar URL)</label>
+              <div class="space-y-2">
+                <input
+                  type="file"
+                  @change="handlePromotionImageUpload"
+                  accept="image/*"
+                  class="admin-input w-full text-sm"
+                >
+                <div class="text-center text-xs text-gray-400">— O —</div>
+                <input
+                  v-model="promotionForm.imagen"
+                  type="text"
+                  placeholder="Pegar URL de la imagen de promoción"
+                  class="admin-input w-full"
+                >
+              </div>
+              <div v-if="promotionForm.imagen && promotionForm.imagen.startsWith('data:')" class="mt-2 text-xs text-gray-600">
+                ✓ Imagen cargada localmente: {{ promotionForm.imagenNombre }}
+              </div>
+              <div v-else-if="promotionForm.imagen" class="mt-2 text-xs text-gray-600 truncate">
+                ✓ Ruta/URL activa: {{ promotionForm.imagen }}
+              </div>
+            </div>
+
+            <div>
+              <label class="text-xs uppercase tracking-widest text-gray-500 block mb-1">Fecha de Expiración (Opcional)</label>
+              <input
+                v-model="promotionForm.fechaFin"
+                type="datetime-local"
+                class="admin-input w-full"
+              >
+            </div>
+
+            <div>
+              <label class="text-xs uppercase tracking-widest text-gray-500 block mb-1">Descripción</label>
+              <textarea
+                v-model="promotionForm.descripcion"
+                rows="3"
+                placeholder="Detalles sobre las condiciones y validez..."
+                class="admin-input w-full"
+              ></textarea>
+            </div>
+
+            <label class="flex items-center gap-2 cursor-pointer py-1">
+              <input v-model="promotionForm.activo" type="checkbox" class="rounded border-gray-300 w-4 h-4">
+              <span class="text-xs uppercase tracking-widest text-gray-600 font-bold">Promoción Activa</span>
+            </label>
+
+            <div class="flex gap-2">
+              <button
+                type="submit"
+                :disabled="savingPromotion"
+                class="admin-primary-btn flex-1"
+              >
+                {{ savingPromotion ? '⏳ Guardando...' : '✓ Guardar' }}
+              </button>
+              <button
+                type="button"
+                class="admin-secondary-btn px-4 py-2 text-xs uppercase tracking-widest"
+                @click="resetPromotionForm"
+              >
+                Limpiar
+              </button>
+            </div>
+
+            <div v-if="promotionMessage" :class="promotionMessageOk ? 'bg-green-50 text-green-700 border-green-200' : 'bg-red-50 text-red-700 border-red-200'" class="p-3 rounded border text-sm">
+              {{ promotionMessageOk ? '✓' : '✗' }} {{ promotionMessage }}
+            </div>
+          </form>
+
+          <div v-if="promotionForm.id" class="mt-6 pt-6 border-t border-gray-200">
+            <button
+              @click="removePromotion(promotionForm.id)"
+              class="w-full px-4 py-2 border border-red-200 text-red-600 rounded text-xs uppercase tracking-widest hover:bg-red-50"
+            >
+              Eliminar promoción
+            </button>
+          </div>
+        </div>
+      </div>
+
       <!-- SOLICITUDES DE PRESUPUESTO -->
       <div v-if="activeTab === 'quote-requests'" class="grid grid-cols-1 lg:grid-cols-[2fr_1fr] gap-8">
         <div class="admin-card">
@@ -744,6 +929,7 @@ const tabs = [
   { id: 'products', label: 'Productos' },
   { id: 'users', label: 'Usuarios' },
   { id: 'events', label: 'Eventos' },
+  { id: 'promotions', label: 'Promociones' },
   { id: 'quote-requests', label: 'Presupuestos' },
   { id: 'messages', label: 'Mensajes' }
 ]
@@ -780,6 +966,23 @@ const eventoForm = ref({
 })
 const eventoMessage = ref('')
 const eventoMessageOk = ref(true)
+
+const promotions = ref([])
+const loadingPromotions = ref(false)
+const savingPromotion = ref(false)
+const promotionForm = ref({
+  id: null,
+  titulo: '',
+  descripcion: '',
+  descuento: '',
+  codigo: '',
+  imagen: '',
+  imagenNombre: '',
+  activo: true,
+  fechaFin: ''
+})
+const promotionMessage = ref('')
+const promotionMessageOk = ref(true)
 
 const solicitudes = ref([])
 const loadingSolicitudes = ref(false)
@@ -1187,6 +1390,130 @@ const removeEvento = async (id) => {
   }
 }
 
+// ===== PROMOCIONES =====
+const loadPromotions = async () => {
+  try {
+    loadingPromotions.value = true
+    const token = localStorage.getItem('token')
+    const res = await apiClient.get('/api/admin/promociones', {
+      headers: { 'Authorization': `Bearer ${token}` }
+    })
+    promotions.value = res.data
+  } catch (e) {
+    if (toast) toast.show('✗ Error al cargar promociones', 'error', 1500)
+  } finally {
+    loadingPromotions.value = false
+  }
+}
+
+const editPromotion = (promo) => {
+  promotionForm.value = {
+    id: promo.id,
+    titulo: promo.titulo,
+    descripcion: promo.descripcion,
+    descuento: promo.descuento || '',
+    codigo: promo.codigo || '',
+    imagen: promo.imagen || '',
+    imagenNombre: promo.imagen ? promo.imagen.substring(promo.imagen.lastIndexOf('/') + 1) : '',
+    activo: promo.activo !== false,
+    fechaFin: promo.fechaFin ? formatDateForInput(promo.fechaFin) : ''
+  }
+  promotionMessage.value = ''
+}
+
+const resetPromotionForm = () => {
+  promotionForm.value = {
+    id: null,
+    titulo: '',
+    descripcion: '',
+    descuento: '',
+    codigo: '',
+    imagen: '',
+    imagenNombre: '',
+    activo: true,
+    fechaFin: ''
+  }
+  promotionMessage.value = ''
+}
+
+const handlePromotionImageUpload = (event) => {
+  const file = event.target.files?.[0]
+  if (!file) return
+  
+  try {
+    const reader = new FileReader()
+    reader.onload = (e) => {
+      const base64 = e.target?.result
+      promotionForm.value.imagen = base64
+      promotionForm.value.imagenNombre = file.name
+    }
+    reader.readAsDataURL(file)
+  } catch (error) {
+    promotionMessage.value = '✗ Error al cargar la imagen.'
+    promotionMessageOk.value = false
+  }
+}
+
+const savePromotion = async () => {
+  if (!promotionForm.value.titulo) {
+    promotionMessage.value = 'El título es obligatorio'
+    promotionMessageOk.value = false
+    return
+  }
+
+  try {
+    savingPromotion.value = true
+    const token = localStorage.getItem('token')
+    const payload = {
+      titulo: promotionForm.value.titulo,
+      descripcion: promotionForm.value.descripcion,
+      descuento: promotionForm.value.descuento,
+      codigo: promotionForm.value.codigo,
+      imagen: promotionForm.value.imagen,
+      activo: promotionForm.value.activo,
+      fechaFin: promotionForm.value.fechaFin ? promotionForm.value.fechaFin : null
+    }
+
+    let res
+    if (promotionForm.value.id) {
+      res = await apiClient.put(`/api/admin/promociones/${promotionForm.value.id}`, payload, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      })
+      promotions.value = promotions.value.map(p => p.id === res.data.id ? res.data : p)
+      promotionMessage.value = '✓ Promoción actualizada correctamente'
+    } else {
+      res = await apiClient.post('/api/admin/promociones', payload, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      })
+      promotions.value.unshift(res.data)
+      promotionMessage.value = '✓ Promoción creada correctamente'
+    }
+    promotionMessageOk.value = true
+    setTimeout(() => resetPromotionForm(), 1500)
+  } catch (e) {
+    promotionMessage.value = '✗ Error al guardar promoción'
+    promotionMessageOk.value = false
+    if (toast) toast.show(promotionMessage.value, 'error', 1500)
+  } finally {
+    savingPromotion.value = false
+  }
+}
+
+const removePromotion = async (id) => {
+  if (!confirm('¿Confirmar eliminación de la promoción?')) return
+  try {
+    const token = localStorage.getItem('token')
+    await apiClient.delete(`/api/admin/promociones/${id}`, {
+      headers: { 'Authorization': `Bearer ${token}` }
+    })
+    promotions.value = promotions.value.filter(p => p.id !== id)
+    resetPromotionForm()
+    if (toast) toast.show('✓ Promoción eliminada', 'success', 1500)
+  } catch (e) {
+    if (toast) toast.show('✗ Error al eliminar promoción', 'error', 1500)
+  }
+}
+
 // ===== SOLICITUDES DE PRESUPUESTO =====
 const loadSolicitudes = async () => {
   try {
@@ -1230,6 +1557,7 @@ onMounted(() => {
   loadProducts()
   loadMessages()
   loadEventos()
+  loadPromotions()
   loadSolicitudes()
   loadUsers()
 })

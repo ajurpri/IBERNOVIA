@@ -134,16 +134,104 @@
         No se pudieron cargar los productos destacados
       </div>
     </section>
+
+    <!-- Promotions Section (Editorial & Luxury Aesthetic) -->
+    <section v-if="promociones.length > 0" class="py-16 bg-[#faf9f5] border-t border-black/5" aria-label="Promociones especiales">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        
+        <!-- Refined Title Area -->
+        <div class="text-center max-w-3xl mx-auto mb-16 animate-fade-in-up">
+          <p class="text-xs uppercase tracking-[0.3em] text-luxury-gold font-bold mb-3">
+            Oportunidades únicas
+          </p>
+          <h2 class="font-serif text-3xl sm:text-4xl lg:text-5xl font-light text-luxury-black tracking-wide leading-tight">
+            Promociones Exclusivas
+          </h2>
+          <div class="w-12 h-[1px] bg-luxury-gold mx-auto mt-6 mb-4"></div>
+          <p class="text-xs sm:text-sm text-gray-500 max-w-md mx-auto leading-relaxed">
+            Avance de ofertas y beneficios especiales diseñados para nuestras novias y clientes colaboradores.
+          </p>
+        </div>
+
+        <!-- Promotions Cards Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 sm:gap-10">
+          <div 
+            v-for="promo in promociones" 
+            :key="promo.id"
+            class="bg-white rounded-2xl border border-black/5 overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 flex flex-col justify-between group"
+          >
+            <div>
+              <!-- Promotion Image with Gold Overlay on Hover -->
+              <div class="relative aspect-[16/9] w-full overflow-hidden bg-gray-50">
+                <img 
+                  v-if="promo.imagen" 
+                  :src="getImageUrl(promo.imagen)" 
+                  :alt="promo.titulo" 
+                  class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-102"
+                />
+                <!-- Elegant placeholder if no image -->
+                <div v-else class="w-full h-full flex flex-col items-center justify-center bg-gradient-to-br from-[#faf9f5] to-white p-6 border-b border-black/5">
+                  <span class="font-serif text-5xl font-light text-luxury-gold/30">%</span>
+                </div>
+                <!-- Discount Gold Badge -->
+                <span 
+                  v-if="promo.descuento" 
+                  class="absolute top-4 left-4 bg-luxury-black text-[#faf9f5] text-[10px] font-bold uppercase tracking-[0.2em] px-3.5 py-1.5 rounded-full shadow-md z-10"
+                >
+                  {{ promo.descuento }}
+                </span>
+              </div>
+
+              <!-- Card Details -->
+              <div class="p-6 sm:p-8 space-y-4">
+                <h3 class="font-serif text-xl text-luxury-black font-normal tracking-wide group-hover:text-luxury-gold transition-colors duration-300">
+                  {{ promo.titulo }}
+                </h3>
+                <p class="text-xs sm:text-sm text-gray-600 leading-relaxed">
+                  {{ promo.descripcion }}
+                </p>
+              </div>
+            </div>
+
+            <!-- Coupon Code & Expiration Date -->
+            <div class="px-6 pb-6 sm:px-8 sm:pb-8 pt-2">
+              <div v-if="promo.codigo" class="bg-[#faf9f5] border border-black/5 rounded-xl p-4 flex items-center justify-between gap-4">
+                <div>
+                  <p class="text-[9px] uppercase tracking-widest text-gray-400 font-bold mb-0.5">Código de Cupón</p>
+                  <p class="font-mono text-sm font-bold text-luxury-black uppercase tracking-wider">{{ promo.codigo }}</p>
+                </div>
+                <button 
+                  @click="copyToClipboard(promo.codigo)"
+                  class="text-xs text-luxury-gold hover:text-luxury-black font-bold uppercase tracking-wider transition-colors focus:outline-none"
+                  title="Copiar cupón"
+                >
+                  Copiar
+                </button>
+              </div>
+              
+              <!-- Expiry date -->
+              <div v-if="promo.fechaFin" class="mt-4 flex items-center justify-center gap-2 text-[10px] uppercase tracking-widest text-gray-400">
+                <span>Válido hasta: {{ formatDate(promo.fechaFin) }}</span>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+    </section>
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, inject } from 'vue'
 import { useRouter } from 'vue-router'
 import { apiClient, getImageUrl } from '../lib/api'
 
 const router = useRouter()
+const toast = inject('toast', null)
 const products = ref([])
+const promociones = ref([])
 const loading = ref(true)
 
 const getProductImage = (product) => {
@@ -151,15 +239,35 @@ const getProductImage = (product) => {
   return 'https://placehold.co/400x400/e5e5e5/3a3a3a?text=Ibernovia'
 }
 
+const formatDate = (dateString) => {
+  if (!dateString) return ''
+  const date = new Date(dateString)
+  return date.toLocaleDateString('es-ES', { day: '2-digit', month: 'long', year: 'numeric' })
+}
+
+const copyToClipboard = (text) => {
+  navigator.clipboard.writeText(text)
+  if (toast) {
+    toast.show('✓ Cupón copiado al portapapeles', 'success', 2000)
+  } else {
+    alert('Cupón copiado: ' + text)
+  }
+}
+
 onMounted(async () => {
   try {
-    const res = await apiClient.get('/api/productos')
-    const list = Array.isArray(res.data) 
-      ? res.data.filter(p => p.activo !== false).slice(0, 15)
+    // Cargar productos
+    const resProd = await apiClient.get('/api/productos')
+    const listProd = Array.isArray(resProd.data) 
+      ? resProd.data.filter(p => p.activo !== false).slice(0, 15)
       : []
-    products.value = list
+    products.value = listProd
+    
+    // Cargar promociones activas
+    const resPromo = await apiClient.get('/api/promociones')
+    promociones.value = Array.isArray(resPromo.data) ? resPromo.data : []
   } catch (e) {
-    console.error('Error fetching products for home slider:', e)
+    console.error('Error fetching data for home:', e)
   } finally {
     loading.value = false
   }

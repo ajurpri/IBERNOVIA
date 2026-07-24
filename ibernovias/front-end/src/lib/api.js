@@ -60,7 +60,7 @@ export const getImageUrl = (img) => {
   }
   const normalized = img.startsWith('/') ? img : '/' + img
   // Solo las imágenes subidas por el admin se sirven desde el backend (Render)
-  if (normalized.startsWith('/images/productos/')) {
+  if (normalized.startsWith('/images/productos/') || normalized.startsWith('/images/promociones/')) {
     return `${API_BASE_URL}${normalized}`
   }
   // El catálogo estático se sirve desde el frontend (VPS)
