@@ -1,60 +1,71 @@
 <template>
   <div class="min-h-screen bg-[#fdfdfc] flex flex-col justify-between">
     
-    <!-- Hero Section (Editorial Split Layout) -->
-    <section class="relative bg-[#fdfdfc] pt-8 pb-16 lg:pt-16 lg:pb-24 overflow-hidden" aria-label="Portada">
-      <!-- Background subtle elements -->
-      <div class="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(168,117,71,0.05),transparent_40%)] pointer-events-none"></div>
-
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
-          
-          <!-- Text Content (Left Column) -->
-          <div class="lg:col-span-5 flex flex-col items-center lg:items-start text-center lg:text-left space-y-6 lg:space-y-8 animate-fade-in-up">
-            <p class="text-xs uppercase tracking-[0.3em] text-luxury-gold font-bold">
-              Colección 2026
-            </p>
-            <div class="space-y-3">
-              <h1 class="font-serif text-5xl sm:text-6xl lg:text-7xl font-light tracking-wide text-luxury-black leading-tight">
-                IBERNOVIA
-              </h1>
-              <p class="font-serif text-xl sm:text-2xl lg:text-3xl tracking-[0.35em] text-luxury-black/60 uppercase font-light">
-                ATELIER
-              </p>
-            </div>
-            <p class="text-sm sm:text-base text-gray-600 leading-relaxed max-w-md text-balance">
-              Diseño nupcial y complementos profesionales de alta costura seleccionados para ceremonia, fiesta y comunión.
-            </p>
-            <div class="pt-4">
-              <router-link
-                to="/acceso-empresarial"
-                class="inline-flex items-center px-8 py-3.5 bg-luxury-black text-white hover:bg-luxury-gold transition-all duration-300 rounded-full text-xs uppercase tracking-[0.2em] font-bold shadow-md hover:shadow-lg hover:-translate-y-0.5"
-              >
-                Acceso empresarial
-              </router-link>
-            </div>
-          </div>
-
-          <!-- Image Frame (Right Column) -->
-          <div class="lg:col-span-7 flex justify-center w-full animate-fade-in-up delay-150">
-            <div class="relative w-full max-w-[520px] aspect-[3/4] rounded-2xl overflow-hidden shadow-2xl border border-black/5 group">
-              <!-- Elegant double gold thin frame inside -->
-              <div class="absolute inset-4 border border-white/40 rounded-xl z-20 pointer-events-none group-hover:inset-3 transition-all duration-500"></div>
-              <div class="absolute inset-5 border border-white/20 rounded-lg z-20 pointer-events-none group-hover:inset-4 transition-all duration-500"></div>
-              
-              <!-- Subtle dark overlay for contrast -->
-              <div class="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-black/5 z-10"></div>
-              
-              <img
-                src="/images/catalogo/novia/velos/17815-lentejuelas.webp"
-                alt="Colección Ibernovia Atelier"
-                class="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
-                loading="eager"
-              />
-            </div>
-          </div>
-
+    <!-- Hero Section (Minimalist Full-Bleed Editorial Banner) -->
+    <section class="relative h-[85vh] min-h-[550px] flex items-center justify-center overflow-hidden" aria-label="Portada">
+      
+      <!-- Fading Campaign Background -->
+      <div class="absolute inset-0 z-0 bg-[#fbfbfa]">
+        <div 
+          v-for="(img, idx) in heroImages" 
+          :key="idx"
+          class="absolute inset-0 transition-opacity duration-1500 ease-in-out"
+          :class="currentHeroIndex === idx ? 'opacity-100' : 'opacity-0'"
+        >
+          <img
+            :src="img.url"
+            :alt="img.alt"
+            class="w-full h-full object-cover select-none pointer-events-none"
+            :loading="idx === 0 ? 'eager' : 'lazy'"
+          />
         </div>
+        
+        <!-- Light Frosted Editorial Overlay -->
+        <div class="absolute inset-0 bg-[#fdfdfc]/80 backdrop-blur-[1px] z-10"></div>
+        <div class="absolute inset-0 bg-gradient-to-b from-[#fdfdfc]/10 via-transparent to-[#fdfdfc] z-10"></div>
+      </div>
+
+      <!-- Centered Premium Typography & Content -->
+      <div class="relative z-20 max-w-4xl mx-auto px-6 text-center space-y-6 sm:space-y-8 animate-fade-in-up">
+        <p class="text-[10px] sm:text-xs uppercase tracking-[0.45em] text-luxury-gold font-bold mb-2">
+          Colección Atelier 2026
+        </p>
+        
+        <div class="space-y-4">
+          <h1 class="font-serif text-5xl sm:text-7xl lg:text-8xl font-light tracking-[0.15em] text-luxury-black leading-none">
+            IBERNOVIA
+          </h1>
+          <p class="font-serif text-base sm:text-lg lg:text-xl tracking-[0.55em] text-luxury-black/50 uppercase font-light">
+            ALTA COSTURA & COMPLEMENTOS
+          </p>
+        </div>
+        
+        <div class="w-16 h-[1px] bg-luxury-gold mx-auto my-6 sm:my-8"></div>
+        
+        <p class="text-xs sm:text-sm text-gray-500 leading-relaxed max-w-lg mx-auto tracking-wide font-light">
+          Alta costura nupcial y accesorios exclusivos seleccionados para profesionales. Descubra nuestras colecciones de velos, tocados, comunión, fiesta y arras.
+        </p>
+        
+        <div class="pt-6 sm:pt-8">
+          <router-link
+            to="/acceso-empresarial"
+            class="inline-flex items-center px-10 py-3.5 border border-luxury-black text-luxury-black hover:bg-luxury-black hover:text-white transition-all duration-500 text-[10px] uppercase tracking-[0.25em] font-bold"
+          >
+            Acceso Empresarial
+          </router-link>
+        </div>
+      </div>
+
+      <!-- Discrete Slideshow Indicators (Bottom Center) -->
+      <div class="absolute bottom-8 left-1/2 -translate-x-1/2 z-20 flex gap-3">
+        <button 
+          v-for="(_, idx) in heroImages" 
+          :key="idx"
+          @click="currentHeroIndex = idx"
+          class="w-1.5 h-1.5 rounded-full transition-all duration-500"
+          :class="currentHeroIndex === idx ? 'bg-luxury-gold w-6' : 'bg-luxury-black/25 hover:bg-luxury-black/50'"
+          :aria-label="`Ver imagen ${idx + 1}`"
+        ></button>
       </div>
     </section>
 
@@ -232,7 +243,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, inject } from 'vue'
+import { ref, onMounted, onBeforeUnmount, inject } from 'vue'
 import { useRouter } from 'vue-router'
 import { apiClient, getImageUrl } from '../lib/api'
 
@@ -241,6 +252,28 @@ const toast = inject('toast', null)
 const products = ref([])
 const promociones = ref([])
 const loading = ref(true)
+
+// Slideshow state
+const currentHeroIndex = ref(0)
+const heroImages = ref([
+  {
+    url: '/images/catalogo/novia/velos/17815-lentejuelas.webp',
+    alt: 'Velo de Novia con Lentejuelas - Ibernovia Atelier'
+  },
+  {
+    url: '/images/catalogo/comunion/diademas-y-coronas/2835-d.webp',
+    alt: 'Diadema de Comunión - Ibernovia Atelier'
+  },
+  {
+    url: '/images/catalogo/novia/tocados/3345-ma.webp',
+    alt: 'Tocado de Novia Artesanal - Ibernovia Atelier'
+  },
+  {
+    url: '/images/catalogo/fiesta/tocados/3150-ma.webp',
+    alt: 'Tocado de Fiesta y Madrina - Ibernovia Atelier'
+  }
+])
+let heroInterval = null
 
 const getProductImage = (product) => {
   if (product && product.imagen) return getImageUrl(product.imagen)
@@ -263,6 +296,11 @@ const copyToClipboard = (text) => {
 }
 
 onMounted(async () => {
+  // Slideshow rotation every 5 seconds
+  heroInterval = setInterval(() => {
+    currentHeroIndex.value = (currentHeroIndex.value + 1) % heroImages.value.length
+  }, 5000)
+
   try {
     // Cargar productos
     const resProd = await apiClient.get('/api/productos')
@@ -278,6 +316,12 @@ onMounted(async () => {
     console.error('Error fetching data for home:', e)
   } finally {
     loading.value = false
+  }
+})
+
+onBeforeUnmount(() => {
+  if (heroInterval) {
+    clearInterval(heroInterval)
   }
 })
 </script>

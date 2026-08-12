@@ -191,7 +191,7 @@ const profileSummary = computed(() => {
   const tags = []
   if (containsAny(normalized, 'novia', 'velo', 'tocado', 'tiara', 'liga')) tags.push('Interes principal en novia')
   if (containsAny(normalized, 'fiesta', 'mantilla', 'pamela', 'bolso')) tags.push('Busca opciones de fiesta')
-  if (containsAny(normalized, 'comunion', 'corona', 'rosario', 'diadema')) tags.push('Valora referencias de comunion')
+  if (containsAny(normalized, 'comunion', 'corona', 'rosario', 'diadema', 'cordon', 'cordones', 'medalla', 'medallas', 'librito', 'libritos', 'cinturon', 'cinturones', 'pin', 'pines')) tags.push('Valora referencias de comunion')
   if (containsAny(normalized, 'novio', 'gemelo')) tags.push('Tambien contempla complementos de novio')
   if (containsAny(normalized, 'elegante', 'clasico', 'refinado')) tags.push('Prefiere un estilo elegante y refinado')
   if (containsAny(normalized, 'llamativo', 'especial', 'diferente')) tags.push('Quiere una propuesta con mas personalidad')
@@ -225,7 +225,7 @@ const activeSuggestions = computed(() => {
     ]
   }
 
-  if (containsAny(normalized, 'comunion', 'rosario', 'corona', 'diadema')) {
+  if (containsAny(normalized, 'comunion', 'rosario', 'corona', 'diadema', 'cordon', 'cordones', 'medalla', 'medallas', 'librito', 'libritos', 'cinturon', 'cinturones', 'pin', 'pines')) {
     return [
       'Busco complementos de comunion finos',
       'Recomiendame coronas o diademas',

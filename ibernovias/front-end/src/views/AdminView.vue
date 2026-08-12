@@ -1045,7 +1045,14 @@ const selectableFamilies = computed(() => {
 })
 
 const categories = computed(() => [...new Set(products.value.map(p => p.categoria))])
-const predefinedCategories = []
+const predefinedCategories = [
+  'Cordones',
+  'Medallas',
+  'Libritos',
+  'Cinturones',
+  'Gemelos',
+  'Pines'
+]
 const selectableCategories = computed(() => {
   const existing = categories.value.filter(Boolean)
   return [...new Set([...predefinedCategories, ...existing])]

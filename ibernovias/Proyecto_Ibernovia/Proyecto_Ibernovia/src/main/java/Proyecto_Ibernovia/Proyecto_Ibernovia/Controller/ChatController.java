@@ -431,7 +431,7 @@ public class ChatController {
         if (containsAny(normalized, "fiesta", "mantilla", "pamela", "pendiente", "bolso", "guante")) {
             return "busqueda de producto fiesta";
         }
-        if (containsAny(normalized, "comunion", "rosario", "diadema", "corona", "crucifijo")) {
+        if (containsAny(normalized, "comunion", "rosario", "diadema", "corona", "crucifijo", "cordon", "cordones", "medalla", "medallas", "librito", "libritos", "cinturon", "cinturones", "pin", "pines")) {
             return "busqueda de producto comunion";
         }
         if (containsAny(normalized, "novio", "gemelo")) {
@@ -534,7 +534,7 @@ public class ChatController {
     private String inferPreferredFamily(String normalizedQuery) {
         if (containsAny(normalizedQuery, "novia", "velo", "liga", "tocado", "tiara")) return "novia";
         if (containsAny(normalizedQuery, "fiesta", "mantilla", "bolso", "pamela")) return "fiesta";
-        if (containsAny(normalizedQuery, "comunion", "rosario", "diadema", "corona")) return "comunion";
+        if (containsAny(normalizedQuery, "comunion", "rosario", "diadema", "corona", "cordon", "cordones", "medalla", "medallas", "librito", "libritos", "cinturon", "cinturones", "pin", "pines")) return "comunion";
         if (containsAny(normalizedQuery, "novio", "gemelo")) return "novio";
         if (containsAny(normalizedQuery, "arras", "cojin", "cesta")) return "arras";
         return "";
