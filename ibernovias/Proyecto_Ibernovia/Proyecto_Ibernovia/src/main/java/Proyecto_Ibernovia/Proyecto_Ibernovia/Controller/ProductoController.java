@@ -66,6 +66,10 @@ public class ProductoController {
             String imagenProcesada = processBase64Image(producto.getImagen());
             producto.setImagen(imagenProcesada);
         }
+        if (producto.getImagen2() != null && producto.getImagen2().startsWith("data:image/")) {
+            String imagenProcesada = processBase64Image(producto.getImagen2());
+            producto.setImagen2(imagenProcesada);
+        }
         Producto savedProducto = repository.save(producto);
         return ResponseEntity.status(HttpStatus.CREATED).body(savedProducto);
     }
@@ -89,6 +93,15 @@ public class ProductoController {
                 producto.setImagen(imagenProcesada);
             } else {
                 producto.setImagen(detalles.getImagen());
+            }
+        }
+        if (detalles.getImagen2() != null) {
+            // Procesar imagen si viene en base64
+            if (detalles.getImagen2().startsWith("data:image/")) {
+                String imagenProcesada = processBase64Image(detalles.getImagen2());
+                producto.setImagen2(imagenProcesada);
+            } else {
+                producto.setImagen2(detalles.getImagen2());
             }
         }
         if (detalles.getDescripcion() != null) producto.setDescripcion(detalles.getDescripcion());
@@ -233,6 +246,7 @@ public class ProductoController {
         copy.setFamilia(p.getFamilia());
         copy.setCategoria(p.getCategoria());
         copy.setImagen(p.getImagen());
+        copy.setImagen2(p.getImagen2());
         copy.setDescripcion(p.getDescripcion());
         copy.setStock(p.getStock());
         copy.setActivo(p.getActivo());

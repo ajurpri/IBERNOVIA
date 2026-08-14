@@ -172,7 +172,7 @@
             </div>
 
             <div>
-              <label class="text-xs uppercase tracking-widest text-gray-500 block mb-1">Imagen (Subir archivo o pegar URL)</label>
+              <label class="text-xs uppercase tracking-widest text-gray-500 block mb-1">Imagen Principal (Subir archivo o pegar URL)</label>
               <div class="space-y-2">
                 <input 
                   type="file" 
@@ -190,10 +190,36 @@
                 >
               </div>
               <div v-if="form.imagen && form.imagen.startsWith('data:')" class="mt-2 text-xs text-gray-600">
-                ✓ Imagen cargada localmente: {{ form.imagenNombre }}
+                ✓ Imagen principal cargada localmente: {{ form.imagenNombre }}
               </div>
               <div v-else-if="form.imagen" class="mt-2 text-xs text-gray-600 truncate">
-                ✓ Ruta/URL de imagen activa: {{ form.imagen }}
+                ✓ Ruta/URL de imagen principal activa: {{ form.imagen }}
+              </div>
+            </div>
+
+            <div>
+              <label class="text-xs uppercase tracking-widest text-gray-500 block mb-1">Imagen Secundaria (Subir archivo o pegar URL - Opcional)</label>
+              <div class="space-y-2">
+                <input 
+                  type="file" 
+                  ref="fileInput2"
+                  @change="handleImage2Upload" 
+                  accept="image/*" 
+                  class="admin-input w-full text-sm"
+                >
+                <div class="text-center text-xs text-gray-400">— O —</div>
+                <input 
+                  v-model="form.imagen2"
+                  type="text" 
+                  placeholder="Pegar URL de la segunda imagen (ej: https://ibernovia.es/images/...)" 
+                  class="admin-input w-full"
+                >
+              </div>
+              <div v-if="form.imagen2 && form.imagen2.startsWith('data:')" class="mt-2 text-xs text-gray-600">
+                ✓ Imagen secundaria cargada localmente: {{ form.imagenNombre2 }}
+              </div>
+              <div v-else-if="form.imagen2" class="mt-2 text-xs text-gray-600 truncate">
+                ✓ Ruta/URL de imagen secundaria activa: {{ form.imagen2 }}
               </div>
             </div>
 
@@ -1028,6 +1054,9 @@ const form = ref({
   precio: 0,
   stock: 0,
   imagen: '',
+  imagenNombre: '',
+  imagen2: '',
+  imagenNombre2: '',
   descripcion: '',
   activo: true
 })
@@ -1127,6 +1156,24 @@ const handleImageUpload = (event) => {
   }
 }
 
+const handleImage2Upload = (event) => {
+  const file = event.target.files?.[0]
+  if (!file) return
+  
+  try {
+    const reader = new FileReader()
+    reader.onload = (e) => {
+      const base64 = e.target?.result
+      form.value.imagen2 = base64
+      form.value.imagenNombre2 = file.name
+    }
+    reader.readAsDataURL(file)
+  } catch (error) {
+    message.value = '✗ Error al cargar la segunda imagen.'
+    messageOk.value = false
+  }
+}
+
 const resetForm = (keepMessage = false) => {
   form.value = {
     id: null,
@@ -1137,6 +1184,8 @@ const resetForm = (keepMessage = false) => {
     stock: 0,
     imagen: '',
     imagenNombre: '',
+    imagen2: '',
+    imagenNombre2: '',
     descripcion: '',
     activo: true
   }

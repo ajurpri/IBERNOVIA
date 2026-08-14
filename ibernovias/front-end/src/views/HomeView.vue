@@ -43,7 +43,7 @@
         <div class="w-16 h-[1px] bg-luxury-gold mx-auto my-6 sm:my-8"></div>
         
         <p class="text-xs sm:text-sm text-gray-500 leading-relaxed max-w-lg mx-auto tracking-wide font-light">
-          Alta costura nupcial y accesorios exclusivos seleccionados para profesionales. Descubra nuestras colecciones de velos, tocados, comunión, fiesta y arras.
+          Descubra nuestros complementos exclusivos para novia, novio, fiesta, madrina, comunión y arras.
         </p>
         
         <div class="pt-6 sm:pt-8">

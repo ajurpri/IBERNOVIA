@@ -24,6 +24,7 @@ public class Producto {
 
     private Double precio;
     private String imagen;
+    private String imagen2;
     
     @Column(length = 500)
     private String descripcion;

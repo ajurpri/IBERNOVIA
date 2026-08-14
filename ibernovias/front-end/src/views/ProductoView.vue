@@ -26,17 +26,17 @@
         <!-- Galería de Imágenes -->
         <div class="flex flex-col gap-4">
           <!-- Imagen Principal -->
-          <div class="bg-gray-50 aspect-[3/4] overflow-hidden">
-              <img
-                :src="getImageUrl(producto.imagen)"
-                :alt="producto.nombre"
-                @error="imagenError = true"
-                loading="lazy"
-                decoding="async"
-                width="900"
-                height="1200"
-                :class="mainImageClass"
-              >
+          <div class="bg-gray-50 aspect-[3/4] overflow-hidden rounded-2xl border border-black/5 relative shadow-sm">
+               <img
+                 :src="getImageUrl(currentImageUrl)"
+                 :alt="producto.nombre"
+                 @error="imagenError = true"
+                 loading="lazy"
+                 decoding="async"
+                 width="900"
+                 height="1200"
+                 :class="mainImageClass"
+               >
             <div v-if="imagenError" class="w-full h-full flex items-center justify-center">
               <div class="text-center">
                 <svg class="w-20 h-20 mx-auto text-gray-300 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -45,6 +45,24 @@
                 <p class="text-gray-400 text-sm">Imagen no disponible</p>
               </div>
             </div>
+          </div>
+
+          <!-- Miniaturas (Solo si hay segunda imagen) -->
+          <div v-if="producto.imagen2" class="flex gap-3 mt-1">
+            <button
+              @click="selectImage(0)"
+              class="w-20 aspect-[3/4] rounded-lg overflow-hidden border-2 bg-gray-50 transition duration-300"
+              :class="selectedImageIndex === 0 ? 'border-luxury-gold scale-[1.03] shadow' : 'border-black/5 hover:border-gray-300'"
+            >
+              <img :src="getImageUrl(producto.imagen)" :alt="producto.nombre" class="w-full h-full object-cover">
+            </button>
+            <button
+              @click="selectImage(1)"
+              class="w-20 aspect-[3/4] rounded-lg overflow-hidden border-2 bg-gray-50 transition duration-300"
+              :class="selectedImageIndex === 1 ? 'border-luxury-gold scale-[1.03] shadow' : 'border-black/5 hover:border-gray-300'"
+            >
+              <img :src="getImageUrl(producto.imagen2)" :alt="producto.nombre" class="w-full h-full object-cover">
+            </button>
           </div>
 
           <!-- Botón Badge -->
@@ -216,6 +234,19 @@ const imagenError = ref(false)
 const cantidad = ref(1)
 const agregando = ref(false)
 const productoAgregado = ref(false)
+const selectedImageIndex = ref(0)
+
+const currentImageUrl = computed(() => {
+  if (!producto.value) return ''
+  return selectedImageIndex.value === 1 && producto.value.imagen2
+    ? producto.value.imagen2
+    : producto.value.imagen
+})
+
+const selectImage = (index) => {
+  selectedImageIndex.value = index
+  imagenError.value = false
+}
 
 const mainImageClass = computed(() => [
   'w-full h-full object-cover transition duration-500',
@@ -229,6 +260,8 @@ const loadProductData = async (id) => {
     // 1. Cargar producto principal
     const res = await apiClient.get(`/api/productos/${id}`)
     producto.value = res.data
+    selectedImageIndex.value = 0
+    imagenError.value = false
     
     if (producto.value) {
       // Inyectar SEO dinámico del producto
