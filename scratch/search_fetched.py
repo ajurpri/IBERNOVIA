@@ -15,8 +15,8 @@ data = json.loads(json_str)
 
 print(f"Total products fetched: {len(data)}")
 
-# Find 1239, 1242, 14126, 14136
-refs = ['1239', '1242', '14126', '14136']
+# Find 14121, 1419, 1424, 1425
+refs = ['14121', '1419', '1424', '1425']
 for ref in refs:
     matches = [x for x in data if ref in str(x.get('nombre', '')) or ref in str(x.get('imagen', ''))]
     print(f"\nMatches for '{ref}':")
