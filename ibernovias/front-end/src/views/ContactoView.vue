@@ -172,6 +172,7 @@ const submitForm = async () => {
   enviando.value = true
   mensaje.value = ''
   try {
+    // 1. Guardar el mensaje en la base de datos (Backend)
     const response = await apiFetch('/api/contacto', {
       method: 'POST',
       headers: {
@@ -184,12 +185,24 @@ const submitForm = async () => {
       throw new Error('Error en el envio')
     }
 
-    const data = await response.json().catch(() => null)
-    if (data?.customerConfirmationSent) {
-      mensaje.value = 'Gracias por tu mensaje. Lo hemos recibido y te hemos enviado una confirmacion por correo.'
-    } else {
-      mensaje.value = data?.message || 'Gracias por tu mensaje. Nos pondremos en contacto pronto.'
-    }
+    // 2. Enviar correo usando el script PHP en el VPS (Evita bloqueos de puertos de la nube)
+    const token = 'IBERNOVIA_SECURE_UPLOAD_TOKEN_2026_AJURPRI'
+    const mailUrl = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+      ? 'https://ibernovia.es/send_mail.php'
+      : '/send_mail.php'
+
+    await fetch(mailUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Security-Token': token
+      },
+      body: JSON.stringify(form.value)
+    }).catch(err => {
+      console.error('Error enviando correo por PHP:', err)
+    })
+
+    mensaje.value = 'Gracias por tu mensaje. Lo hemos recibido y te hemos enviado una confirmacion por correo.'
     exito.value = true
     form.value = { nombre: '', email: '', asunto: '', mensaje: '' }
   } catch (error) {
