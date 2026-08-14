@@ -9,4 +9,4 @@ FROM eclipse-temurin:21-jre
 WORKDIR /app
 COPY --from=build /app/target/Proyecto_Ibernovia-0.0.1-SNAPSHOT.jar app.jar
 EXPOSE 8080
-ENTRYPOINT ["java", "-XX:TieredStopAtLevel=1", "-Xmx350m", "-jar", "app.jar"]
+ENTRYPOINT ["java", "-XX:TieredStopAtLevel=1", "-Xms90m", "-Xmx140m", "-XX:MaxMetaspaceSize=64m", "-XX:ReservedCodeCacheSize=24m", "-Xss256k", "-XX:CICompilerCount=2", "-jar", "app.jar"]
