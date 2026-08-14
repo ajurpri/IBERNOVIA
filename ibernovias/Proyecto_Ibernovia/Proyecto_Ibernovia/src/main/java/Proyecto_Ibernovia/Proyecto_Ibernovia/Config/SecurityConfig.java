@@ -1,6 +1,5 @@
 package Proyecto_Ibernovia.Proyecto_Ibernovia.Config;
 
-
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -40,33 +39,34 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .cors(cors -> cors.configurationSource(corsConfigurationSource())) // Habilitar CORS para conectar con Vue
-        .csrf(csrf -> csrf.disable()) // API stateless con JWT
+                .csrf(csrf -> csrf.disable()) // API stateless con JWT
                 .authorizeHttpRequests(auth -> auth
-            .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-            .requestMatchers(
-                "/api/auth/**",
-                "/api/contacto",
-                "/api/contacto/",
-                "/api/chat",
-                "/api/chat/",
-                "/api/health",
-                "/api/health/",
-                "/images/**"
-            ).permitAll()
-            // Permitir crear el primer admin con X-Setup-Key (sin requerir ROLE_ADMIN)
-            .requestMatchers(HttpMethod.POST, "/api/admin/setup/create-admin").permitAll()
-            .requestMatchers(HttpMethod.GET, "/api/productos/**").permitAll()
-            .requestMatchers(HttpMethod.GET, "/api/eventos", "/api/eventos/").permitAll()
-            .requestMatchers(HttpMethod.POST, "/api/admin/solicitudes").permitAll()
-            .requestMatchers("/api/admin/**", "/api/contacto/admin/**").hasRole("ADMIN")
-            .requestMatchers(HttpMethod.POST, "/api/productos/**").hasRole("ADMIN")
-            .requestMatchers(HttpMethod.PUT, "/api/productos/**").hasRole("ADMIN")
-            .requestMatchers(HttpMethod.DELETE, "/api/productos/**").hasRole("ADMIN")
-            .anyRequest().authenticated()
+                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+                        .requestMatchers(
+                                "/",
+                                "/api/auth/**",
+                                "/api/contacto",
+                                "/api/contacto/",
+                                "/api/chat",
+                                "/api/chat/",
+                                "/api/health",
+                                "/api/health/",
+                                "/images/**"
+                        ).permitAll()
+                        // Permitir crear el primer admin con X-Setup-Key (sin requerir ROLE_ADMIN)
+                        .requestMatchers(HttpMethod.POST, "/api/admin/setup/create-admin").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/productos/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/eventos", "/api/eventos/").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/admin/solicitudes").permitAll()
+                        .requestMatchers("/api/admin/**", "/api/contacto/admin/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.POST, "/api/productos/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/api/productos/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/api/productos/**").hasRole("ADMIN")
+                        .anyRequest().authenticated()
                 )
                 .httpBasic(basic -> basic.disable()) // ¡ESTO quita la ventanita de usuario/password!
-        .formLogin(form -> form.disable()) // ¡ESTO quita el formulario de login!
-        .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+                .formLogin(form -> form.disable()) // ¡ESTO quita el formulario de login!
+                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
