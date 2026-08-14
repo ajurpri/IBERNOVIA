@@ -1262,17 +1262,62 @@ const toggleBusiness = async (user) => {
   }
 }
 
+const uploadImageToVps = async (base64Image, originalFilename) => {
+  const token = 'IBERNOVIA_SECURE_UPLOAD_TOKEN_2026_AJURPRI'
+  const uploadUrl = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+    ? 'https://ibernovia.es/upload.php'
+    : '/upload.php'
+  
+  const response = await fetch(uploadUrl, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'X-Security-Token': token
+    },
+    body: JSON.stringify({
+      image: base64Image,
+      filename: originalFilename
+    })
+  })
+  
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => ({}))
+    throw new Error(errorData.error || 'Error al subir la imagen al VPS')
+  }
+  
+  const result = await response.json()
+  return result.url
+}
+
 const saveProduct = async () => {
   saving.value = true
   message.value = ''
   try {
-    if (form.value.id) {
-      const res = await apiClient.put(`/api/productos/${form.value.id}`, form.value)
-      products.value = products.value.map(p => (p.id === form.value.id ? res.data : p))
+    // Clonar el formulario para no interferir con la UI reactiva mientras procesamos la subida
+    const productData = { ...form.value }
+
+    // 1. Subir la imagen principal al VPS si está cargada localmente (base64)
+    if (productData.imagen && productData.imagen.startsWith('data:image/')) {
+      if (toast) toast.show('Subiendo imagen principal al VPS...', 'info', 1500)
+      const vpsUrl = await uploadImageToVps(productData.imagen, productData.imagenNombre || 'producto.jpg')
+      productData.imagen = vpsUrl
+    }
+
+    // 2. Subir la imagen secundaria al VPS si está cargada localmente (base64)
+    if (productData.imagen2 && productData.imagen2.startsWith('data:image/')) {
+      if (toast) toast.show('Subiendo imagen secundaria al VPS...', 'info', 1500)
+      const vpsUrl2 = await uploadImageToVps(productData.imagen2, productData.imagenNombre2 || 'producto2.jpg')
+      productData.imagen2 = vpsUrl2
+    }
+
+    // 3. Enviar datos del producto (con las URLs del VPS) al backend de Render
+    if (productData.id) {
+      const res = await apiClient.put(`/api/productos/${productData.id}`, productData)
+      products.value = products.value.map(p => (p.id === productData.id ? res.data : p))
       message.value = '✓ Producto actualizado con éxito.'
       if (toast) toast.show(`✓ "${res.data.nombre}" actualizado correctamente`, 'success', 2500)
     } else {
-      const res = await apiClient.post('/api/productos', form.value)
+      const res = await apiClient.post('/api/productos', productData)
       products.value = [res.data, ...products.value]
       message.value = '✓ Producto creado con éxito.'
       if (toast) toast.show(`✓ "${res.data.nombre}" creado correctamente`, 'success', 2500)
@@ -1281,8 +1326,8 @@ const saveProduct = async () => {
     resetForm(true)
   } catch (e) {
     messageOk.value = false
-    message.value = '✗ Error al guardar el producto.'
-    if (toast) toast.show('✗ Error al guardar producto', 'error', 2500)
+    message.value = e.message || '✗ Error al guardar el producto.'
+    if (toast) toast.show(e.message || '✗ Error al guardar producto', 'error', 3000)
   } finally {
     saving.value = false
   }
