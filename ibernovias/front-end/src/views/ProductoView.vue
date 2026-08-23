@@ -26,7 +26,12 @@
         <!-- Galería de Imágenes -->
         <div class="flex flex-col gap-4">
           <!-- Imagen Principal -->
-          <div class="bg-gray-50 aspect-[3/4] overflow-hidden rounded-2xl border border-black/5 relative shadow-sm">
+          <div 
+            class="bg-gray-50 aspect-[3/4] overflow-hidden rounded-2xl border border-black/5 relative shadow-sm cursor-zoom-in"
+            @mousemove="handleZoomMouseMove"
+            @mouseenter="isZoomActive = true"
+            @mouseleave="isZoomActive = false"
+          >
                <img
                  :src="getImageUrl(currentImageUrl)"
                  :alt="producto.nombre"
@@ -36,6 +41,7 @@
                  width="900"
                  height="1200"
                  :class="mainImageClass"
+                 :style="isZoomActive ? zoomStyle : {}"
                >
             <div v-if="imagenError" class="w-full h-full flex items-center justify-center">
               <div class="text-center">
@@ -93,8 +99,16 @@
               {{ producto.descripcion }}
             </p>
             <div v-if="authStore.canSeePrices && producto.precio !== null && producto.precio !== undefined" class="flex items-baseline gap-3">
-              <span class="text-3xl sm:text-4xl font-bold text-luxury-gold">{{ producto.precio }}€</span>
-              <span class="text-base sm:text-lg text-gray-400 line-through">{{ (producto.precio * 1.1).toFixed(2) }}€</span>
+              <template v-if="producto.enOferta">
+                <span class="text-3xl sm:text-4xl font-bold text-red-600">{{ producto.precioOferta }}€</span>
+                <span class="text-base sm:text-lg text-gray-400 line-through">{{ producto.precio }}€</span>
+                <span class="inline-block bg-red-100 text-red-700 text-[10px] font-bold uppercase tracking-widest px-2.5 py-1 rounded ml-2">
+                  {{ producto.tagOferta || 'Oferta' }}
+                </span>
+              </template>
+              <template v-else>
+                <span class="text-3xl sm:text-4xl font-bold text-luxury-gold">{{ producto.precio }}€</span>
+              </template>
             </div>
             <div v-else class="rounded-lg border border-luxury-gold/30 bg-luxury-gray/60 px-4 py-4">
               <p class="text-sm text-gray-600">Catálogo público. Tarifas y solicitudes de presupuesto disponibles solo para clientes profesionales.</p>
@@ -193,7 +207,7 @@
         <div class="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6">
           <div v-for="rel in relatedProducts" :key="rel.id" class="group cursor-pointer">
             <router-link :to="`/producto/${rel.id}`" class="block">
-              <div class="aspect-[3/4] bg-gray-100 mb-3 overflow-hidden">
+              <div class="aspect-[3/4] bg-gray-100 mb-3 overflow-hidden relative">
                 <img
                   :src="getImageUrl(rel.imagen)"
                   :alt="rel.nombre"
@@ -203,9 +217,18 @@
                   width="400"
                   height="533"
                 >
+                <div
+                  v-if="rel.enOferta && rel.tagOferta"
+                  class="absolute top-2 left-2 bg-red-600 text-white text-[8px] sm:text-[9px] font-bold uppercase tracking-widest px-1.5 py-0.5 rounded shadow-sm z-10"
+                >
+                  {{ rel.tagOferta }}
+                </div>
               </div>
               <h3 class="text-sm font-medium text-gray-900 truncate">{{ rel.nombre }}</h3>
-              <p v-if="authStore.canSeePrices" class="text-sm text-luxury-gold font-bold">{{ rel.precio }}€</p>
+              <div v-if="authStore.canSeePrices" class="text-sm font-bold flex items-center gap-2">
+                <span v-if="rel.enOferta" class="line-through text-gray-400 text-xs font-normal">{{ rel.precio }}€</span>
+                <span :class="rel.enOferta ? 'text-red-600' : 'text-luxury-gold'">{{ rel.enOferta ? rel.precioOferta : rel.precio }}€</span>
+              </div>
               <p v-else class="text-xs text-gray-500">Solo empresas</p>
             </router-link>
           </div>
@@ -242,6 +265,22 @@ const currentImageUrl = computed(() => {
     ? producto.value.imagen2
     : producto.value.imagen
 })
+
+const isZoomActive = ref(false)
+const zoomStyle = ref({})
+
+const handleZoomMouseMove = (event) => {
+  const container = event.currentTarget
+  const rect = container.getBoundingClientRect()
+  const x = ((event.clientX - rect.left) / rect.width) * 100
+  const y = ((event.clientY - rect.top) / rect.height) * 100
+  
+  zoomStyle.value = {
+    transform: 'scale(2.2)',
+    transformOrigin: `${x}% ${y}%`,
+    transition: 'none'
+  }
+}
 
 const selectImage = (index) => {
   selectedImageIndex.value = index

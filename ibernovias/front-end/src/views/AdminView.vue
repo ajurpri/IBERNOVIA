@@ -78,6 +78,32 @@
       <!-- PRODUCTOS -->
       <div v-if="activeTab === 'products'" class="grid grid-cols-1 lg:grid-cols-[2fr_1fr] gap-8">
         <div class="admin-card">
+          <div class="flex flex-col md:flex-row justify-between gap-4 mb-6 border-b border-black/5 pb-4">
+            <div class="flex gap-2">
+              <button
+                type="button"
+                @click="exportToCSV"
+                class="admin-secondary-btn px-4 py-2 text-xs uppercase tracking-widest flex items-center gap-1.5"
+              >
+                📥 Exportar CSV (Excel)
+              </button>
+              <label
+                class="admin-secondary-btn px-4 py-2 text-xs uppercase tracking-widest flex items-center gap-1.5 cursor-pointer"
+              >
+                📤 Importar CSV (Excel)
+                <input
+                  type="file"
+                  @change="importFromCSV"
+                  accept=".csv"
+                  class="hidden"
+                >
+              </label>
+            </div>
+            <div class="text-[10px] text-gray-400 max-w-xs text-right hidden md:block">
+              Puedes modificar precios/stock en Excel y volver a subirlo.
+            </div>
+          </div>
+
           <div class="flex flex-col md:flex-row gap-4 mb-6">
             <input
               v-model="search"
@@ -168,6 +194,25 @@
               <div>
                 <label class="text-xs uppercase tracking-widest text-gray-500 block mb-1">Stock</label>
                 <input v-model.number="form.stock" required type="number" min="0" class="admin-input w-full">
+              </div>
+            </div>
+
+            <!-- Campos de Promoción/Oferta -->
+            <div class="border border-black/5 bg-[#faf9f6] p-4 rounded-xl space-y-4">
+              <label class="flex items-center gap-2 cursor-pointer">
+                <input v-model="form.enOferta" type="checkbox" class="rounded border-gray-300 w-4 h-4 text-luxury-gold focus:ring-luxury-gold">
+                <span class="text-xs font-bold uppercase tracking-widest text-luxury-gold">¿Artículo en Liquidación / Oferta?</span>
+              </label>
+
+              <div v-if="form.enOferta" class="grid grid-cols-2 gap-3 transition-all duration-300">
+                <div>
+                  <label class="text-xs uppercase tracking-widest text-gray-500 block mb-1">Precio Oferta (€)</label>
+                  <input v-model.number="form.precioOferta" required type="number" min="0" step="0.01" class="admin-input w-full bg-white">
+                </div>
+                <div>
+                  <label class="text-xs uppercase tracking-widest text-gray-500 block mb-1">Letrero de Oferta</label>
+                  <input v-model="form.tagOferta" type="text" placeholder="Ej: Oferta, Liquidación, -20%" class="admin-input w-full bg-white">
+                </div>
               </div>
             </div>
 
@@ -972,7 +1017,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, inject } from 'vue'
+import { ref, computed, onMounted, inject, watch } from 'vue'
 import { apiClient, getImageUrl } from '../lib/api'
 import { useAuthStore } from '../stores/auth'
 
@@ -1058,7 +1103,21 @@ const form = ref({
   imagen2: '',
   imagenNombre2: '',
   descripcion: '',
-  activo: true
+  activo: true,
+  enOferta: false,
+  precioOferta: 0,
+  tagOferta: ''
+})
+
+watch(() => form.value.enOferta, (newVal) => {
+  if (newVal) {
+    if (!form.value.precioOferta && form.value.precio) {
+      form.value.precioOferta = parseFloat((form.value.precio * 0.9).toFixed(2))
+    }
+    if (!form.value.tagOferta) {
+      form.value.tagOferta = 'Liquidación'
+    }
+  }
 })
 
 // Datos calculados para el dashboard
@@ -1138,38 +1197,71 @@ const editProduct = (producto) => {
   }, 100)
 }
 
-const handleImageUpload = (event) => {
+const compressImage = (file, maxWidth = 1200, maxHeight = 1200, quality = 0.8) => {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader()
+    reader.readAsDataURL(file)
+    reader.onload = (event) => {
+      const img = new Image()
+      img.src = event.target.result
+      img.onload = () => {
+        const canvas = document.createElement('canvas')
+        let width = img.width
+        let height = img.height
+
+        if (width > height) {
+          if (width > maxWidth) {
+            height = Math.round((height * maxWidth) / width)
+            width = maxWidth
+          }
+        } else {
+          if (height > maxHeight) {
+            width = Math.round((width * maxHeight) / height)
+            height = maxHeight
+          }
+        }
+
+        canvas.width = width
+        canvas.height = height
+        const ctx = canvas.getContext('2d')
+        ctx.drawImage(img, 0, 0, width, height)
+        
+        // Comprimir a webp
+        const base64 = canvas.toDataURL('image/webp', quality)
+        resolve(base64)
+      }
+      img.onerror = (err) => reject(err)
+    }
+    reader.onerror = (err) => reject(err)
+  })
+}
+
+const handleImageUpload = async (event) => {
   const file = event.target.files?.[0]
   if (!file) return
   
   try {
-    const reader = new FileReader()
-    reader.onload = (e) => {
-      const base64 = e.target?.result
-      form.value.imagen = base64
-      form.value.imagenNombre = file.name
-    }
-    reader.readAsDataURL(file)
+    if (toast) toast.show('Optimizando imagen principal...', 'info', 1000)
+    const base64 = await compressImage(file, 1200, 1200, 0.8)
+    form.value.imagen = base64
+    form.value.imagenNombre = file.name.replace(/\.[^/.]+$/, "") + ".webp"
   } catch (error) {
-    message.value = '✗ Error al cargar la imagen.'
+    message.value = '✗ Error al cargar y optimizar la imagen.'
     messageOk.value = false
   }
 }
 
-const handleImage2Upload = (event) => {
+const handleImage2Upload = async (event) => {
   const file = event.target.files?.[0]
   if (!file) return
   
   try {
-    const reader = new FileReader()
-    reader.onload = (e) => {
-      const base64 = e.target?.result
-      form.value.imagen2 = base64
-      form.value.imagenNombre2 = file.name
-    }
-    reader.readAsDataURL(file)
+    if (toast) toast.show('Optimizando imagen secundaria...', 'info', 1000)
+    const base64 = await compressImage(file, 1200, 1200, 0.8)
+    form.value.imagen2 = base64
+    form.value.imagenNombre2 = file.name.replace(/\.[^/.]+$/, "") + ".webp"
   } catch (error) {
-    message.value = '✗ Error al cargar la segunda imagen.'
+    message.value = '✗ Error al cargar y optimizar la segunda imagen.'
     messageOk.value = false
   }
 }
@@ -1187,7 +1279,10 @@ const resetForm = (keepMessage = false) => {
     imagen2: '',
     imagenNombre2: '',
     descripcion: '',
-    activo: true
+    activo: true,
+    enOferta: false,
+    precioOferta: 0,
+    tagOferta: ''
   }
   if (!keepMessage) {
     message.value = ''
@@ -1348,6 +1443,110 @@ const removeProduct = async (id) => {
     message.value = '✗ No se pudo eliminar el producto.'
     if (toast) toast.show('✗ Error al eliminar producto', 'error', 2500)
   }
+}
+
+const exportToCSV = () => {
+  try {
+    const headers = ['ID', 'Nombre', 'Familia', 'Categoría', 'Precio', 'Stock', 'Activo', 'Precio Oferta', 'En Oferta', 'Letrero Oferta']
+    const rows = products.value.map(p => [
+      p.id,
+      `"${(p.nombre || '').replace(/"/g, '""')}"`,
+      `"${(p.familia || '').replace(/"/g, '""')}"`,
+      `"${(p.categoria || '').replace(/"/g, '""')}"`,
+      p.precio || 0,
+      p.stock || 0,
+      p.activo ? 1 : 0,
+      p.precioOferta || 0,
+      p.enOferta ? 1 : 0,
+      `"${(p.tagOferta || '').replace(/"/g, '""')}"`
+    ])
+    
+    const csvContent = [headers.join(','), ...rows.map(r => r.join(','))].join('\n')
+    const blob = new Blob(['\uFEFF' + csvContent], { type: 'text/csv;charset=utf-8;' })
+    const url = URL.createObjectURL(blob)
+    const link = document.createElement('a')
+    link.setAttribute('href', url)
+    link.setAttribute('download', `catalogo_ibernovia_${new Date().toISOString().slice(0,10)}.csv`)
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
+    if (toast) toast.show('✓ Catálogo exportado a CSV con éxito', 'success', 2500)
+  } catch (e) {
+    if (toast) toast.show('✗ Error al exportar catálogo', 'error', 2500)
+  }
+}
+
+const importFromCSV = (event) => {
+  const file = event.target.files?.[0]
+  if (!file) return
+  
+  if (toast) toast.show('Procesando archivo CSV...', 'info', 1500)
+  
+  const reader = new FileReader()
+  reader.onload = async (e) => {
+    try {
+      const text = e.target?.result
+      if (typeof text !== 'string') return
+      
+      const lines = text.split(/\r?\n/)
+      if (lines.length < 2) {
+        throw new Error('El archivo CSV está vacío o no tiene el formato correcto.')
+      }
+      
+      const updatedProducts = []
+      for (let i = 1; i < lines.length; i++) {
+        const line = lines[i].trim()
+        if (!line) continue
+        
+        const cols = line.match(/(".*?"|[^",]+)(?=\s*,|\s*$)/g) || line.split(',')
+        if (cols.length < 7) continue
+        
+        const clean = (val) => (val || '').replace(/^"|"$/g, '').trim()
+        
+        const id = parseInt(clean(cols[0]))
+        if (isNaN(id)) continue
+        
+        const precio = parseFloat(clean(cols[4]))
+        const stock = parseInt(clean(cols[5]))
+        const activo = parseInt(clean(cols[6])) === 1
+        
+        const precioOferta = cols[7] ? parseFloat(clean(cols[7])) : null
+        const enOferta = cols[8] ? parseInt(clean(cols[8])) === 1 : false
+        const tagOferta = cols[9] ? clean(cols[9]) : ''
+        
+        updatedProducts.push({
+          id,
+          precio: isNaN(precio) ? null : precio,
+          stock: isNaN(stock) ? null : stock,
+          activo,
+          precioOferta: isNaN(precioOferta) ? null : precioOferta,
+          enOferta,
+          tagOferta
+        })
+      }
+      
+      if (updatedProducts.length === 0) {
+        throw new Error('No se encontraron registros válidos para actualizar.')
+      }
+      
+      if (toast) toast.show(`Actualizando ${updatedProducts.length} productos en masa...`, 'info', 2000)
+      
+      const res = await apiClient.put('/api/productos/bulk', updatedProducts)
+      
+      if (Array.isArray(res.data)) {
+        loadProducts()
+        if (toast) toast.show(`✓ ${res.data.length} productos actualizados con éxito en masa`, 'success', 3000)
+      }
+      
+    } catch (error) {
+      message.value = `✗ Error en importación: ${error.message}`
+      messageOk.value = false
+      if (toast) toast.show(error.message || '✗ Error al procesar CSV', 'error', 3000)
+    } finally {
+      event.target.value = ''
+    }
+  }
+  reader.readAsText(file, 'UTF-8')
 }
 
 const loadMessages = async () => {

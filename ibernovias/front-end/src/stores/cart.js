@@ -38,7 +38,12 @@ export const useCartStore = defineStore('cart', () => {
   }
 
   const total = computed(() => {
-    return items.value.reduce((sum, item) => sum + (item.precio * item.cantidad), 0).toFixed(2)
+    return items.value.reduce((sum, item) => {
+      const price = item.enOferta && item.precioOferta !== null && item.precioOferta !== undefined
+        ? item.precioOferta
+        : item.precio
+      return sum + (price * item.cantidad)
+    }, 0).toFixed(2)
   })
 
   const totalItems = computed(() => {

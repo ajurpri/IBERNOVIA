@@ -20,14 +20,35 @@
           <label for="search" class="block text-[10px] uppercase tracking-[0.25em] text-gray-400 font-bold mb-2">
             Buscar en catalogo
           </label>
-          <input
-            id="search"
-            v-model="searchTerm"
-            type="search"
-            placeholder="Ej. velo, tocado, novia..."
-            class="w-full h-12 px-4 rounded-2xl border border-gray-200 bg-[#fcfaf6] text-sm text-luxury-black placeholder-gray-400/70 focus:outline-none focus:border-luxury-gold transition-colors"
-            aria-label="Buscar productos"
-          >
+          <div class="relative flex items-center">
+            <input
+              id="search"
+              v-model="searchTerm"
+              type="search"
+              placeholder="Ej. velo, tocado, novia..."
+              class="w-full h-12 pl-4 pr-12 rounded-2xl border border-gray-200 bg-[#fcfaf6] text-sm text-luxury-black placeholder-gray-400/70 focus:outline-none focus:border-luxury-gold transition-colors"
+              aria-label="Buscar productos"
+            >
+            <div class="absolute right-3 flex items-center gap-2">
+              <span v-if="isSearchingImage" class="animate-spin h-5 w-5 border-2 border-t-transparent border-luxury-gold rounded-full" role="status"></span>
+              <label 
+                v-else
+                class="cursor-pointer text-gray-400 hover:text-luxury-gold transition-colors p-1"
+                title="Buscar por imagen con IA"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M6.827 6.175A2.31 2.31 0 0 1 5.186 7.23c-.38.054-.757.112-1.134.175C2.999 7.58 2.25 8.507 2.25 9.574V18a2.25 2.25 0 0 0 2.25 2.25h15A2.25 2.25 0 0 0 21.75 18V9.574c0-1.067-.75-1.994-1.802-2.169a47.865 47.865 0 0 0-1.134-.175 2.31 2.31 0 0 1-1.64-1.055l-.822-1.316A2.192 2.192 0 0 0 14.68 4h-5.36a2.192 2.192 0 0 0-1.677.777l-.822 1.316Z" />
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+                </svg>
+                <input
+                  type="file"
+                  @change="handleImageSearchUpload"
+                  accept="image/*"
+                  class="hidden"
+                >
+              </label>
+            </div>
+          </div>
         </div>
 
         <div>
@@ -87,7 +108,15 @@
             {{ visibleProducts.length }} productos encontrados
           </p>
 
-          <div class="flex flex-wrap gap-3 items-center">
+          <div class="flex flex-wrap gap-4 items-center">
+            <button
+              type="button"
+              @click="printCatalog"
+              class="text-[11px] uppercase tracking-[0.18em] font-semibold text-luxury-black hover:text-luxury-gold transition-colors flex items-center gap-1.5"
+            >
+              📄 Descargar Catálogo (PDF)
+            </button>
+
             <router-link
               to="/acceso-empresarial"
               class="text-[11px] uppercase tracking-[0.18em] font-semibold text-luxury-gold hover:text-luxury-black transition-colors"
@@ -131,10 +160,21 @@
 
         <div v-else class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-8 gap-y-12 items-stretch">
           <ProductCard
-            v-for="prod in visibleProducts"
+            v-for="prod in paginatedProducts"
             :key="prod.id"
             :producto="prod"
           />
+        </div>
+
+        <!-- Botón Cargar Más -->
+        <div v-if="visibleLimit < visibleProducts.length" class="text-center mt-12">
+          <button
+            type="button"
+            @click="visibleLimit += 24"
+            class="inline-flex items-center justify-center px-8 py-3.5 bg-luxury-black text-white hover:bg-luxury-gold hover:text-luxury-black font-bold uppercase tracking-widest text-[10px] rounded-full transition shadow-sm hover:shadow-md"
+          >
+            Cargar más productos
+          </button>
         </div>
       </div>
 
@@ -169,10 +209,10 @@
 </template>
 
 <script setup>
-import { ref, onMounted, computed, watch } from 'vue'
+import { ref, onMounted, computed, watch, inject } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import ProductCard from '../components/ProductCard.vue'
-import { apiClient } from '../lib/api'
+import { apiClient, getImageUrl } from '../lib/api'
 import { useAuthStore } from '../stores/auth'
 
 const productos = ref([])
@@ -182,9 +222,263 @@ const authStore = useAuthStore()
 const isLoading = ref(true)
 const loadError = ref('')
 const searchTerm = ref('')
+const isSearchingImage = ref(false)
+const toast = inject('toast')
+
+const handleImageSearchUpload = async (event) => {
+  const file = event.target.files?.[0]
+  if (!file) return
+  
+  isSearchingImage.value = true
+  if (toast) toast.show('Analizando imagen con IA...', 'info', 3000)
+  
+  try {
+    const base64Image = await compressImageForSearch(file)
+    const res = await apiClient.post('/api/productos/buscar-por-imagen', {
+      image: base64Image
+    })
+    
+    if (res.data && res.data.keywords) {
+      searchTerm.value = res.data.keywords
+      const el = document.getElementById('catalogo')
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth' })
+      }
+      if (toast) toast.show(`Búsqueda IA: "${res.data.keywords}"`, 'success', 2500)
+    } else {
+      throw new Error('No se pudieron extraer términos de búsqueda.')
+    }
+  } catch (error) {
+    if (toast) toast.show('✗ Error en búsqueda visual IA', 'error', 3000)
+  } finally {
+    isSearchingImage.value = false
+    event.target.value = ''
+  }
+}
+
+const compressImageForSearch = (file) => {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader()
+    reader.readAsDataURL(file)
+    reader.onload = (e) => {
+      const img = new Image()
+      img.src = e.target.result
+      img.onload = () => {
+        const canvas = document.createElement('canvas')
+        const max_dim = 600
+        let w = img.width
+        let h = img.height
+        
+        if (w > max_dim || h > max_dim) {
+          if (w > h) {
+            h = Math.round((h * max_dim) / w)
+            w = max_dim
+          } else {
+            w = Math.round((w * max_dim) / h)
+            h = max_dim
+          }
+        }
+        
+        canvas.width = w
+        canvas.height = h
+        const ctx = canvas.getContext('2d')
+        ctx.drawImage(img, 0, 0, w, h)
+        resolve(canvas.toDataURL('image/jpeg', 0.75))
+      }
+      img.onerror = reject
+    }
+    reader.onerror = reject
+  })
+}
+
+const printCatalog = () => {
+  const productsToPrint = visibleProducts.value
+  if (productsToPrint.length === 0) {
+    if (toast) toast.show('No hay productos para exportar', 'warning', 2500)
+    return
+  }
+  
+  const printWindow = window.open('', '_blank')
+  if (!printWindow) {
+    if (toast) toast.show('✗ El navegador bloqueó la ventana emergente. Por favor, permítela.', 'error', 3000)
+    return
+  }
+  
+  const productCardsHtml = productsToPrint.map(p => {
+    const imageUrl = getImageUrl(p.imagen)
+    const precioHtml = authStore.canSeePrices && p.precio 
+      ? `<div class="price">${p.enOferta && p.precioOferta ? p.precioOferta : p.precio} €</div>`
+      : ''
+    const refHtml = p.nombre ? `<div class="ref">Ref: ${p.nombre}</div>` : ''
+    
+    return `
+      <div class="card">
+        <div class="img-wrapper">
+          <img src="${imageUrl}" alt="${p.nombre || 'Producto'}">
+        </div>
+        <div class="info">
+          <div class="name">${p.nombre || 'Sin nombre'}</div>
+          <div class="meta">${p.familia || ''} - ${p.categoria || ''}</div>
+          ${refHtml}
+          ${precioHtml}
+        </div>
+      </div>
+    `
+  }).join('')
+  
+  const htmlContent = `
+    <!DOCTYPE html>
+    <html lang="es">
+    <head>
+      <meta charset="UTF-8">
+      <title>Catálogo Ibernovia - ${selectedFamily.value}</title>
+      <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+      <style>
+        body {
+          font-family: 'Outfit', sans-serif;
+          color: #1a1a1a;
+          margin: 0;
+          padding: 20px;
+          background: #ffffff;
+        }
+        header {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          border-bottom: 2px solid #1a1a1a;
+          padding-bottom: 15px;
+          margin-bottom: 30px;
+        }
+        .logo {
+          font-family: 'Playfair Display', serif;
+          font-size: 24px;
+          font-weight: 700;
+          letter-spacing: 2px;
+          text-transform: uppercase;
+        }
+        .catalog-title {
+          font-size: 14px;
+          text-transform: uppercase;
+          letter-spacing: 1.5px;
+          color: #666;
+        }
+        .grid {
+          display: grid;
+          grid-template-columns: repeat(3, 1fr);
+          gap: 20px;
+        }
+        .card {
+          border: 1px solid #eaeaea;
+          border-radius: 8px;
+          padding: 10px;
+          display: flex;
+          flex-direction: column;
+          page-break-inside: avoid;
+          background: #fff;
+        }
+        .img-wrapper {
+          aspect-ratio: 3/4;
+          overflow: hidden;
+          background: #fcfcfc;
+          border-radius: 4px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+        .img-wrapper img {
+          max-width: 100%;
+          max-height: 100%;
+          object-fit: cover;
+        }
+        .info {
+          margin-top: 10px;
+          text-align: center;
+        }
+        .name {
+          font-family: 'Playfair Display', serif;
+          font-size: 16px;
+          font-weight: 700;
+          color: #1a1a1a;
+        }
+        .meta {
+          font-size: 10px;
+          text-transform: uppercase;
+          letter-spacing: 1px;
+          color: #888;
+          margin: 4px 0;
+        }
+        .ref {
+          font-size: 11px;
+          color: #444;
+        }
+        .price {
+          font-size: 14px;
+          font-weight: 600;
+          color: #b89244;
+          margin-top: 5px;
+        }
+        footer {
+          margin-top: 50px;
+          border-top: 1px solid #eaeaea;
+          padding-top: 15px;
+          text-align: center;
+          font-size: 10px;
+          color: #888;
+        }
+        @media print {
+          body {
+            padding: 0;
+          }
+          .card {
+            border: none;
+            padding: 0;
+            margin-bottom: 20px;
+          }
+          @page {
+            margin: 1.5cm;
+          }
+        }
+      </style>
+    </head>
+    <body>
+      <header>
+        <div class="logo">IBERNOVIA</div>
+        <div class="catalog-title">Colección: ${selectedFamily.value} / ${selectedCategory.value}</div>
+      </header>
+      
+      <div class="grid">
+        ${productCardsHtml}
+      </div>
+      
+      <footer>
+        <p>Ibernovia Atelier - Plaza de Abastos, C. Ollerias, 48, 23740 Andújar, Jaén - Tlf: 953 51 50 70 - info@ibernovia.es</p>
+        <p>Documento generado dinámicamente como catálogo comercial de referencia.</p>
+      </footer>
+      
+      ` + `<script>` + `
+        window.addEventListener('load', () => {
+          setTimeout(() => {
+            window.print();
+            window.close();
+          }, 600);
+        });
+      ` + `</` + `script>` + `
+    </body>
+    </html>
+  `
+  
+  printWindow.document.open()
+  printWindow.document.write(htmlContent)
+  printWindow.document.close()
+}
 const selectedFamily = ref('Todas')
 const selectedCategory = ref('Todos')
 const syncFromRoute = ref(false)
+const visibleLimit = ref(24)
+
+const paginatedProducts = computed(() => {
+  return visibleProducts.value.slice(0, visibleLimit.value)
+})
 
 const familyOrder = ['novia', 'novio', 'fiesta', 'comunion', 'arras']
 
@@ -367,6 +661,7 @@ const resetFilters = () => {
   searchTerm.value = ''
   selectedFamily.value = 'Todas'
   selectedCategory.value = 'Todos'
+  visibleLimit.value = 24
 }
 
 const fetchProductos = async () => {
@@ -394,6 +689,7 @@ watch(() => route.query, () => {
 }, { deep: true })
 
 watch([searchTerm, selectedFamily, selectedCategory], () => {
+  visibleLimit.value = 24
   if (isLoading.value) return
   updateRouteQuery()
 })

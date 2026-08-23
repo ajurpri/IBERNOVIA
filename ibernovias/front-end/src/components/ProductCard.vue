@@ -35,6 +35,14 @@
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
         </svg>
       </button>
+
+      <!-- Badge de Oferta -->
+      <div
+        v-if="producto.enOferta && producto.tagOferta"
+        class="absolute top-4 left-4 bg-red-600 text-white text-[9px] sm:text-[10px] font-bold uppercase tracking-widest px-2.5 py-1 rounded shadow-md z-10"
+      >
+        {{ producto.tagOferta }}
+      </div>
     </router-link>
 
     <!-- Details below image -->
@@ -48,8 +56,13 @@
 
       <div class="mt-3">
         <!-- Authorized Price Display -->
-        <div v-if="authStore.canSeePrices" class="text-base font-serif text-luxury-black font-medium">
-          {{ producto.precio || '0' }} €
+        <div v-if="authStore.canSeePrices" class="text-base font-serif font-medium flex items-center flex-wrap gap-x-2 gap-y-0.5">
+          <span v-if="producto.enOferta" class="line-through text-gray-400 text-xs sm:text-sm font-sans font-normal">
+            {{ producto.precio || '0' }} €
+          </span>
+          <span :class="producto.enOferta ? 'text-red-600 font-bold' : 'text-luxury-black'">
+            {{ producto.enOferta ? producto.precioOferta : producto.precio }} €
+          </span>
         </div>
         <!-- Restricted Professional Access Prompt -->
         <div v-else class="text-[10px] text-gray-400 tracking-wide font-sans flex items-center gap-1.5">

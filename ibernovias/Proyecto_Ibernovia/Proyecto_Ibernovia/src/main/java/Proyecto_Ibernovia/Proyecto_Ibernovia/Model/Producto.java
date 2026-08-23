@@ -32,6 +32,15 @@ public class Producto {
     private Integer stock;
     private Boolean activo;
     
+    @Column(name = "precio_oferta")
+    private Double precioOferta;
+
+    @Column(name = "en_oferta")
+    private Boolean enOferta;
+
+    @Column(name = "tag_oferta")
+    private String tagOferta;
+    
     @Column(name = "created_at")
     private LocalDateTime createdAt;
     
@@ -44,6 +53,9 @@ public class Producto {
         updatedAt = LocalDateTime.now();
         if (activo == null) {
             activo = true;
+        }
+        if (enOferta == null) {
+            enOferta = false;
         }
         // El stock se genera en el controller, no aquí
     }

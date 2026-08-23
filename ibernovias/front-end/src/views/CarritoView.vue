@@ -43,7 +43,15 @@
                       {{ item.nombre }}
                     </router-link>
                     <p class="text-xs text-gray-400 uppercase tracking-widest">{{ item.categoria }}</p>
-                    <p class="text-sm font-bold text-gray-900">{{ item.precio }}€</p>
+                    <div class="flex items-center gap-1.5 flex-wrap">
+                      <span v-if="item.enOferta" class="text-xs text-gray-400 line-through">{{ item.precio }}€</span>
+                      <span class="text-sm font-bold" :class="item.enOferta ? 'text-red-600' : 'text-gray-900'">
+                        {{ item.enOferta ? item.precioOferta : item.precio }}€
+                      </span>
+                      <span v-if="item.enOferta" class="text-[8px] bg-red-100 text-red-700 px-1 py-0.5 rounded font-bold uppercase tracking-wider">
+                        {{ item.tagOferta || 'Oferta' }}
+                      </span>
+                    </div>
                   </div>
                 </div>
 
@@ -64,7 +72,9 @@
 
                 <!-- Subtotal y Eliminar -->
                 <div class="text-right">
-                  <p class="text-sm font-bold text-gray-900 mb-2">{{ (item.precio * item.cantidad).toFixed(2) }}€</p>
+                  <p class="text-sm font-bold text-gray-900 mb-2">
+                    {{ ((item.enOferta ? item.precioOferta : item.precio) * item.cantidad).toFixed(2) }}€
+                  </p>
                   <button 
                     @click="removeItemWithToast(item)"
                     class="text-xs text-red-500 hover:text-red-700 uppercase tracking-widest font-bold transition">

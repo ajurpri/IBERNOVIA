@@ -30,6 +30,9 @@ public class ProductoController {
     @Value("${app.business.codes:EMPRESA2025,IBERNOVIA2025,DEMO123}")
     private String businessCodesString;
 
+    @Value("${app.gemini.api-key:}")
+    private String geminiApiKey;
+
     public ProductoController(ProductoRepository repository, UsuarioRepository usuarioRepository, JwtUtil jwtUtil) {
         this.repository = repository;
         this.usuarioRepository = usuarioRepository;
@@ -107,6 +110,9 @@ public class ProductoController {
         if (detalles.getDescripcion() != null) producto.setDescripcion(detalles.getDescripcion());
         if (detalles.getStock() != null) producto.setStock(detalles.getStock());
         if (detalles.getActivo() != null) producto.setActivo(detalles.getActivo());
+        if (detalles.getPrecioOferta() != null) producto.setPrecioOferta(detalles.getPrecioOferta());
+        if (detalles.getEnOferta() != null) producto.setEnOferta(detalles.getEnOferta());
+        if (detalles.getTagOferta() != null) producto.setTagOferta(detalles.getTagOferta());
 
         Producto actualizado = repository.save(producto);
         return ResponseEntity.ok(actualizado);
@@ -250,14 +256,130 @@ public class ProductoController {
         copy.setDescripcion(p.getDescripcion());
         copy.setStock(p.getStock());
         copy.setActivo(p.getActivo());
+        copy.setEnOferta(p.getEnOferta());
+        copy.setTagOferta(p.getTagOferta());
         copy.setCreatedAt(p.getCreatedAt());
         copy.setUpdatedAt(p.getUpdatedAt());
         if (canSeePrices) {
             copy.setPrecio(p.getPrecio());
+            copy.setPrecioOferta(p.getPrecioOferta());
         } else {
             copy.setPrecio(null);
+            copy.setPrecioOferta(null);
         }
         return copy;
+    }
+
+    @PutMapping("/bulk")
+    public ResponseEntity<List<Producto>> actualizarProductosMasivo(@RequestBody List<Producto> productos) {
+        List<Producto> actualizados = new java.util.ArrayList<>();
+        for (Producto p : productos) {
+            if (p.getId() != null) {
+                Optional<Producto> opt = repository.findById(p.getId());
+                if (opt.isPresent()) {
+                    Producto prod = opt.get();
+                    if (p.getPrecio() != null) prod.setPrecio(p.getPrecio());
+                    if (p.getStock() != null) prod.setStock(p.getStock());
+                    if (p.getPrecioOferta() != null) prod.setPrecioOferta(p.getPrecioOferta());
+                    if (p.getEnOferta() != null) prod.setEnOferta(p.getEnOferta());
+                    if (p.getTagOferta() != null) prod.setTagOferta(p.getTagOferta());
+                    if (p.getActivo() != null) prod.setActivo(p.getActivo());
+                    actualizados.add(repository.save(prod));
+                }
+            }
+        }
+        return ResponseEntity.ok(actualizados);
+    }
+
+    @PostMapping("/buscar-por-imagen")
+    public ResponseEntity<?> buscarPorImagen(@RequestBody java.util.Map<String, String> body) {
+        try {
+            String base64Image = body.get("image");
+            if (base64Image == null || base64Image.isBlank()) {
+                return ResponseEntity.badRequest().body(java.util.Map.of("error", "No se proporcionó la imagen base64."));
+            }
+
+            if (geminiApiKey == null || geminiApiKey.isBlank()) {
+                return ResponseEntity.ok(java.util.Map.of("keywords", "velo de novia"));
+            }
+
+            String dataBase64 = base64Image;
+            String mimeType = "image/jpeg";
+            if (base64Image.startsWith("data:")) {
+                String[] parts = base64Image.split(",");
+                if (parts.length == 2) {
+                    mimeType = parts[0].split(";")[0].replace("data:", "");
+                    dataBase64 = parts[1];
+                }
+            }
+
+            com.fasterxml.jackson.databind.ObjectMapper mapper = new com.fasterxml.jackson.databind.ObjectMapper();
+            com.fasterxml.jackson.databind.node.ObjectNode rootNode = mapper.createObjectNode();
+            com.fasterxml.jackson.databind.node.ArrayNode contentsNode = mapper.createArrayNode();
+            com.fasterxml.jackson.databind.node.ObjectNode contentObj = mapper.createObjectNode();
+            com.fasterxml.jackson.databind.node.ArrayNode partsNode = mapper.createArrayNode();
+
+            com.fasterxml.jackson.databind.node.ObjectNode textPart = mapper.createObjectNode();
+            textPart.put("text", "Identify the type of ceremony or bridal accessory in this image. Output ONLY 2 or 3 relevant search keywords in Spanish (separated by spaces) that can be used to search for this product in our catalog (e.g. 'velo novia encaje', 'peina plata', 'cinturon comunion', 'gemelos caballero'). Do not output any explanation, markdown, punctuation, or extra words.");
+            partsNode.add(textPart);
+
+            com.fasterxml.jackson.databind.node.ObjectNode imgPart = mapper.createObjectNode();
+            com.fasterxml.jackson.databind.node.ObjectNode inlineData = mapper.createObjectNode();
+            inlineData.put("mimeType", mimeType);
+            inlineData.put("data", dataBase64.trim().replace("\n", "").replace("\r", ""));
+            imgPart.set("inlineData", inlineData);
+            partsNode.add(imgPart);
+
+            contentObj.set("parts", partsNode);
+            contentsNode.add(contentObj);
+            rootNode.set("contents", contentsNode);
+
+            com.fasterxml.jackson.databind.node.ObjectNode genConfig = mapper.createObjectNode();
+            genConfig.put("temperature", 0.1);
+            genConfig.put("maxOutputTokens", 20);
+            rootNode.set("generationConfig", genConfig);
+
+            String jsonPayload = mapper.writeValueAsString(rootNode);
+
+            java.net.http.HttpClient client = java.net.http.HttpClient.newBuilder()
+                    .connectTimeout(java.time.Duration.ofSeconds(10))
+                    .build();
+
+            java.net.http.HttpRequest request = java.net.http.HttpRequest.newBuilder()
+                    .uri(java.net.URI.create("https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=" + geminiApiKey))
+                    .header("Content-Type", "application/json")
+                    .timeout(java.time.Duration.ofSeconds(15))
+                    .POST(java.net.http.HttpRequest.BodyPublishers.ofString(jsonPayload, java.nio.charset.StandardCharsets.UTF_8))
+                    .build();
+
+            java.net.http.HttpResponse<String> response = client.send(request, java.net.http.HttpResponse.BodyHandlers.ofString());
+
+            if (response.statusCode() == 200) {
+                com.fasterxml.jackson.databind.JsonNode responseJson = mapper.readTree(response.body());
+                String keywordsText = responseJson.path("candidates")
+                        .path(0)
+                        .path("content")
+                        .path("parts")
+                        .path(0)
+                        .path("text")
+                        .asText();
+
+                if (keywordsText != null) {
+                    keywordsText = keywordsText.trim().toLowerCase();
+                } else {
+                    keywordsText = "velo de novia";
+                }
+
+                return ResponseEntity.ok(java.util.Map.of("keywords", keywordsText));
+            } else {
+                System.err.println("Gemini Visual API Error status: " + response.statusCode() + " body: " + response.body());
+                return ResponseEntity.status(response.statusCode()).body(java.util.Map.of("error", "Error al procesar la imagen con Gemini."));
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(500).body(java.util.Map.of("error", "Error interno en el servidor: " + e.getMessage()));
+        }
     }
 }
 
