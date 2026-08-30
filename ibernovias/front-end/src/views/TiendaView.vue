@@ -103,6 +103,40 @@
           </div>
         </div>
 
+        <!-- Filtros adicionales y Ordenación -->
+        <div class="flex flex-wrap items-center gap-x-6 gap-y-3 pt-4 border-t border-black/5 mt-2">
+          <!-- Ordenar (Solo si puede ver precios) -->
+          <div v-if="authStore.canSeePrices" class="flex items-center gap-2">
+            <label for="sort-select" class="text-[10px] uppercase tracking-[0.25em] text-gray-400 font-bold">
+              Ordenar por:
+            </label>
+            <select
+              id="sort-select"
+              v-model="sortBy"
+              class="h-9 px-3 rounded-xl border border-gray-200 bg-white text-xs text-luxury-black focus:outline-none focus:border-luxury-gold transition-colors cursor-pointer"
+            >
+              <option value="default">Por defecto</option>
+              <option value="price-asc">Precio: de menor a mayor</option>
+              <option value="price-desc">Precio: de mayor a menor</option>
+            </select>
+          </div>
+
+          <!-- Filtro Ofertas -->
+          <div class="flex items-center gap-2">
+            <label class="relative inline-flex items-center cursor-pointer select-none">
+              <input 
+                type="checkbox" 
+                v-model="onlyOffers" 
+                class="sr-only peer"
+              >
+              <div class="w-9 h-5 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-luxury-gold"></div>
+              <span class="ml-2.5 text-[10px] uppercase tracking-[0.25em] text-gray-500 font-bold peer-checked:text-luxury-gold transition-colors">
+                Solo en oferta 🔥
+              </span>
+            </label>
+          </div>
+        </div>
+
         <div class="mt-2 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 pt-2">
           <p class="text-[11px] uppercase tracking-[0.18em] text-gray-500 font-semibold" aria-live="polite">
             {{ visibleProducts.length }} productos encontrados
@@ -125,7 +159,7 @@
             </router-link>
 
             <button
-              v-if="searchTerm || selectedFamily !== 'Todas' || selectedCategory !== 'Todos'"
+              v-if="searchTerm || selectedFamily !== 'Todas' || selectedCategory !== 'Todos' || sortBy !== 'default' || onlyOffers"
               type="button"
               @click="resetFilters"
               class="text-[11px] uppercase tracking-[0.18em] font-semibold text-luxury-black hover:text-luxury-gold transition-colors"
@@ -473,6 +507,8 @@ const printCatalog = () => {
 }
 const selectedFamily = ref('Todas')
 const selectedCategory = ref('Todos')
+const sortBy = ref('default')
+const onlyOffers = ref(false)
 const syncFromRoute = ref(false)
 const visibleLimit = ref(24)
 
@@ -558,7 +594,11 @@ const scoredProducts = computed(() => {
       ? true
       : p.categoria === selectedCategory.value
 
-    return matchesFamily && matchesCategory
+    const matchesOnlyOffers = onlyOffers.value
+      ? p.enOferta === true
+      : true
+
+    return matchesFamily && matchesCategory && matchesOnlyOffers
   })
 
   if (tokens.length === 0) {
@@ -602,10 +642,27 @@ const scoredProducts = computed(() => {
 const visibleProducts = computed(() => {
   const term = normalizeForSearch(searchTerm.value)
   const hasTerm = term.length > 0
-  const list = scoredProducts.value.map((x) => x)
+  const list = scoredProducts.value.map((x) => x.producto)
 
-  if (hasTerm) {
+  if (sortBy.value === 'price-asc') {
     list.sort((a, b) => {
+      const priceA = a.enOferta && a.precioOferta != null ? a.precioOferta : (a.precio || 0)
+      const priceB = b.enOferta && b.precioOferta != null ? b.precioOferta : (b.precio || 0)
+      return priceA - priceB
+    })
+    return list
+  } else if (sortBy.value === 'price-desc') {
+    list.sort((a, b) => {
+      const priceA = a.enOferta && a.precioOferta != null ? a.precioOferta : (a.precio || 0)
+      const priceB = b.enOferta && b.precioOferta != null ? b.precioOferta : (b.precio || 0)
+      return priceB - priceA
+    })
+    return list
+  }
+
+  const scoredList = scoredProducts.value.map((x) => x)
+  if (hasTerm) {
+    scoredList.sort((a, b) => {
       if (b.score !== a.score) return b.score - a.score
       const familyDiff = familySortIndex(a.producto.familia) - familySortIndex(b.producto.familia)
       if (familyDiff !== 0) return familyDiff
@@ -613,10 +670,10 @@ const visibleProducts = computed(() => {
       if (categoryDiff !== 0) return categoryDiff
       return (a.producto.nombre || '').localeCompare(b.producto.nombre || '')
     })
-    return list.map((x) => x.producto)
+    return scoredList.map((x) => x.producto)
   }
 
-  return list
+  return scoredList
     .map((x) => x.producto)
     .sort((a, b) => {
       const familyDiff = familySortIndex(a.familia) - familySortIndex(b.familia)
@@ -634,10 +691,14 @@ const applyQueryFilters = () => {
   const querySearch = typeof q.q === 'string' ? q.q : ''
   const queryFamily = typeof q.familia === 'string' ? q.familia : 'Todas'
   const queryCategory = typeof q.categoria === 'string' ? q.categoria : 'Todos'
+  const querySortBy = typeof q.orden === 'string' ? q.orden : 'default'
+  const queryOnlyOffers = q.ofertas === 'true'
 
   searchTerm.value = querySearch
   selectedFamily.value = familias.value.includes(queryFamily) ? queryFamily : 'Todas'
   selectedCategory.value = categorias.value.includes(queryCategory) ? queryCategory : 'Todos'
+  sortBy.value = ['default', 'price-asc', 'price-desc'].includes(querySortBy) ? querySortBy : 'default'
+  onlyOffers.value = queryOnlyOffers
 
   syncFromRoute.value = false
 }
@@ -649,6 +710,8 @@ const updateRouteQuery = () => {
   if (searchTerm.value.trim()) query.q = searchTerm.value.trim()
   if (selectedFamily.value !== 'Todas') query.familia = selectedFamily.value
   if (selectedCategory.value !== 'Todos') query.categoria = selectedCategory.value
+  if (sortBy.value !== 'default') query.orden = sortBy.value
+  if (onlyOffers.value) query.ofertas = 'true'
 
   router.replace({
     path: route.path,
@@ -662,6 +725,8 @@ const resetFilters = () => {
   selectedFamily.value = 'Todas'
   selectedCategory.value = 'Todos'
   visibleLimit.value = 24
+  sortBy.value = 'default'
+  onlyOffers.value = false
 }
 
 const fetchProductos = async () => {
@@ -688,7 +753,7 @@ watch(() => route.query, () => {
   applyQueryFilters()
 }, { deep: true })
 
-watch([searchTerm, selectedFamily, selectedCategory], () => {
+watch([searchTerm, selectedFamily, selectedCategory, sortBy, onlyOffers], () => {
   visibleLimit.value = 24
   if (isLoading.value) return
   updateRouteQuery()
