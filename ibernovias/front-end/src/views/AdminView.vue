@@ -1143,34 +1143,6 @@ const selectableFamilies = computed(() => {
   return [...new Set([...predefinedFamilies, ...existing])]
 })
 
-const selectedCategoryChoice = ref('')
-const customCategoryInput = ref('')
-
-watch(selectedCategoryChoice, (val) => {
-  if (val === '__CUSTOM__') {
-    form.value.categoria = customCategoryInput.value
-  } else {
-    form.value.categoria = val
-  }
-})
-
-watch(customCategoryInput, (val) => {
-  if (selectedCategoryChoice.value === '__CUSTOM__') {
-    form.value.categoria = val
-  }
-})
-
-watch(() => form.value.categoria, (val) => {
-  if (!val) {
-    selectedCategoryChoice.value = ''
-  } else if (selectableCategories.value.includes(val)) {
-    selectedCategoryChoice.value = val
-  } else {
-    selectedCategoryChoice.value = '__CUSTOM__'
-    customCategoryInput.value = val
-  }
-}, { immediate: true })
-
 const predefinedCategoriesByFamily = {
   Novia: [
     'Abanicos',
@@ -1240,6 +1212,35 @@ const selectableCategories = computed(() => {
 
   return [...new Set([...predefined, ...existingInFamily])].sort((a, b) => a.localeCompare(b))
 })
+
+const selectedCategoryChoice = ref('')
+const customCategoryInput = ref('')
+
+watch(selectedCategoryChoice, (val) => {
+  if (val === '__CUSTOM__') {
+    form.value.categoria = customCategoryInput.value
+  } else {
+    form.value.categoria = val
+  }
+})
+
+watch(customCategoryInput, (val) => {
+  if (selectedCategoryChoice.value === '__CUSTOM__') {
+    form.value.categoria = val
+  }
+})
+
+watch(() => form.value.categoria, (val) => {
+  if (!val) {
+    selectedCategoryChoice.value = ''
+  } else if (selectableCategories.value && selectableCategories.value.includes(val)) {
+    selectedCategoryChoice.value = val
+  } else {
+    selectedCategoryChoice.value = '__CUSTOM__'
+    customCategoryInput.value = val
+  }
+}, { immediate: true })
+
 const adminUsers = computed(() => users.value.filter(u => u.isAdmin).length)
 
 const loadProducts = async () => {
