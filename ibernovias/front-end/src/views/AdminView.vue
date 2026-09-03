@@ -1029,7 +1029,7 @@
 
 <script setup>
 import { ref, computed, onMounted, inject, watch } from 'vue'
-import { apiClient, getImageUrl } from '../lib/api'
+import { apiClient, getImageUrl, invalidateProductsCache } from '../lib/api'
 import { useAuthStore } from '../stores/auth'
 
 const authStore = useAuthStore()
@@ -1514,6 +1514,7 @@ const saveProduct = async () => {
       message.value = '✓ Producto creado con éxito.'
       if (toast) toast.show(`✓ "${res.data.nombre}" creado correctamente`, 'success', 2500)
     }
+    invalidateProductsCache()
     messageOk.value = true
     resetForm(true)
   } catch (e) {
@@ -1531,6 +1532,7 @@ const removeProduct = async (id) => {
     const productName = products.value.find(p => p.id === id)?.nombre || 'Producto'
     await apiClient.delete(`/api/productos/${id}`)
     products.value = products.value.filter(p => p.id !== id)
+    invalidateProductsCache()
     resetForm()
     message.value = '✓ Producto eliminado.'
     messageOk.value = true

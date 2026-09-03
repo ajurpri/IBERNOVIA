@@ -104,6 +104,15 @@ export const fetchCachedProducts = async (forceRefresh = false) => {
   }
 }
 
+export const invalidateProductsCache = () => {
+  cache.delete('api_productos')
+  try {
+    localStorage.removeItem('ibernovia_products_backup')
+  } catch (e) {
+    // LocalStorage error ignored
+  }
+}
+
 export const getImageUrl = (img) => {
   if (!img) return '/logo.jpg'
   if (img.startsWith('http://') || img.startsWith('https://') || img.startsWith('data:')) {
