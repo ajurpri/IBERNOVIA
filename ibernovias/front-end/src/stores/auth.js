@@ -95,6 +95,31 @@ export const useAuthStore = defineStore('auth', () => {
 
   const verifyAdminSession = async () => {
     if (!token.value) return false
+
+    // Si ya tenemos el usuario guardado localmente como admin, confiamos en la sesión local
+    if (user.value && user.value.isAdmin) {
+      // Verificación asíncrona de fondo sin bloquear ni cerrar sesión por fallos de red temporales
+      apiClient.get('/api/auth/verify').then((response) => {
+        if (response.data) {
+          const payload = response.data
+          user.value = {
+            userId: payload.userId,
+            email: payload.email,
+            nombre: payload.nombre,
+            apellido: payload.apellido,
+            isAdmin: Boolean(payload.isAdmin),
+            isBusiness: Boolean(payload.isBusiness)
+          }
+          localStorage.setItem('user', JSON.stringify(user.value))
+        }
+      }).catch((e) => {
+        if (e.response && (e.response.status === 401 || e.response.status === 403)) {
+          logout()
+        }
+      })
+      return true
+    }
+
     try {
       const response = await apiClient.get('/api/auth/verify')
       const payload = response.data
@@ -119,8 +144,11 @@ export const useAuthStore = defineStore('auth', () => {
       localStorage.setItem('user', JSON.stringify(normalizedUser))
       return isAdmin.value
     } catch (e) {
-      await logout()
-      return false
+      if (e.response && (e.response.status === 401 || e.response.status === 403)) {
+        await logout()
+        return false
+      }
+      return Boolean(user.value?.isAdmin)
     }
   }
 

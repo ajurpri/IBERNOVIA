@@ -66,10 +66,42 @@ export const fetchCachedProducts = async (forceRefresh = false) => {
     return cached.data
   }
 
-  const res = await apiClient.get('/api/productos')
-  const data = Array.isArray(res.data) ? res.data : []
-  cache.set(cacheKey, { timestamp: now, data })
-  return data
+  try {
+    const res = await apiClient.get('/api/productos')
+    const data = Array.isArray(res.data) ? res.data : []
+    if (data.length > 0) {
+      cache.set(cacheKey, { timestamp: now, data })
+      try {
+        localStorage.setItem('ibernovia_products_backup', JSON.stringify(data))
+      } catch (e) {
+        // localStorage quotas or privacy mode error
+      }
+    }
+    return data
+  } catch (error) {
+    console.warn('Network error or server delay fetching products, attempting local backup:', error)
+    
+    // 1. Return in-memory cache if available (even if expired)
+    if (cached && cached.data && cached.data.length > 0) {
+      return cached.data
+    }
+
+    // 2. Return persistent localStorage backup (resilient against Ctrl+F5)
+    try {
+      const stored = localStorage.getItem('ibernovia_products_backup')
+      if (stored) {
+        const parsed = JSON.parse(stored)
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          cache.set(cacheKey, { timestamp: now, data: parsed })
+          return parsed
+        }
+      }
+    } catch (e) {
+      // LocalStorage read error
+    }
+
+    throw error
+  }
 }
 
 export const getImageUrl = (img) => {

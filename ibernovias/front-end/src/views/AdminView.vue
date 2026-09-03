@@ -1987,13 +1987,15 @@ const updateEstadoSolicitud = async (solicitudId, nuevoEstado) => {
 
 onMounted(() => {
   loadProducts()
-  loadMessages()
-  loadEventos()
-  loadPromotions()
-  loadSolicitudes()
-  loadUsers()
 })
 
+watch(activeTab, (newTab) => {
+  if (newTab === 'users') loadUsers()
+  if (newTab === 'events') loadEventos()
+  if (newTab === 'promotions') loadPromotions()
+  if (newTab === 'quote-requests') loadSolicitudes()
+  if (newTab === 'messages') loadMessages()
+}, { immediate: true })
 </script>
 
 <style scoped>
