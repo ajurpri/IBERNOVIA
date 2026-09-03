@@ -1137,6 +1137,7 @@ const lowStockProducts = computed(() => products.value.filter(p => p.stock < 5).
 const lowStockList = computed(() => products.value.filter(p => p.stock < 5).sort((a, b) => a.stock - b.stock))
 
 const families = computed(() => [...new Set(products.value.map(p => p.familia))])
+const categories = computed(() => [...new Set(products.value.map(p => p.categoria).filter(Boolean))])
 const predefinedFamilies = ['Novia', 'Novio', 'Fiesta', 'Comunión', 'Arras']
 const selectableFamilies = computed(() => {
   const existing = families.value.filter(Boolean)
