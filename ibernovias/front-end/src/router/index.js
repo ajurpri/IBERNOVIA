@@ -1,22 +1,21 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import { defineAsyncComponent } from 'vue'
 import ProductoView from '../views/ProductoView.vue'
 import { useAuthStore } from '../stores/auth'
 
-// Lazy load para vistas que se usan menos frecuentemente
-const CarritoView = defineAsyncComponent(() => import('../views/CarritoView.vue'))
-const CheckoutView = defineAsyncComponent(() => import('../views/CheckoutView.vue'))
-const ConfirmacionView = defineAsyncComponent(() => import('../views/ConfirmacionView.vue'))
-const AuthView = defineAsyncComponent(() => import('../views/AuthView.vue'))
-const TiendaView = defineAsyncComponent(() => import('../views/TiendaView.vue'))
-const HomeView = defineAsyncComponent(() => import('../views/HomeView.vue'))
-const CuentaView = defineAsyncComponent(() => import('../views/CuentaView.vue'))
-const ContactoView = defineAsyncComponent(() => import('../views/ContactoView.vue'))
-const AccesoEmpresarialView = defineAsyncComponent(() => import('../views/AccesoEmpresarialView.vue'))
-const PrivacidadView = defineAsyncComponent(() => import('../views/PrivacidadView.vue'))
-const CookiesView = defineAsyncComponent(() => import('../views/CookiesView.vue'))
-const LegalView = defineAsyncComponent(() => import('../views/LegalView.vue'))
-const AdminView = defineAsyncComponent(() => import('../views/AdminView.vue'))
+// Lazy load para vistas de rutas (Vue Router)
+const HomeView = () => import('../views/HomeView.vue')
+const TiendaView = () => import('../views/TiendaView.vue')
+const CarritoView = () => import('../views/CarritoView.vue')
+const CheckoutView = () => import('../views/CheckoutView.vue')
+const ConfirmacionView = () => import('../views/ConfirmacionView.vue')
+const AuthView = () => import('../views/AuthView.vue')
+const CuentaView = () => import('../views/CuentaView.vue')
+const ContactoView = () => import('../views/ContactoView.vue')
+const AccesoEmpresarialView = () => import('../views/AccesoEmpresarialView.vue')
+const PrivacidadView = () => import('../views/PrivacidadView.vue')
+const CookiesView = () => import('../views/CookiesView.vue')
+const LegalView = () => import('../views/LegalView.vue')
+const AdminView = () => import('../views/AdminView.vue')
 
 const routes = [
   {
