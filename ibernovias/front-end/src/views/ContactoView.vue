@@ -24,8 +24,8 @@
               <div>
                 <h3 class="text-[10px] uppercase tracking-[0.2em] text-gray-400 font-bold mb-2">Direccion</h3>
                 <p class="text-luxury-black font-serif text-lg leading-relaxed">
-                  Plaza de Abastos, C. Ollerias, 48<br>
-                  23740 Andujar, Jaen
+                  Calle Forjadores, 1<br>
+                  23740 Andújar, Jaén
                 </p>
               </div>
             </div>

@@ -298,7 +298,7 @@ public class ChatController {
         sb.append("- Si no hay una coincidencia exacta en catalogo, dilo y redirige a la categoria o familia mas cercana.\n\n");
 
         sb.append("DATOS DEL ATELIER:\n");
-        sb.append("- Direccion: Plaza de Abastos, C. Ollerias, 48, 23740 Andujar, Jaen, Espana.\n");
+        sb.append("- Direccion: Calle Forjadores, 1, 23740 Andujar, Jaen, Espana.\n");
         sb.append("- Telefono: 953 51 50 70.\n");
         sb.append("- Email: info@ibernovia.es.\n");
         sb.append("- Horario: lunes a viernes de 9:00 a 14:00 y de 17:00 a 20:00. Sabados y domingos cerrado.\n");

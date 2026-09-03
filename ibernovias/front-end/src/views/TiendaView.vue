@@ -485,7 +485,7 @@ const printCatalog = () => {
       </div>
       
       <footer>
-        <p>Ibernovia Atelier - Plaza de Abastos, C. Ollerias, 48, 23740 Andújar, Jaén - Tlf: 953 51 50 70 - info@ibernovia.es</p>
+        <p>Ibernovia Atelier - Calle Forjadores, 1, 23740 Andújar, Jaén - Tlf: 953 51 50 70 - info@ibernovia.es</p>
         <p>Documento generado dinámicamente como catálogo comercial de referencia.</p>
       </footer>
       
