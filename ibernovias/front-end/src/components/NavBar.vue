@@ -1,42 +1,55 @@
 <template>
-  <nav class="header-shell sticky top-0 z-[70] border-b border-black/10">
-    <BusinessAccessModal ref="businessModalRef" />
-    <EventsModal ref="eventsModalRef" />
+  <div class="w-full relative z-[75]">
+    <!-- Banner de Alta Empresarial visible en todas las paginas -->
+    <div class="bg-luxury-black text-white text-[11px] sm:text-xs py-2 px-4 border-b border-luxury-gold/30 flex items-center justify-center gap-2 sm:gap-3 text-center tracking-wide shadow-sm">
+      <span class="text-gray-300 font-medium">🏢 ¿Eres tienda o profesional del sector?</span>
+      <router-link
+        to="/acceso-empresarial"
+        class="inline-flex items-center gap-1 font-bold text-luxury-gold hover:text-white transition-colors underline underline-offset-2 uppercase tracking-wider shrink-0"
+      >
+        Darse de alta como empresa
+        <svg class="w-3.5 h-3.5 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+        </svg>
+      </router-link>
+    </div>
 
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="h-[86px] flex items-center justify-between gap-3">
-        <router-link to="/" class="wordmark" aria-label="Ir a inicio">
-          <span class="brand">IBERNOVIA</span>
-          <span class="sub">ATELIER</span>
-        </router-link>
+    <nav class="header-shell sticky top-0 z-[70] border-b border-black/10">
+      <BusinessAccessModal ref="businessModalRef" />
+      <EventsModal ref="eventsModalRef" />
 
-        <div class="hidden lg:flex items-center gap-8">
-          <router-link to="/" class="menu-link">Inicio</router-link>
-          <router-link :to="{ path: '/tienda', hash: '#catalogo' }" class="menu-link">Catalogo</router-link>
-          <button type="button" class="menu-link" @click="openEventsModal">Eventos</button>
-          <router-link to="/contacto" class="menu-link">Contacto</router-link>
-        </div>
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="h-[86px] flex items-center justify-between gap-3">
+          <router-link to="/" class="wordmark" aria-label="Ir a inicio">
+            <span class="brand">IBERNOVIA</span>
+            <span class="sub">ATELIER</span>
+          </router-link>
 
-        <div class="flex items-center gap-2 sm:gap-3">
-          <button
-            type="button"
-            @click="toggleSearch"
-            class="icon-btn"
-            aria-label="Abrir buscador"
-          >
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="m21 21-4.3-4.3m1.5-5.2a6.8 6.8 0 1 1-13.6 0 6.8 6.8 0 0 1 13.6 0Z" />
-            </svg>
-          </button>
+          <div class="hidden lg:flex items-center gap-8">
+            <router-link to="/" class="menu-link">Inicio</router-link>
+            <router-link :to="{ path: '/tienda', hash: '#catalogo' }" class="menu-link">Catalogo</router-link>
+            <button type="button" class="menu-link" @click="openEventsModal">Eventos</button>
+            <router-link to="/contacto" class="menu-link">Contacto</router-link>
+          </div>
 
-          <button
-            v-if="authStore.canSeePrices"
-            type="button"
-            class="business-btn hidden sm:inline-flex"
-            @click="router.push('/cuenta')"
-          >
-            Acceso empresarial
-          </button>
+          <div class="flex items-center gap-2 sm:gap-3">
+            <button
+              type="button"
+              @click="toggleSearch"
+              class="icon-btn"
+              aria-label="Abrir buscador"
+            >
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="m21 21-4.3-4.3m1.5-5.2a6.8 6.8 0 1 1-13.6 0 6.8 6.8 0 0 1 13.6 0Z" />
+              </svg>
+            </button>
+
+            <router-link
+              to="/acceso-empresarial"
+              class="business-btn hidden sm:inline-flex"
+            >
+              Alta Empresa
+            </router-link>
 
           <router-link
             v-if="authStore.canRequestQuote"
@@ -261,6 +274,7 @@
       </div>
     </Teleport>
   </nav>
+</div>
 </template>
 
 <script setup>
@@ -500,6 +514,7 @@ const handleDocumentKeydown = (event) => {
 }
 
 onMounted(() => {
+  loadAllProducts()
   document.addEventListener('click', handleDocumentClick)
   document.addEventListener('keydown', handleDocumentKeydown)
   window.addEventListener('resize', updateUserMenuPosition)
