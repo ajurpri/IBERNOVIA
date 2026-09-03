@@ -176,14 +176,25 @@
 
             <div>
               <label class="text-xs uppercase tracking-widest text-gray-500 block mb-1">Categoría</label>
-              <select
-                v-model="form.categoria"
-                required
-                class="admin-input w-full bg-white"
-              >
-                <option disabled value="">Selecciona una categoría</option>
-                <option v-for="cat in selectableCategories" :key="cat" :value="cat">{{ cat }}</option>
-              </select>
+              <div class="space-y-2">
+                <select
+                  v-model="selectedCategoryChoice"
+                  required
+                  class="admin-input w-full bg-white"
+                >
+                  <option disabled value="">Selecciona una categoría</option>
+                  <option v-for="cat in selectableCategories" :key="cat" :value="cat">{{ cat }}</option>
+                  <option value="__CUSTOM__">➕ Escribir nueva categoría...</option>
+                </select>
+                <input
+                  v-if="selectedCategoryChoice === '__CUSTOM__'"
+                  v-model="customCategoryInput"
+                  type="text"
+                  placeholder="Escribe el nombre de la nueva categoría"
+                  class="admin-input w-full bg-white"
+                  required
+                />
+              </div>
             </div>
 
             <div class="grid grid-cols-2 gap-3">
@@ -1132,18 +1143,102 @@ const selectableFamilies = computed(() => {
   return [...new Set([...predefinedFamilies, ...existing])]
 })
 
-const categories = computed(() => [...new Set(products.value.map(p => p.categoria))])
-const predefinedCategories = [
-  'Cordones',
-  'Medallas',
-  'Libritos',
-  'Cinturones',
-  'Gemelos',
-  'Pines'
-]
+const selectedCategoryChoice = ref('')
+const customCategoryInput = ref('')
+
+watch(selectedCategoryChoice, (val) => {
+  if (val === '__CUSTOM__') {
+    form.value.categoria = customCategoryInput.value
+  } else {
+    form.value.categoria = val
+  }
+})
+
+watch(customCategoryInput, (val) => {
+  if (selectedCategoryChoice.value === '__CUSTOM__') {
+    form.value.categoria = val
+  }
+})
+
+watch(() => form.value.categoria, (val) => {
+  if (!val) {
+    selectedCategoryChoice.value = ''
+  } else if (selectableCategories.value.includes(val)) {
+    selectedCategoryChoice.value = val
+  } else {
+    selectedCategoryChoice.value = '__CUSTOM__'
+    customCategoryInput.value = val
+  }
+}, { immediate: true })
+
+const predefinedCategoriesByFamily = {
+  Novia: [
+    'Abanicos',
+    'Can Can',
+    'Casquetes Metálicos',
+    'Coronas Metálicas',
+    'Diademas Metálicas',
+    'Espirales Metálicas',
+    'Hilos Metálicos',
+    'Horquillas Metálicas',
+    'Ligas',
+    'Mantillas',
+    'Medias',
+    'Pañuelos',
+    'Peinas Metálicas',
+    'Pendientes Metálicos',
+    'Pulseras Azahar',
+    'Tocados',
+    'Velos',
+    'Velos con Aplicaciones'
+  ],
+  Fiesta: [
+    'Abanicos',
+    'Bolsos',
+    'Broches de Mantilla',
+    'Guantes',
+    'Mantillas',
+    'Mantillas de Niña',
+    'Peinas de Mantilla',
+    'Pendientes',
+    'Tocados'
+  ],
+  Comunión: [
+    'Adornos',
+    'Can Can',
+    'Crucifijos',
+    'Diademas y Coronas',
+    'Guantes',
+    'Pamelas',
+    'Prendidos',
+    'Rosarios',
+    'Cordones',
+    'Medallas',
+    'Libritos',
+    'Cinturones',
+    'Pines'
+  ],
+  Novio: [
+    'Gemelos'
+  ],
+  Arras: [
+    'Arras Matrimoniales',
+    'Cestas y Cojines'
+  ]
+}
+
 const selectableCategories = computed(() => {
-  const existing = categories.value.filter(Boolean)
-  return [...new Set([...predefinedCategories, ...existing])]
+  const family = form.value.familia
+  const existingInFamily = products.value
+    .filter(p => !family || p.familia === family)
+    .map(p => p.categoria)
+    .filter(Boolean)
+
+  const predefined = family && predefinedCategoriesByFamily[family]
+    ? predefinedCategoriesByFamily[family]
+    : Object.values(predefinedCategoriesByFamily).flat()
+
+  return [...new Set([...predefined, ...existingInFamily])].sort((a, b) => a.localeCompare(b))
 })
 const adminUsers = computed(() => users.value.filter(u => u.isAdmin).length)
 
