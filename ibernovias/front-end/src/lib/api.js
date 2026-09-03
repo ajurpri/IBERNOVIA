@@ -53,6 +53,25 @@ export const apiFetch = (path, options = {}) => {
   })
 }
 
+// In-memory cache for GET requests to prevent slow duplicate network calls
+const cache = new Map()
+const CACHE_TTL = 3 * 60 * 1000 // 3 minutos de caché
+
+export const fetchCachedProducts = async (forceRefresh = false) => {
+  const cacheKey = 'api_productos'
+  const cached = cache.get(cacheKey)
+  const now = Date.now()
+
+  if (!forceRefresh && cached && (now - cached.timestamp < CACHE_TTL)) {
+    return cached.data
+  }
+
+  const res = await apiClient.get('/api/productos')
+  const data = Array.isArray(res.data) ? res.data : []
+  cache.set(cacheKey, { timestamp: now, data })
+  return data
+}
+
 export const getImageUrl = (img) => {
   if (!img) return '/logo.jpg'
   if (img.startsWith('http://') || img.startsWith('https://') || img.startsWith('data:')) {
@@ -61,8 +80,6 @@ export const getImageUrl = (img) => {
   const normalized = img.startsWith('/') ? img : '/' + img
   
   if (normalized.startsWith('/images/productos/') || normalized.startsWith('/images/promociones/')) {
-    // Si estamos en desarrollo local, apuntamos al VPS de producción para ver las imágenes.
-    // Si estamos en producción, usamos la ruta relativa del propio dominio del VPS.
     if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
       return `https://ibernovia.es${normalized}`
     }

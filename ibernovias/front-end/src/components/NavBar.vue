@@ -282,7 +282,7 @@ import { computed, nextTick, onBeforeUnmount, onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useCartStore } from '../stores/cart'
 import { useAuthStore } from '../stores/auth'
-import { apiClient, getImageUrl } from '../lib/api'
+import { apiClient, fetchCachedProducts, getImageUrl } from '../lib/api'
 import BusinessAccessModal from './BusinessAccessModal.vue'
 import EventsModal from './EventsModal.vue'
 
@@ -398,8 +398,7 @@ const loadAllProducts = async () => {
   productLoadError.value = ''
 
   try {
-    const res = await apiClient.get('/api/productos')
-    allProducts.value = Array.isArray(res.data) ? res.data : []
+    allProducts.value = await fetchCachedProducts()
   } catch (error) {
     productLoadError.value = 'No se pudieron cargar los productos'
     console.error('Error cargando productos:', error)

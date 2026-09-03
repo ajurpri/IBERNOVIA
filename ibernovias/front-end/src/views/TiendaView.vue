@@ -246,7 +246,7 @@
 import { ref, onMounted, computed, watch, inject } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import ProductCard from '../components/ProductCard.vue'
-import { apiClient, getImageUrl } from '../lib/api'
+import { apiClient, fetchCachedProducts, getImageUrl } from '../lib/api'
 import { useAuthStore } from '../stores/auth'
 
 const productos = ref([])
@@ -733,8 +733,7 @@ const fetchProductos = async () => {
   isLoading.value = true
   loadError.value = ''
   try {
-    const res = await apiClient.get('/api/productos')
-    productos.value = Array.isArray(res.data) ? res.data : []
+    productos.value = await fetchCachedProducts()
   } catch (error) {
     loadError.value = error?.message || 'Error desconocido'
     console.error('Error cargando productos:', error)
