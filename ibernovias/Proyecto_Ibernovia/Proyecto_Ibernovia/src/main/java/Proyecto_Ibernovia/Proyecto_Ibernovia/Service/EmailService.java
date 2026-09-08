@@ -8,13 +8,18 @@ import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 
+import java.util.LinkedHashSet;
+import java.util.Set;
+
 @Service
 public class EmailService {
 
     private static final Logger logger = LoggerFactory.getLogger(EmailService.class);
+    private static final String IBERNOVIA_INFO_EMAIL = "info@ibernovia.es";
 
     private final JavaMailSender mailSender;
-    private final String contactTo;
+    private final String[] contactRecipients;
+    private final String contactRecipientsText;
     private final String contactFrom;
     private final String smtpHost;
     private final String smtpPort;
@@ -38,7 +43,8 @@ public class EmailService {
             @Value("${spring.mail.properties.mail.smtp.ssl.checkserveridentity:true}") boolean smtpCheckServerIdentity,
             @Value("${spring.mail.properties.mail.smtp.ssl.trust:}") String smtpSslTrust) {
         this.mailSender = mailSender;
-        this.contactTo = contactTo;
+        this.contactRecipients = resolveContactRecipients(contactTo);
+        this.contactRecipientsText = String.join(", ", this.contactRecipients);
         this.contactFrom = contactFrom;
         this.smtpHost = smtpHost;
         this.smtpPort = smtpPort;
@@ -61,7 +67,7 @@ public class EmailService {
 
     private void logConfiguration() {
         logger.info("Email Service Initialized");
-        logger.info("  - Contact To: {}", contactTo);
+        logger.info("  - Contact To: {}", contactRecipientsText);
         logger.info("  - Contact From: {}", contactFrom);
         logger.info("  - SMTP Host: {}:{}", smtpHost, smtpPort);
         logger.info("  - SMTP Username: {}", smtpUsername);
@@ -74,20 +80,20 @@ public class EmailService {
 
     public boolean sendContactEmailToCompany(ContactRequest request) {
         if (!smtpConfigured()) {
-            logger.warn("SMTP not configured. Email would be sent to: {} with subject: {}", contactTo, "Contacto: " + request.getAsunto());
+            logger.warn("SMTP not configured. Email would be sent to: {} with subject: {}", contactRecipientsText, "Contacto: " + request.getAsunto());
             logger.warn("Message preview:\n{}", buildCompanyBody(request));
             return false;
         }
 
         try {
             SimpleMailMessage message = new SimpleMailMessage();
-            message.setTo(contactTo);
+            message.setTo(contactRecipients);
             message.setFrom(contactFrom);
             message.setReplyTo(request.getEmail());
             message.setSubject("Contacto: " + request.getAsunto());
             message.setText(buildCompanyBody(request));
             mailSender.send(message);
-            logger.info("Company contact email sent successfully to {} from {}", contactTo, request.getEmail());
+            logger.info("Company contact email sent successfully to {} from {}", contactRecipientsText, request.getEmail());
             return true;
         } catch (Exception e) {
             logger.error("Error sending company contact email: {}", e.getMessage(), e);
@@ -105,7 +111,7 @@ public class EmailService {
             SimpleMailMessage message = new SimpleMailMessage();
             message.setTo(request.getEmail());
             message.setFrom(contactFrom);
-            message.setReplyTo(contactTo);
+            message.setReplyTo(IBERNOVIA_INFO_EMAIL);
             message.setSubject("Hemos recibido tu consulta en IBERNOVIA");
             message.setText(buildCustomerConfirmationBody(request));
             mailSender.send(message);
@@ -132,7 +138,23 @@ public class EmailService {
                 "\n\nResumen de tu consulta:" +
                 "\nAsunto: " + request.getAsunto() +
                 "\nMensaje: " + request.getMensaje() +
-                "\n\nSi necesitas ampliar informacion, puedes responder directamente a este correo o escribir a " + contactTo + "." +
+                "\n\nSi necesitas ampliar informacion, puedes responder directamente a este correo o escribir a " + IBERNOVIA_INFO_EMAIL + "." +
                 "\n\nGracias por contactar con IBERNOVIA.";
+    }
+
+    private String[] resolveContactRecipients(String configuredContactTo) {
+        Set<String> recipients = new LinkedHashSet<>();
+
+        if (configuredContactTo != null && !configuredContactTo.isBlank()) {
+            for (String recipient : configuredContactTo.split(",")) {
+                String trimmed = recipient.trim();
+                if (!trimmed.isBlank()) {
+                    recipients.add(trimmed);
+                }
+            }
+        }
+
+        recipients.add(IBERNOVIA_INFO_EMAIL);
+        return recipients.toArray(String[]::new);
     }
 }
