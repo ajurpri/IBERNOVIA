@@ -1,7 +1,7 @@
 <template>
   <div class="w-full relative z-[75]">
     <!-- Banner de Alta Empresarial visible en todas las paginas -->
-    <div class="bg-luxury-black text-white text-[11px] sm:text-xs py-2 px-4 border-b border-luxury-gold/30 flex items-center justify-center gap-2 sm:gap-3 text-center tracking-wide shadow-sm">
+    <div class="business-strip bg-luxury-black text-white text-[11px] sm:text-xs py-2 px-4 border-b border-luxury-gold/30 flex items-center justify-center gap-2 sm:gap-3 text-center tracking-wide shadow-sm">
       <span class="text-gray-300 font-medium">🏢 ¿Eres tienda o profesional del sector?</span>
       <router-link
         to="/acceso-empresarial"
@@ -19,7 +19,7 @@
       <EventsModal ref="eventsModalRef" />
 
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="h-[86px] flex items-center justify-between gap-3">
+        <div class="nav-row h-[86px] flex items-center justify-between gap-3">
           <router-link to="/" class="wordmark" aria-label="Ir a inicio">
             <span class="brand">IBERNOVIA</span>
             <span class="sub">ATELIER</span>
@@ -541,6 +541,7 @@ onBeforeUnmount(() => {
   flex-direction: column;
   gap: 0;
   line-height: 1;
+  min-width: 0;
 }
 
 .brand {
@@ -731,8 +732,53 @@ onBeforeUnmount(() => {
 }
 
 @media (max-width: 640px) {
+  .business-strip {
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    row-gap: 0.35rem;
+    padding: 0.55rem 0.75rem;
+    line-height: 1.35;
+    letter-spacing: 0.04em;
+  }
+
+  .business-strip span {
+    width: 100%;
+  }
+
+  .business-strip a {
+    white-space: normal;
+    justify-content: center;
+    letter-spacing: 0.12em;
+  }
+
+  .nav-row {
+    height: 68px;
+  }
+
   .brand {
     letter-spacing: 0.12em;
+    font-size: 1.25rem;
+  }
+
+  .sub {
+    letter-spacing: 0.24em;
+  }
+
+  .icon-btn {
+    min-width: 42px;
+    height: 42px;
+  }
+
+  .results-strip {
+    grid-auto-columns: minmax(132px, 42vw);
+  }
+
+  .editorial-title {
+    white-space: normal;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
   }
 }
 </style>

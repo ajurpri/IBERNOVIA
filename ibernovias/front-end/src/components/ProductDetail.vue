@@ -591,9 +591,37 @@ const agregarCarrito = async () => {
 }
 
 @media (max-width: 640px) {
+  .product-section .max-w-6xl,
+  .product-related-section .max-w-6xl {
+    padding-top: 2rem;
+    padding-bottom: 6rem;
+  }
+
+  .product-breadcrumb {
+    gap: 0.3rem;
+    font-size: 10px;
+    letter-spacing: 0.1em;
+  }
+
+  .product-title {
+    font-size: 2.35rem;
+    line-height: 1.02;
+  }
+
+  .product-image-card,
+  .product-box,
+  .product-message-box {
+    border-radius: 12px;
+  }
+
+  .product-image-card {
+    padding: 0.55rem;
+  }
+
   .product-main-image,
   .product-image-fallback {
     min-height: 340px;
+    border-radius: 9px;
   }
 
   .product-meta-item,
@@ -612,6 +640,13 @@ const agregarCarrito = async () => {
   .product-quantity-controls {
     width: 100%;
     grid-template-columns: 46px 1fr 46px;
+  }
+
+  .product-primary-button,
+  .product-secondary-button,
+  .product-inline-link,
+  .product-box-label {
+    letter-spacing: 0.12em;
   }
 }
 </style>

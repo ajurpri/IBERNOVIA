@@ -1,5 +1,5 @@
 <template>
-  <div class="min-h-screen bg-[#fcfaf6]">
+  <div class="tienda-page min-h-screen bg-[#fcfaf6]">
     <section class="border-b border-black/5 bg-white">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14 sm:py-16">
         <div class="max-w-3xl">
@@ -758,3 +758,49 @@ watch([searchTerm, selectedFamily, selectedCategory, sortBy, onlyOffers], () => 
   updateRouteQuery()
 })
 </script>
+
+<style scoped>
+@media (max-width: 640px) {
+  .tienda-page {
+    padding-bottom: 5.75rem;
+  }
+
+  .tienda-page h1 {
+    font-size: 2.45rem;
+    line-height: 1.04;
+  }
+
+  .tienda-page .tracking-\[0\.35em\],
+  .tienda-page .tracking-\[0\.3em\],
+  .tienda-page .tracking-\[0\.25em\],
+  .tienda-page .tracking-\[0\.18em\] {
+    letter-spacing: 0.14em;
+  }
+
+  #catalogo {
+    padding-top: 2rem;
+  }
+
+  #catalogo button,
+  #catalogo a {
+    overflow-wrap: anywhere;
+  }
+
+  #catalogo > div:first-child {
+    padding-bottom: 1.4rem;
+  }
+
+  #catalogo .flex-wrap {
+    gap: 0.55rem;
+  }
+
+  #catalogo .flex-wrap button,
+  #catalogo .flex-wrap a {
+    min-height: 2.4rem;
+  }
+
+  #catalogo select {
+    max-width: 100%;
+  }
+}
+</style>

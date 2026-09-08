@@ -86,4 +86,12 @@ defineExpose({ show })
 .animate-slide-in-up {
   animation: slideInUp 0.3s ease-out;
 }
+
+@media (max-width: 640px) {
+  .fixed {
+    left: 0.75rem;
+    right: 0.75rem;
+    bottom: 5rem;
+  }
+}
 </style>

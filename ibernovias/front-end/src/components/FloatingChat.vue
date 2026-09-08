@@ -996,13 +996,13 @@ onBeforeUnmount(() => {
 
 @media (max-width: 640px) {
   .chat-shell {
-    left: 0.75rem;
+    left: auto;
     right: 0.75rem;
     bottom: 0.75rem;
   }
 
   .chat-panel {
-    width: 100%;
+    width: calc(100vw - 1.5rem);
     height: min(78vh, 700px);
     margin-left: auto;
   }

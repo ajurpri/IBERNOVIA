@@ -48,6 +48,10 @@
               <a href="tel:+34953515070">953 51 50 70</a>
             </li>
             <li>
+              <span class="contact-label">WhatsApp</span>
+              <a href="https://wa.me/34619625679?text=Hola%20Ibernovia%2C%20queria%20hacer%20una%20consulta%20sobre%20vuestros%20productos." target="_blank" rel="noopener">619 62 56 79</a>
+            </li>
+            <li>
               <span class="contact-label">Correo</span>
               <a href="mailto:info@ibernovia.es">info@ibernovia.es</a>
             </li>
@@ -201,5 +205,23 @@
   font-size: 0.78rem;
   letter-spacing: 0.12em;
   text-transform: uppercase;
+}
+
+@media (max-width: 640px) {
+  .footer-premium .max-w-7xl {
+    padding-left: 1rem;
+    padding-right: 1rem;
+    padding-bottom: 6.5rem;
+  }
+
+  .brand-title {
+    font-size: 1.55rem;
+    letter-spacing: 0.16em;
+  }
+
+  .brand-subtitle,
+  .footer-bottom {
+    letter-spacing: 0.18em;
+  }
 }
 </style>

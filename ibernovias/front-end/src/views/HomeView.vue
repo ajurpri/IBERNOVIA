@@ -1,8 +1,8 @@
 <template>
-  <div class="min-h-screen bg-[#fdfdfc] flex flex-col justify-between">
+  <div class="home-page min-h-screen bg-[#fdfdfc] flex flex-col justify-between">
     
     <!-- Hero Section (Minimalist Full-Bleed Editorial Banner) -->
-    <section class="relative h-[85vh] min-h-[550px] flex items-center justify-center overflow-hidden" aria-label="Portada">
+    <section class="home-hero-section relative h-[85vh] min-h-[550px] flex items-center justify-center overflow-hidden" aria-label="Portada">
       
       <!-- Fading Campaign Background -->
       <div class="absolute inset-0 z-0 bg-[#fbfbfa]">
@@ -26,16 +26,16 @@
       </div>
 
       <!-- Centered Premium Typography & Content -->
-      <div class="relative z-20 max-w-4xl mx-auto px-6 text-center space-y-6 sm:space-y-8 animate-fade-in-up">
-        <p class="text-[10px] sm:text-xs uppercase tracking-[0.45em] text-luxury-gold font-bold mb-2">
+      <div class="home-hero-copy relative z-20 max-w-4xl mx-auto px-6 text-center space-y-6 sm:space-y-8 animate-fade-in-up">
+        <p class="home-eyebrow text-[10px] sm:text-xs uppercase tracking-[0.45em] text-luxury-gold font-bold mb-2">
           Colección Atelier 2026
         </p>
         
         <div class="space-y-4">
-          <h1 class="font-serif text-5xl sm:text-7xl lg:text-8xl font-light tracking-[0.15em] text-luxury-black leading-none">
+          <h1 class="home-wordmark font-serif text-5xl sm:text-7xl lg:text-8xl font-light tracking-[0.15em] text-luxury-black leading-none">
             IBERNOVIA
           </h1>
-          <p class="font-serif text-base sm:text-lg lg:text-xl tracking-[0.55em] text-luxury-black/50 uppercase font-light">
+          <p class="home-subline font-serif text-base sm:text-lg lg:text-xl tracking-[0.55em] text-luxury-black/50 uppercase font-light">
             ALTA COSTURA & COMPLEMENTOS
           </p>
         </div>
@@ -70,7 +70,7 @@
     </section>
 
     <!-- Horizontal Infinite Slider Section -->
-    <section class="py-12 bg-[#fdfdfc] border-t border-b border-black/5 overflow-hidden" aria-label="Colección destacada">
+    <section class="home-featured py-12 bg-[#fdfdfc] border-t border-b border-black/5 overflow-hidden" aria-label="Colección destacada">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 mb-6">
         <div class="text-center md:text-left">
           <h2 class="font-serif text-2xl sm:text-3xl text-luxury-black tracking-wide">Nuestra Selección</h2>
@@ -147,7 +147,7 @@
     </section>
 
     <!-- Promotions Section (Editorial & Luxury Aesthetic) -->
-    <section v-if="promociones.length > 0" class="py-16 bg-[#faf9f5] border-t border-black/5" aria-label="Promociones especiales">
+    <section v-if="promociones.length > 0" class="home-promos py-16 bg-[#faf9f5] border-t border-black/5" aria-label="Promociones especiales">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         <!-- Refined Title Area -->
@@ -364,6 +364,51 @@ onBeforeUnmount(() => {
   }
   100% {
     transform: translateX(-50%);
+  }
+}
+
+@media (max-width: 640px) {
+  .home-hero-section {
+    min-height: 480px;
+    height: min(76vh, 560px);
+  }
+
+  .home-hero-copy {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+
+  .home-eyebrow {
+    letter-spacing: 0.2em;
+  }
+
+  .home-wordmark {
+    font-size: clamp(2.4rem, 13vw, 3.35rem);
+    letter-spacing: 0.08em;
+    text-indent: 0.08em;
+  }
+
+  .home-subline {
+    max-width: 20rem;
+    margin-left: auto;
+    margin-right: auto;
+    font-size: 0.72rem;
+    line-height: 1.7;
+    letter-spacing: 0.22em;
+  }
+
+  .home-featured,
+  .home-promos {
+    padding-top: 2.5rem;
+    padding-bottom: 2.5rem;
+  }
+
+  .home-promos .mb-16 {
+    margin-bottom: 2.25rem;
+  }
+
+  .home-promos .rounded-2xl {
+    border-radius: 0.75rem;
   }
 }
 </style>

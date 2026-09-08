@@ -113,8 +113,20 @@ const toggleFavorite = () => {
 
 <style scoped>
 @media (max-width: 640px) {
-  :deep(.group) {
-    aspect-ratio: 3 / 4;
+  a {
+    border-radius: 0.75rem;
+  }
+
+  button[aria-label="Marcar favorito"] {
+    top: 0.65rem;
+    right: 0.65rem;
+    width: 2rem;
+    height: 2rem;
+  }
+
+  .tracking-\[0\.25em\],
+  .tracking-widest {
+    letter-spacing: 0.12em;
   }
 }
 </style>

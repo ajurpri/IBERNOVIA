@@ -37,7 +37,7 @@ onBeforeUnmount(() => {
 .back-to-top {
   position: fixed;
   right: 20px;
-  bottom: 24px;
+  bottom: 106px;
   z-index: 60;
   height: 44px;
   width: 44px;
@@ -63,8 +63,10 @@ onBeforeUnmount(() => {
 
 @media (max-width: 640px) {
   .back-to-top {
-    right: 16px;
-    bottom: 16px;
+    right: 18px;
+    bottom: 72px;
+    height: 40px;
+    width: 40px;
   }
 }
 </style>

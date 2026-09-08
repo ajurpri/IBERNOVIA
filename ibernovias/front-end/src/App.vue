@@ -1,5 +1,5 @@
 <template>
-  <div class="signature-shell flex flex-col w-screen min-h-screen overflow-x-hidden">
+  <div class="signature-shell flex flex-col w-full min-h-screen overflow-x-hidden">
     <a href="#main-content" class="skip-link">Saltar al contenido</a>
     <NavBar /> 
     
@@ -11,6 +11,7 @@
     <FooterSection />
     <CookieBanner />
     <Toast ref="toastRef" />
+    <WhatsAppButton />
     <FloatingChat />
   </div>
 </template>
@@ -22,6 +23,7 @@ import FooterSection from './components/FooterSection.vue'
 import CookieBanner from './components/CookieBanner.vue'
 import BackToTop from './components/BackToTop.vue'
 import Toast from './components/Toast.vue'
+import WhatsAppButton from './components/WhatsAppButton.vue'
 import FloatingChat from './components/FloatingChat.vue'
 import { useAuthStore } from './stores/auth'
 
@@ -58,6 +60,27 @@ onMounted(async () => {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+}
+
+html {
+  overflow-x: hidden;
+  -webkit-text-size-adjust: 100%;
+}
+
+img,
+picture,
+video,
+canvas,
+svg {
+  max-width: 100%;
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+  min-width: 0;
 }
 
 /* Global signature: subtle jewelry lattice + gold frame */
@@ -119,6 +142,20 @@ body {
   background-attachment: fixed;
   margin: 0;
   overflow-x: hidden;
+}
+
+@supports (overflow: clip) {
+  body,
+  #app,
+  .signature-shell {
+    overflow-x: clip;
+  }
+}
+
+@media (max-width: 640px) {
+  body {
+    background-attachment: scroll;
+  }
 }
 
 /* Animaciones Premium */

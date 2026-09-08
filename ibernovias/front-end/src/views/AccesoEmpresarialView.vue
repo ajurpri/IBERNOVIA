@@ -602,6 +602,49 @@ fieldset {
 }
 
 @media (max-width: 640px) {
+  .b2b-header .max-w-6xl {
+    padding-top: 2.5rem;
+    padding-bottom: 2.5rem;
+  }
+
+  .b2b-title {
+    max-width: none;
+    font-size: 2.45rem;
+    line-height: 1.02;
+  }
+
+  .b2b-eyebrow,
+  .b2b-section-label,
+  .b2b-fieldset-title,
+  .b2b-submit-button,
+  .b2b-secondary-link {
+    letter-spacing: 0.14em;
+  }
+
+  .b2b-summary-list {
+    gap: 0.75rem;
+  }
+
+  .b2b-content .max-w-6xl {
+    padding-bottom: 6rem;
+  }
+
+  .b2b-form-card,
+  .b2b-info-card {
+    padding: 1.1rem;
+  }
+
+  .b2b-input {
+    border-radius: 8px;
+  }
+
+  .b2b-submit-button,
+  .b2b-secondary-link {
+    width: 100%;
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+
   .b2b-form-head {
     flex-direction: column;
     align-items: start;

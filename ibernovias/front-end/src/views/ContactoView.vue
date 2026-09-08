@@ -1,5 +1,5 @@
 <template>
-  <div class="min-h-screen bg-[#fdfdfc] py-16 md:py-24 px-4 sm:px-6 lg:px-8">
+  <div class="contact-page min-h-screen bg-[#fdfdfc] py-16 md:py-24 px-4 sm:px-6 lg:px-8">
     <div class="max-w-6xl mx-auto">
       <div class="text-center mb-16 md:mb-20 animate-fade-in-up">
         <span class="text-[10px] uppercase tracking-[0.4em] text-luxury-gold font-bold block mb-4">ATELIER IBERNOVIA</span>
@@ -26,6 +26,20 @@
                 <p class="text-luxury-black font-serif text-lg leading-relaxed">
                   Calle Forjadores, 1<br>
                   23740 Andújar, Jaén
+                </p>
+              </div>
+            </div>
+
+            <div class="flex gap-4">
+              <span class="w-5 h-5 shrink-0 text-[#25d366] mt-1">
+                <svg class="w-5 h-5" viewBox="0 0 32 32" fill="currentColor">
+                  <path d="M16.02 4.2A11.62 11.62 0 0 0 6.1 21.9L4.8 27.7l5.95-1.42A11.62 11.62 0 1 0 16.02 4.2Zm0 2.1a9.52 9.52 0 0 1 8.05 14.62 9.52 9.52 0 0 1-12.88 3.12l-.36-.22-3.22.77.7-3.14-.24-.38A9.52 9.52 0 0 1 16.02 6.3Zm-3.25 4.75c-.2-.45-.42-.46-.62-.47h-.53c-.18 0-.47.07-.72.35-.25.27-.95.93-.95 2.27s.98 2.64 1.12 2.82c.14.18 1.9 3.05 4.7 4.15 2.33.92 2.8.74 3.3.69.5-.04 1.63-.66 1.86-1.3.23-.63.23-1.18.16-1.3-.07-.1-.25-.17-.53-.31-.27-.14-1.63-.8-1.88-.9-.25-.08-.44-.13-.62.14-.18.27-.72.9-.88 1.08-.16.18-.32.2-.6.07-.27-.14-1.15-.42-2.2-1.35-.81-.72-1.36-1.62-1.52-1.9-.16-.27-.02-.42.12-.56.13-.12.28-.32.42-.48.14-.16.18-.27.27-.45.09-.18.05-.34-.02-.48-.07-.14-.6-1.49-.84-2.03Z" />
+                </svg>
+              </span>
+              <div>
+                <h3 class="text-[10px] uppercase tracking-[0.2em] text-gray-400 font-bold mb-1">WhatsApp</h3>
+                <p class="text-luxury-black font-serif text-lg hover:text-luxury-gold transition-colors">
+                  <a href="https://wa.me/34619625679?text=Hola%20Ibernovia%2C%20queria%20hacer%20una%20consulta%20sobre%20vuestros%20productos." target="_blank" rel="noopener">619 62 56 79</a>
                 </p>
               </div>
             </div>
@@ -231,6 +245,30 @@ const submitForm = async () => {
   to {
     opacity: 1;
     transform: translateY(0);
+  }
+}
+
+@media (max-width: 640px) {
+  .contact-page {
+    padding-top: 2.75rem;
+    padding-bottom: 6rem;
+  }
+
+  .contact-page h1 {
+    font-size: 2.75rem;
+    line-height: 1;
+  }
+
+  .contact-page .tracking-\[0\.4em\],
+  .contact-page .tracking-\[0\.25em\] {
+    letter-spacing: 0.18em;
+  }
+
+  .contact-page button[type="submit"] {
+    width: 100%;
+    padding-left: 1rem;
+    padding-right: 1rem;
+    letter-spacing: 0.16em;
   }
 }
 </style>
