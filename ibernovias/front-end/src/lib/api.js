@@ -53,12 +53,55 @@ export const apiFetch = (path, options = {}) => {
   })
 }
 
-// In-memory cache for GET requests to prevent slow duplicate network calls
+// Cache de catálogo por tipo de acceso. Separar el ámbito público del
+// profesional evita reutilizar precios al cerrar sesión en un equipo compartido.
 const cache = new Map()
-const CACHE_TTL = 3 * 60 * 1000 // 3 minutos de caché
+const pendingRequests = new Map()
+const CACHE_TTL = 5 * 60 * 1000
+const PRODUCT_CACHE_VERSION = 2
+
+const getProductCacheScope = () => {
+  try {
+    if (localStorage.getItem('business_code')) return 'professional'
+    const user = JSON.parse(localStorage.getItem('user') || 'null')
+    return user?.isAdmin || user?.isBusiness ? 'professional' : 'public'
+  } catch {
+    return 'public'
+  }
+}
+
+const getProductCacheKey = () => `api_productos_${getProductCacheScope()}`
+const getPersistentProductCacheKey = () => `ibernovia_products_${getProductCacheScope()}_v${PRODUCT_CACHE_VERSION}`
+const getProductStorage = () => getProductCacheScope() === 'professional' ? sessionStorage : localStorage
+
+const readPersistentProducts = (allowExpired = false) => {
+  try {
+    const stored = getProductStorage().getItem(getPersistentProductCacheKey())
+    if (!stored) return null
+
+    const parsed = JSON.parse(stored)
+    if (!Array.isArray(parsed?.data) || parsed.data.length === 0) return null
+    if (!allowExpired && Date.now() - Number(parsed.timestamp || 0) >= CACHE_TTL) return null
+
+    return parsed.data
+  } catch {
+    return null
+  }
+}
+
+const persistProducts = (data, timestamp) => {
+  try {
+    getProductStorage().setItem(
+      getPersistentProductCacheKey(),
+      JSON.stringify({ version: PRODUCT_CACHE_VERSION, timestamp, data })
+    )
+  } catch {
+    // Algunos navegadores o modos privados limitan localStorage.
+  }
+}
 
 export const fetchCachedProducts = async (forceRefresh = false) => {
-  const cacheKey = 'api_productos'
+  const cacheKey = getProductCacheKey()
   const cached = cache.get(cacheKey)
   const now = Date.now()
 
@@ -66,50 +109,65 @@ export const fetchCachedProducts = async (forceRefresh = false) => {
     return cached.data
   }
 
-  try {
-    const res = await apiClient.get('/api/productos')
-    const data = Array.isArray(res.data) ? res.data : []
-    if (data.length > 0) {
-      cache.set(cacheKey, { timestamp: now, data })
-      try {
-        localStorage.setItem('ibernovia_products_backup', JSON.stringify(data))
-      } catch (e) {
-        // localStorage quotas or privacy mode error
-      }
+  if (!forceRefresh) {
+    const persisted = readPersistentProducts()
+    if (persisted) {
+      cache.set(cacheKey, { timestamp: now, data: persisted })
+      return persisted
     }
-    return data
-  } catch (error) {
-    console.warn('Network error or server delay fetching products, attempting local backup:', error)
-    
-    // 1. Return in-memory cache if available (even if expired)
-    if (cached && cached.data && cached.data.length > 0) {
-      return cached.data
-    }
-
-    // 2. Return persistent localStorage backup (resilient against Ctrl+F5)
-    try {
-      const stored = localStorage.getItem('ibernovia_products_backup')
-      if (stored) {
-        const parsed = JSON.parse(stored)
-        if (Array.isArray(parsed) && parsed.length > 0) {
-          cache.set(cacheKey, { timestamp: now, data: parsed })
-          return parsed
-        }
-      }
-    } catch (e) {
-      // LocalStorage read error
-    }
-
-    throw error
   }
+
+  // Inicio, buscador y catálogo pueden pedir los productos a la vez. Todos
+  // comparten una sola petición para no despertar el backend varias veces.
+  if (pendingRequests.has(cacheKey)) {
+    return pendingRequests.get(cacheKey)
+  }
+
+  const request = (async () => {
+    try {
+      const res = await apiClient.get('/api/productos')
+      const data = Array.isArray(res.data) ? res.data : []
+      if (data.length > 0) {
+        const timestamp = Date.now()
+        cache.set(cacheKey, { timestamp, data })
+        persistProducts(data, timestamp)
+      }
+      return data
+    } catch (error) {
+      console.warn('Network error or server delay fetching products, attempting local backup:', error)
+
+      if (cached?.data?.length > 0) {
+        return cached.data
+      }
+
+      const persisted = readPersistentProducts(true)
+      if (persisted) {
+        cache.set(cacheKey, { timestamp: now, data: persisted })
+        return persisted
+      }
+
+      throw error
+    } finally {
+      pendingRequests.delete(cacheKey)
+    }
+  })()
+
+  pendingRequests.set(cacheKey, request)
+  return request
 }
 
 export const invalidateProductsCache = () => {
-  cache.delete('api_productos')
+  cache.clear()
+  pendingRequests.clear()
   try {
     localStorage.removeItem('ibernovia_products_backup')
-  } catch (e) {
-    // LocalStorage error ignored
+    for (const storage of [localStorage, sessionStorage]) {
+      Object.keys(storage)
+        .filter((key) => key.startsWith('ibernovia_products_'))
+        .forEach((key) => storage.removeItem(key))
+    }
+  } catch {
+    // Error de almacenamiento ignorado.
   }
 }
 

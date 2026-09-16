@@ -227,8 +227,11 @@
               </div>
             </div>
 
-            <div>
-              <label class="text-xs uppercase tracking-widest text-gray-500 block mb-1">Imagen Principal (Subir archivo o pegar URL)</label>
+            <div class="image-upload-card">
+              <div class="flex items-center justify-between gap-3 mb-3">
+                <label class="text-xs uppercase tracking-widest text-gray-600 font-bold">Imagen principal</label>
+                <span class="image-optimization-badge">WebP optimizado</span>
+              </div>
               <div class="space-y-2">
                 <input 
                   type="file" 
@@ -236,25 +239,40 @@
                   @change="handleImageUpload" 
                   accept="image/*" 
                   class="admin-input w-full text-sm"
+                  :disabled="optimizingImages.primary || saving"
                 >
-                <div class="text-center text-xs text-gray-400">— O —</div>
+                <div class="text-center text-[10px] uppercase tracking-widest text-gray-400">— o pega una URL —</div>
                 <input 
                   v-model="form.imagen"
+                  @input="clearPendingImage('primary')"
                   type="text" 
                   placeholder="Pegar URL de la imagen (ej: https://ibernovia.es/images/...)" 
                   class="admin-input w-full"
                 >
               </div>
-              <div v-if="form.imagen && form.imagen.startsWith('data:')" class="mt-2 text-xs text-gray-600">
-                ✓ Imagen principal cargada localmente: {{ form.imagenNombre }}
+              <div v-if="optimizingImages.primary" class="image-processing-note" role="status">
+                <span class="image-processing-dot"></span>
+                Optimizando sin modificar la imagen guardada…
               </div>
-              <div v-else-if="form.imagen" class="mt-2 text-xs text-gray-600 truncate">
-                ✓ Ruta/URL de imagen principal activa: {{ form.imagen }}
+              <div v-else-if="pendingPrimaryImage" class="image-preview-row">
+                <img :src="pendingPrimaryImage.dataUrl" alt="Vista previa de la nueva imagen principal" class="image-preview-thumb">
+                <div class="min-w-0 flex-1">
+                  <p class="text-xs font-semibold text-gray-700 truncate">{{ pendingPrimaryImage.filename }}</p>
+                  <p class="text-[11px] text-gray-500">{{ formatFileSize(pendingPrimaryImage.originalSize) }} → {{ formatFileSize(pendingPrimaryImage.optimizedSize) }}</p>
+                  <p class="text-[10px] text-emerald-700 mt-0.5">Preparada. La actual sigue intacta hasta guardar.</p>
+                </div>
+                <button type="button" class="image-clear-button" @click="clearPendingImage('primary')">Quitar</button>
+              </div>
+              <div v-else-if="form.imagen" class="mt-3 text-xs text-gray-600 truncate">
+                ✓ Imagen actual conservada: {{ form.imagen }}
               </div>
             </div>
 
-            <div>
-              <label class="text-xs uppercase tracking-widest text-gray-500 block mb-1">Imagen Secundaria (Subir archivo o pegar URL - Opcional)</label>
+            <div class="image-upload-card">
+              <div class="flex items-center justify-between gap-3 mb-3">
+                <label class="text-xs uppercase tracking-widest text-gray-600 font-bold">Imagen secundaria <span class="font-normal text-gray-400">(opcional)</span></label>
+                <span class="image-optimization-badge">WebP optimizado</span>
+              </div>
               <div class="space-y-2">
                 <input 
                   type="file" 
@@ -262,20 +280,32 @@
                   @change="handleImage2Upload" 
                   accept="image/*" 
                   class="admin-input w-full text-sm"
+                  :disabled="optimizingImages.secondary || saving"
                 >
-                <div class="text-center text-xs text-gray-400">— O —</div>
+                <div class="text-center text-[10px] uppercase tracking-widest text-gray-400">— o pega una URL —</div>
                 <input 
                   v-model="form.imagen2"
+                  @input="clearPendingImage('secondary')"
                   type="text" 
                   placeholder="Pegar URL de la segunda imagen (ej: https://ibernovia.es/images/...)" 
                   class="admin-input w-full"
                 >
               </div>
-              <div v-if="form.imagen2 && form.imagen2.startsWith('data:')" class="mt-2 text-xs text-gray-600">
-                ✓ Imagen secundaria cargada localmente: {{ form.imagenNombre2 }}
+              <div v-if="optimizingImages.secondary" class="image-processing-note" role="status">
+                <span class="image-processing-dot"></span>
+                Optimizando sin modificar la imagen guardada…
               </div>
-              <div v-else-if="form.imagen2" class="mt-2 text-xs text-gray-600 truncate">
-                ✓ Ruta/URL de imagen secundaria activa: {{ form.imagen2 }}
+              <div v-else-if="pendingSecondaryImage" class="image-preview-row">
+                <img :src="pendingSecondaryImage.dataUrl" alt="Vista previa de la nueva imagen secundaria" class="image-preview-thumb">
+                <div class="min-w-0 flex-1">
+                  <p class="text-xs font-semibold text-gray-700 truncate">{{ pendingSecondaryImage.filename }}</p>
+                  <p class="text-[11px] text-gray-500">{{ formatFileSize(pendingSecondaryImage.originalSize) }} → {{ formatFileSize(pendingSecondaryImage.optimizedSize) }}</p>
+                  <p class="text-[10px] text-emerald-700 mt-0.5">Preparada. La actual sigue intacta hasta guardar.</p>
+                </div>
+                <button type="button" class="image-clear-button" @click="clearPendingImage('secondary')">Quitar</button>
+              </div>
+              <div v-else-if="form.imagen2" class="mt-3 text-xs text-gray-600 truncate">
+                ✓ Imagen actual conservada: {{ form.imagen2 }}
               </div>
             </div>
 
@@ -292,10 +322,10 @@
             <div class="flex gap-2">
               <button
                 type="submit"
-                :disabled="saving"
+                :disabled="saving || optimizingImages.primary || optimizingImages.secondary"
                 class="admin-primary-btn flex-1"
               >
-                {{ saving ? '⏳ Guardando...' : '✓ Guardar' }}
+                {{ saving ? saveStage : '✓ Guardar' }}
               </button>
               <button
                 type="button"
@@ -1049,10 +1079,16 @@ const activeTab = ref('dashboard')
 const products = ref([])
 const loading = ref(false)
 const saving = ref(false)
+const saveStage = ref('Guardando…')
 const message = ref('')
 const messageOk = ref(true)
 const search = ref('')
 const statusFilter = ref('all')
+const fileInput = ref(null)
+const fileInput2 = ref(null)
+const pendingPrimaryImage = ref(null)
+const pendingSecondaryImage = ref(null)
+const optimizingImages = ref({ primary: false, secondary: false })
 
 const users = ref([])
 const loadingUsers = ref(false)
@@ -1179,6 +1215,7 @@ const predefinedCategoriesByFamily = {
   Comunión: [
     'Adornos',
     'Can Can',
+    'Cruces + Cordón',
     'Crucifijos',
     'Diademas y Coronas',
     'Guantes',
@@ -1287,6 +1324,8 @@ const filteredUsers = computed(() => {
 
 const editProduct = (producto) => {
   form.value = { ...producto }
+  clearPendingImage('primary')
+  clearPendingImage('secondary')
   message.value = ''
   // Scroll al form
   setTimeout(() => {
@@ -1294,43 +1333,88 @@ const editProduct = (producto) => {
   }, 100)
 }
 
-const compressImage = (file, maxWidth = 1200, maxHeight = 1200, quality = 0.8) => {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader()
-    reader.readAsDataURL(file)
-    reader.onload = (event) => {
-      const img = new Image()
-      img.src = event.target.result
-      img.onload = () => {
-        const canvas = document.createElement('canvas')
-        let width = img.width
-        let height = img.height
+const formatFileSize = (bytes) => {
+  if (!Number.isFinite(bytes) || bytes <= 0) return '0 KB'
+  return bytes >= 1024 * 1024
+    ? `${(bytes / (1024 * 1024)).toFixed(1)} MB`
+    : `${Math.max(1, Math.round(bytes / 1024))} KB`
+}
 
-        if (width > height) {
-          if (width > maxWidth) {
-            height = Math.round((height * maxWidth) / width)
-            width = maxWidth
-          }
-        } else {
-          if (height > maxHeight) {
-            width = Math.round((width * maxHeight) / height)
-            height = maxHeight
-          }
-        }
+const blobToDataUrl = (blob) => new Promise((resolve, reject) => {
+  const reader = new FileReader()
+  reader.onload = () => resolve(reader.result)
+  reader.onerror = reject
+  reader.readAsDataURL(blob)
+})
 
-        canvas.width = width
-        canvas.height = height
-        const ctx = canvas.getContext('2d')
-        ctx.drawImage(img, 0, 0, width, height)
-        
-        // Comprimir a webp
-        const base64 = canvas.toDataURL('image/webp', quality)
-        resolve(base64)
-      }
-      img.onerror = (err) => reject(err)
-    }
-    reader.onerror = (err) => reject(err)
-  })
+const loadImageFile = (file) => new Promise((resolve, reject) => {
+  const objectUrl = URL.createObjectURL(file)
+  const image = new Image()
+  image.decoding = 'async'
+  image.onload = () => {
+    URL.revokeObjectURL(objectUrl)
+    resolve(image)
+  }
+  image.onerror = (error) => {
+    URL.revokeObjectURL(objectUrl)
+    reject(error)
+  }
+  image.src = objectUrl
+})
+
+const compressImage = async (file, maxWidth = 1200, maxHeight = 1200, quality = 0.76) => {
+  if (!file.type.startsWith('image/')) {
+    throw new Error('Selecciona un archivo de imagen válido.')
+  }
+  if (file.size > 25 * 1024 * 1024) {
+    throw new Error('La imagen original no puede superar 25 MB.')
+  }
+
+  const img = await loadImageFile(file)
+  let width = img.naturalWidth || img.width
+  let height = img.naturalHeight || img.height
+
+  if (!width || !height) {
+    throw new Error('No se pudieron leer las dimensiones de la imagen.')
+  }
+
+  const scale = Math.min(1, maxWidth / width, maxHeight / height)
+  width = Math.max(1, Math.round(width * scale))
+  height = Math.max(1, Math.round(height * scale))
+
+  const canvas = document.createElement('canvas')
+  canvas.width = width
+  canvas.height = height
+  const ctx = canvas.getContext('2d', { alpha: true })
+  if (!ctx) throw new Error('El navegador no pudo optimizar la imagen.')
+  ctx.imageSmoothingEnabled = true
+  ctx.imageSmoothingQuality = 'high'
+  ctx.drawImage(img, 0, 0, width, height)
+
+  const blob = await new Promise((resolve) => canvas.toBlob(resolve, 'image/webp', quality))
+  canvas.width = 1
+  canvas.height = 1
+  if (!blob) throw new Error('No se pudo generar la imagen optimizada.')
+
+  return {
+    blob,
+    dataUrl: await blobToDataUrl(blob),
+    filename: `${file.name.replace(/\.[^/.]+$/, '')}.webp`,
+    originalSize: file.size,
+    optimizedSize: blob.size,
+    width,
+    height
+  }
+}
+
+const clearPendingImage = (slot) => {
+  if (slot === 'primary') {
+    pendingPrimaryImage.value = null
+    if (fileInput.value) fileInput.value.value = ''
+    return
+  }
+  pendingSecondaryImage.value = null
+  if (fileInput2.value) fileInput2.value.value = ''
 }
 
 const handleImageUpload = async (event) => {
@@ -1338,13 +1422,15 @@ const handleImageUpload = async (event) => {
   if (!file) return
   
   try {
+    optimizingImages.value.primary = true
     if (toast) toast.show('Optimizando imagen principal...', 'info', 1000)
-    const base64 = await compressImage(file, 1200, 1200, 0.8)
-    form.value.imagen = base64
-    form.value.imagenNombre = file.name.replace(/\.[^/.]+$/, "") + ".webp"
+    pendingPrimaryImage.value = await compressImage(file)
   } catch (error) {
-    message.value = '✗ Error al cargar y optimizar la imagen.'
+    message.value = `✗ ${error.message || 'Error al cargar y optimizar la imagen.'}`
     messageOk.value = false
+    clearPendingImage('primary')
+  } finally {
+    optimizingImages.value.primary = false
   }
 }
 
@@ -1353,13 +1439,15 @@ const handleImage2Upload = async (event) => {
   if (!file) return
   
   try {
+    optimizingImages.value.secondary = true
     if (toast) toast.show('Optimizando imagen secundaria...', 'info', 1000)
-    const base64 = await compressImage(file, 1200, 1200, 0.8)
-    form.value.imagen2 = base64
-    form.value.imagenNombre2 = file.name.replace(/\.[^/.]+$/, "") + ".webp"
+    pendingSecondaryImage.value = await compressImage(file)
   } catch (error) {
-    message.value = '✗ Error al cargar y optimizar la segunda imagen.'
+    message.value = `✗ ${error.message || 'Error al cargar y optimizar la segunda imagen.'}`
     messageOk.value = false
+    clearPendingImage('secondary')
+  } finally {
+    optimizingImages.value.secondary = false
   }
 }
 
@@ -1381,6 +1469,8 @@ const resetForm = (keepMessage = false) => {
     precioOferta: 0,
     tagOferta: ''
   }
+  clearPendingImage('primary')
+  clearPendingImage('secondary')
   if (!keepMessage) {
     message.value = ''
   }
@@ -1454,23 +1544,36 @@ const toggleBusiness = async (user) => {
   }
 }
 
-const uploadImageToVps = async (base64Image, originalFilename) => {
+const uploadImageToVps = async (optimizedImage) => {
   const token = 'IBERNOVIA_SECURE_UPLOAD_TOKEN_2026_AJURPRI'
   const uploadUrl = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
     ? 'https://ibernovia.es/upload.php'
     : '/upload.php'
-  
-  const response = await fetch(uploadUrl, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'X-Security-Token': token
-    },
-    body: JSON.stringify({
-      image: base64Image,
-      filename: originalFilename
+  const body = new FormData()
+  body.append('image', optimizedImage.blob, optimizedImage.filename)
+  body.append('filename', optimizedImage.filename)
+
+  const controller = new AbortController()
+  const timeoutId = window.setTimeout(() => controller.abort(), 60000)
+  let response
+
+  try {
+    response = await fetch(uploadUrl, {
+      method: 'POST',
+      headers: {
+        'X-Security-Token': token
+      },
+      body,
+      signal: controller.signal
     })
-  })
+  } catch (error) {
+    if (error?.name === 'AbortError') {
+      throw new Error('La subida ha tardado demasiado. La imagen anterior sigue intacta.')
+    }
+    throw error
+  } finally {
+    window.clearTimeout(timeoutId)
+  }
   
   if (!response.ok) {
     const errorData = await response.json().catch(() => ({}))
@@ -1478,31 +1581,53 @@ const uploadImageToVps = async (base64Image, originalFilename) => {
   }
   
   const result = await response.json()
+  if (typeof result?.url !== 'string' || !result.url.trim()) {
+    throw new Error('El servidor no confirmó la ruta de la imagen.')
+  }
   return result.url
 }
 
 const saveProduct = async () => {
   saving.value = true
+  saveStage.value = 'Preparando…'
   message.value = ''
   try {
-    // Clonar el formulario para no interferir con la UI reactiva mientras procesamos la subida
+    // La URL guardada no se sustituye hasta que el servidor confirma la nueva
+    // subida. Ante un fallo, la ficha y sus imágenes actuales quedan intactas.
     const productData = { ...form.value }
+    delete productData.imagenNombre
+    delete productData.imagenNombre2
+    const uploads = []
 
-    // 1. Subir la imagen principal al VPS si está cargada localmente (base64)
-    if (productData.imagen && productData.imagen.startsWith('data:image/')) {
-      if (toast) toast.show('Subiendo imagen principal al VPS...', 'info', 1500)
-      const vpsUrl = await uploadImageToVps(productData.imagen, productData.imagenNombre || 'producto.jpg')
-      productData.imagen = vpsUrl
+    if (pendingPrimaryImage.value) {
+      uploads.push(
+        uploadImageToVps(pendingPrimaryImage.value)
+          .then((url) => {
+            productData.imagen = url
+            form.value.imagen = url
+            clearPendingImage('primary')
+          })
+      )
     }
 
-    // 2. Subir la imagen secundaria al VPS si está cargada localmente (base64)
-    if (productData.imagen2 && productData.imagen2.startsWith('data:image/')) {
-      if (toast) toast.show('Subiendo imagen secundaria al VPS...', 'info', 1500)
-      const vpsUrl2 = await uploadImageToVps(productData.imagen2, productData.imagenNombre2 || 'producto2.jpg')
-      productData.imagen2 = vpsUrl2
+    if (pendingSecondaryImage.value) {
+      uploads.push(
+        uploadImageToVps(pendingSecondaryImage.value)
+          .then((url) => {
+            productData.imagen2 = url
+            form.value.imagen2 = url
+            clearPendingImage('secondary')
+          })
+      )
     }
 
-    // 3. Enviar datos del producto (con las URLs del VPS) al backend de Render
+    if (uploads.length > 0) {
+      saveStage.value = uploads.length === 2 ? 'Subiendo 2 imágenes…' : 'Subiendo imagen…'
+      if (toast) toast.show(saveStage.value, 'info', 1500)
+      await Promise.all(uploads)
+    }
+
+    saveStage.value = 'Guardando ficha…'
     if (productData.id) {
       const res = await apiClient.put(`/api/productos/${productData.id}`, productData)
       products.value = products.value.map(p => (p.id === productData.id ? res.data : p))
@@ -1523,6 +1648,7 @@ const saveProduct = async () => {
     if (toast) toast.show(e.message || '✗ Error al guardar producto', 'error', 3000)
   } finally {
     saving.value = false
+    saveStage.value = 'Guardando…'
   }
 }
 
@@ -2136,6 +2262,84 @@ onMounted(() => {
 .admin-input:focus {
   border-color: rgb(196 160 106 / 0.8);
   box-shadow: 0 0 0 4px rgb(196 160 106 / 0.14);
+}
+
+.image-upload-card {
+  border: 1px solid rgb(20 20 20 / 0.09);
+  border-radius: 20px;
+  padding: 1rem;
+  background: linear-gradient(145deg, rgb(255 255 255 / 0.96), rgb(250 248 244 / 0.92));
+}
+
+.image-optimization-badge {
+  flex: none;
+  border: 1px solid rgb(168 117 71 / 0.24);
+  border-radius: 999px;
+  padding: 0.3rem 0.55rem;
+  background: rgb(168 117 71 / 0.07);
+  color: #8a5d37;
+  font-size: 0.58rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.image-processing-note,
+.image-preview-row {
+  margin-top: 0.8rem;
+  border-top: 1px solid rgb(20 20 20 / 0.07);
+  padding-top: 0.8rem;
+}
+
+.image-processing-note {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  color: #725b45;
+  font-size: 0.75rem;
+}
+
+.image-processing-dot {
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 999px;
+  background: var(--luxury-gold);
+  box-shadow: 0 0 0 0 rgb(168 117 71 / 0.35);
+  animation: processing-pulse 1.2s ease-out infinite;
+}
+
+.image-preview-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.image-preview-thumb {
+  width: 3.25rem;
+  height: 4rem;
+  flex: none;
+  border-radius: 10px;
+  object-fit: cover;
+  border: 1px solid rgb(20 20 20 / 0.08);
+  background: #f5f2ec;
+}
+
+.image-clear-button {
+  flex: none;
+  color: #77716b;
+  font-size: 0.68rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.image-clear-button:hover {
+  color: #9f3f35;
+}
+
+@keyframes processing-pulse {
+  70% { box-shadow: 0 0 0 0.45rem rgb(168 117 71 / 0); }
+  100% { box-shadow: 0 0 0 0 rgb(168 117 71 / 0); }
 }
 
 .admin-primary-btn {

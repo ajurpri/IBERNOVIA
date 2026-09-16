@@ -1,120 +1,125 @@
 <?php
 /**
- * Ibernovia - Script seguro de subida de imágenes al VPS.
- * 
- * Este script recibe imágenes codificadas en base64 y las guarda de forma permanente
- * en la carpeta de imágenes del VPS. Requiere un token secreto de autenticación.
+ * Ibernovia - subida permanente y no destructiva de imágenes.
+ *
+ * Acepta multipart/form-data (preferido, más rápido) y conserva soporte
+ * para el JSON Base64 usado por versiones anteriores del panel.
  */
 
-// Permitir CORS para desarrollo local y peticiones cruzadas (ej: desde localhost)
-header("Access-Control-Allow-Origin: *");
-header("Access-Control-Allow-Headers: Content-Type, Authorization, X-Security-Token");
-header("Access-Control-Allow-Methods: POST, OPTIONS");
-header("Content-Type: application/json; charset=UTF-8");
+header('Access-Control-Allow-Origin: *');
+header('Access-Control-Allow-Headers: Content-Type, Authorization, X-Security-Token');
+header('Access-Control-Allow-Methods: POST, OPTIONS');
+header('Content-Type: application/json; charset=UTF-8');
+header('Cache-Control: no-store');
 
-// Responder a peticiones preflight OPTIONS de CORS e interrumpir ejecución
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
-    exit(0);
-}
-
-// Token de seguridad secreto para evitar subidas no autorizadas
-define('SECURITY_TOKEN', 'IBERNOVIA_SECURE_UPLOAD_TOKEN_2026_AJURPRI');
-
-// Obtener cabeceras HTTP de forma compatible
-$headers = array_change_key_case(getallheaders(), CASE_LOWER);
-$received_token = isset($headers['x-security-token']) ? $headers['x-security-token'] : '';
-
-// Validar token de seguridad
-if ($received_token !== SECURITY_TOKEN) {
-    http_response_code(403);
-    echo json_encode([
-        "success" => false,
-        "error" => "Acceso no autorizado. Token de seguridad inválido."
-    ]);
+    http_response_code(204);
     exit();
 }
 
-// Obtener datos de la petición POST
-$input = file_get_contents('php://input');
-$data = json_decode($input, true);
+const FALLBACK_SECURITY_TOKEN = 'IBERNOVIA_SECURE_UPLOAD_TOKEN_2026_AJURPRI';
+const MAX_IMAGE_BYTES = 8 * 1024 * 1024;
 
-if (!isset($data['image']) || !isset($data['filename'])) {
-    http_response_code(400);
-    echo json_encode([
-        "success" => false,
-        "error" => "Datos incompletos. Se requiere 'image' (base64) y 'filename'."
-    ]);
+function respond(int $status, array $payload): void
+{
+    http_response_code($status);
+    echo json_encode($payload, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
     exit();
 }
 
-$base64_image = $data['image']; // ej: "data:image/png;base64,iVBORw0KG..."
-$filename = $data['filename'];
-
-// Validar que sea un formato de imagen base64
-if (strpos($base64_image, 'data:image/') !== 0) {
-    http_response_code(400);
-    echo json_encode([
-        "success" => false,
-        "error" => "Formato de imagen inválido. Debe ser una cadena base64 de tipo imagen."
-    ]);
-    exit();
+function request_headers_lowercase(): array
+{
+    $headers = function_exists('getallheaders') ? getallheaders() : [];
+    return array_change_key_case(is_array($headers) ? $headers : [], CASE_LOWER);
 }
 
-// Limpiar el nombre del archivo para evitar vulnerabilidades de Path Traversal
-$filename = basename($filename);
-$extension = pathinfo($filename, PATHINFO_EXTENSION);
-if (empty($extension)) {
-    $extension = 'jpg';
+function detect_image_extension(string $path): ?string
+{
+    $finfo = new finfo(FILEINFO_MIME_TYPE);
+    $mime = $finfo->file($path);
+    $allowed = [
+        'image/jpeg' => 'jpg',
+        'image/png' => 'png',
+        'image/webp' => 'webp',
+        'image/gif' => 'gif',
+    ];
+    return $allowed[$mime] ?? null;
 }
 
-// Generar un nombre único para evitar colisiones y sobrescritura de archivos
-$new_filename = "producto_" . round(microtime(true) * 1000) . "_" . uniqid() . "." . strtolower($extension);
-
-// Decodificar los datos base64
-$parts = explode(',', $base64_image);
-if (count($parts) !== 2) {
-    http_response_code(400);
-    echo json_encode([
-        "success" => false,
-        "error" => "La cadena de datos base64 está malformada."
-    ]);
-    exit();
-}
-$decoded_image = base64_decode($parts[1]);
-
-if ($decoded_image === false) {
-    http_response_code(400);
-    echo json_encode([
-        "success" => false,
-        "error" => "Error al decodificar la imagen base64."
-    ]);
-    exit();
+function unique_image_name(string $extension): string
+{
+    return 'producto_' . (int) round(microtime(true) * 1000) . '_' . bin2hex(random_bytes(8)) . '.' . $extension;
 }
 
-// Carpeta de destino (en la misma estructura del frontend)
-$target_dir = __DIR__ . "/images/productos/";
+$headers = request_headers_lowercase();
+$receivedToken = $headers['x-security-token'] ?? '';
+$configuredToken = getenv('IBERNOVIA_UPLOAD_TOKEN') ?: FALLBACK_SECURITY_TOKEN;
 
-// Crear el directorio de forma recursiva si no existe
-if (!file_exists($target_dir)) {
-    mkdir($target_dir, 0755, true);
+if (!hash_equals($configuredToken, $receivedToken)) {
+    respond(403, ['success' => false, 'error' => 'Acceso no autorizado.']);
 }
 
-$target_file = $target_dir . $new_filename;
+$targetDir = __DIR__ . '/images/productos/';
+if (!is_dir($targetDir) && !mkdir($targetDir, 0755, true) && !is_dir($targetDir)) {
+    respond(500, ['success' => false, 'error' => 'No se pudo preparar la carpeta de imágenes.']);
+}
 
-// Guardar la imagen en el disco del VPS
-if (file_put_contents($target_file, $decoded_image) !== false) {
-    // Retornar la ruta relativa que se guardará en la base de datos
-    $public_url = "/images/productos/" . $new_filename;
-    
-    echo json_encode([
-        "success" => true,
-        "url" => $public_url
-    ]);
+$sourcePath = null;
+$temporaryPath = null;
+$isUploadedFile = false;
+
+if (isset($_FILES['image'])) {
+    $upload = $_FILES['image'];
+    if (($upload['error'] ?? UPLOAD_ERR_NO_FILE) !== UPLOAD_ERR_OK) {
+        respond(400, ['success' => false, 'error' => 'La subida del archivo no se completó.']);
+    }
+    if (($upload['size'] ?? 0) <= 0 || $upload['size'] > MAX_IMAGE_BYTES) {
+        respond(413, ['success' => false, 'error' => 'La imagen supera el límite permitido de 8 MB.']);
+    }
+    $sourcePath = $upload['tmp_name'];
+    $isUploadedFile = true;
 } else {
-    http_response_code(500);
-    echo json_encode([
-        "success" => false,
-        "error" => "No se pudo guardar el archivo en el servidor. Revisa los permisos de escritura de la carpeta."
-    ]);
+    $data = json_decode(file_get_contents('php://input'), true);
+    $base64Image = is_array($data) ? ($data['image'] ?? '') : '';
+    if (!is_string($base64Image) || !preg_match('#^data:image/[^;]+;base64,#', $base64Image)) {
+        respond(400, ['success' => false, 'error' => 'No se recibió una imagen válida.']);
+    }
+
+    $encoded = substr($base64Image, strpos($base64Image, ',') + 1);
+    $decoded = base64_decode($encoded, true);
+    if ($decoded === false || strlen($decoded) === 0) {
+        respond(400, ['success' => false, 'error' => 'No se pudo decodificar la imagen.']);
+    }
+    if (strlen($decoded) > MAX_IMAGE_BYTES) {
+        respond(413, ['success' => false, 'error' => 'La imagen supera el límite permitido de 8 MB.']);
+    }
+
+    $temporaryPath = tempnam(sys_get_temp_dir(), 'ibernovia_upload_');
+    if ($temporaryPath === false || file_put_contents($temporaryPath, $decoded, LOCK_EX) === false) {
+        respond(500, ['success' => false, 'error' => 'No se pudo preparar la imagen para guardarla.']);
+    }
+    $sourcePath = $temporaryPath;
 }
-?>
+
+$extension = detect_image_extension($sourcePath);
+if ($extension === null) {
+    if ($temporaryPath !== null) @unlink($temporaryPath);
+    respond(415, ['success' => false, 'error' => 'El archivo recibido no es una imagen admitida.']);
+}
+
+$newFilename = unique_image_name($extension);
+$targetFile = $targetDir . $newFilename;
+$stored = $isUploadedFile
+    ? move_uploaded_file($sourcePath, $targetFile)
+    : rename($sourcePath, $targetFile);
+
+if (!$stored) {
+    if ($temporaryPath !== null && is_file($temporaryPath)) @unlink($temporaryPath);
+    respond(500, ['success' => false, 'error' => 'No se pudo guardar la imagen en el servidor.']);
+}
+
+@chmod($targetFile, 0644);
+respond(201, [
+    'success' => true,
+    'url' => '/images/productos/' . $newFilename,
+]);

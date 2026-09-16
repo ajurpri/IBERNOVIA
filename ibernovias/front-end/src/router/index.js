@@ -1,10 +1,10 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import ProductoView from '../views/ProductoView.vue'
 import { useAuthStore } from '../stores/auth'
 
 // Lazy load para vistas de rutas (Vue Router)
 const HomeView = () => import('../views/HomeView.vue')
 const TiendaView = () => import('../views/TiendaView.vue')
+const ProductoView = () => import('../views/ProductoView.vue')
 const CarritoView = () => import('../views/CarritoView.vue')
 const CheckoutView = () => import('../views/CheckoutView.vue')
 const ConfirmacionView = () => import('../views/ConfirmacionView.vue')

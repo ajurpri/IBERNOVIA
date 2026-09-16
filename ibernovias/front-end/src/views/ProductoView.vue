@@ -36,7 +36,8 @@
                  :src="getImageUrl(currentImageUrl)"
                  :alt="producto.nombre"
                  @error="imagenError = true"
-                 loading="lazy"
+                 loading="eager"
+                 fetchpriority="high"
                  decoding="async"
                  width="900"
                  height="1200"
@@ -60,14 +61,14 @@
               class="w-20 aspect-[3/4] rounded-lg overflow-hidden border-2 bg-gray-50 transition duration-300"
               :class="selectedImageIndex === 0 ? 'border-luxury-gold scale-[1.03] shadow' : 'border-black/5 hover:border-gray-300'"
             >
-              <img :src="getImageUrl(producto.imagen)" :alt="producto.nombre" class="w-full h-full object-cover">
+              <img :src="getImageUrl(producto.imagen)" :alt="producto.nombre" class="w-full h-full object-cover" loading="lazy" fetchpriority="low" decoding="async">
             </button>
             <button
               @click="selectImage(1)"
               class="w-20 aspect-[3/4] rounded-lg overflow-hidden border-2 bg-gray-50 transition duration-300"
               :class="selectedImageIndex === 1 ? 'border-luxury-gold scale-[1.03] shadow' : 'border-black/5 hover:border-gray-300'"
             >
-              <img :src="getImageUrl(producto.imagen2)" :alt="producto.nombre" class="w-full h-full object-cover">
+              <img :src="getImageUrl(producto.imagen2)" :alt="producto.nombre" class="w-full h-full object-cover" loading="lazy" fetchpriority="low" decoding="async">
             </button>
           </div>
 
@@ -295,8 +296,8 @@ const mainImageClass = computed(() => [
 const loadProductData = async (id) => {
   loading.value = true
   error.value = false
+  relatedProducts.value = []
   try {
-    // 1. Cargar producto principal
     const res = await apiClient.get(`/api/productos/${id}`)
     producto.value = res.data
     selectedImageIndex.value = 0
@@ -334,8 +335,17 @@ const loadProductData = async (id) => {
         updateMetaTag('meta[name="twitter:image"]', 'content', producto.value.imagen)
       }
     }
-    
-    // 2. Cargar relacionados (misma familia si existe; si no, por categoría)
+  } catch (e) {
+    console.error('Error cargando el producto:', e)
+    error.value = true
+    return
+  } finally {
+    // La ficha y su imagen principal ya pueden pintarse. Los relacionados se
+    // cargan después y nunca bloquean el contenido importante.
+    loading.value = false
+  }
+
+  try {
     if (producto.value.familia) {
       const familiaEncoded = encodeURIComponent(producto.value.familia)
       const resRel = await apiClient.get(`/api/productos/familia/${familiaEncoded}`)
@@ -350,10 +360,7 @@ const loadProductData = async (id) => {
         .slice(0, 4)
     }
   } catch (e) {
-    console.error('Error:', e)
-    error.value = true
-  } finally {
-    loading.value = false
+    console.warn('No se pudieron cargar los productos relacionados:', e)
   }
 }
 

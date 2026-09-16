@@ -17,6 +17,8 @@
             :alt="img.alt"
             class="w-full h-full object-cover select-none pointer-events-none"
             :loading="idx === 0 ? 'eager' : 'lazy'"
+            :fetchpriority="idx === 0 ? 'high' : 'low'"
+            decoding="async"
           />
         </div>
         
@@ -86,7 +88,7 @@
             :to="{ path: '/tienda', hash: '#catalogo', query: { familia: family.query } }"
             class="home-family-card"
           >
-            <img :src="family.image" :alt="family.alt" loading="lazy" decoding="async">
+            <img :src="family.image" :alt="family.alt" loading="lazy" fetchpriority="low" decoding="async">
             <span class="home-family-shade"></span>
             <span class="home-family-copy">
               <strong>{{ family.name }}</strong>
@@ -131,6 +133,8 @@
                   :alt="prod.nombre" 
                   class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                   loading="lazy"
+                  fetchpriority="low"
+                  decoding="async"
                 />
               </div>
               <h3 class="text-[11px] sm:text-xs font-semibold tracking-wider text-luxury-black mt-2.5 truncate text-center uppercase group-hover:text-luxury-gold transition-colors">
@@ -156,6 +160,8 @@
                   :alt="prod.nombre" 
                   class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                   loading="lazy"
+                  fetchpriority="low"
+                  decoding="async"
                 />
               </div>
               <h3 class="text-[11px] sm:text-xs font-semibold tracking-wider text-luxury-black mt-2.5 truncate text-center uppercase group-hover:text-luxury-gold transition-colors">
@@ -207,6 +213,9 @@
                   :src="getImageUrl(promo.imagen)" 
                   :alt="promo.titulo" 
                   class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-102"
+                  loading="lazy"
+                  fetchpriority="low"
+                  decoding="async"
                 />
                 <!-- Elegant placeholder if no image -->
                 <div v-else class="w-full h-full flex flex-col items-center justify-center bg-gradient-to-br from-[#faf9f5] to-white p-6 border-b border-black/5">
@@ -273,7 +282,7 @@
 <script setup>
 import { ref, onMounted, onBeforeUnmount, inject } from 'vue'
 import { useRouter } from 'vue-router'
-import { apiClient, getImageUrl } from '../lib/api'
+import { apiClient, fetchCachedProducts, getImageUrl } from '../lib/api'
 
 const router = useRouter()
 const toast = inject('toast', null)
@@ -367,18 +376,20 @@ onMounted(async () => {
   }, 5000)
 
   try {
-    // Cargar productos
-    const resProd = await apiClient.get('/api/productos')
-    const listProd = Array.isArray(resProd.data) 
-      ? resProd.data.filter(p => p.activo !== false).slice(0, 15)
-      : []
-    products.value = listProd
-    
-    // Cargar promociones activas
-    const resPromo = await apiClient.get('/api/promociones')
-    promociones.value = Array.isArray(resPromo.data) ? resPromo.data : []
-  } catch (e) {
-    console.error('Error fetching data for home:', e)
+    const [productsResult, promosResult] = await Promise.allSettled([
+      fetchCachedProducts(),
+      apiClient.get('/api/promociones')
+    ])
+
+    if (productsResult.status === 'fulfilled') {
+      products.value = productsResult.value
+        .filter(p => p.activo !== false)
+        .slice(0, 15)
+    }
+
+    if (promosResult.status === 'fulfilled') {
+      promociones.value = Array.isArray(promosResult.value.data) ? promosResult.value.data : []
+    }
   } finally {
     loading.value = false
   }

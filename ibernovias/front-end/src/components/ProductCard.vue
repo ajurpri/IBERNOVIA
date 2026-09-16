@@ -2,20 +2,32 @@
   <div class="group h-full flex flex-col bg-transparent overflow-hidden transition-all duration-300">
     
     <!-- Image Wrapper -->
-    <router-link 
+    <router-link
       :to="`/producto/${producto.id}`" 
-      class="block overflow-hidden rounded-xl border border-black/5 bg-[#faf9f7] shadow-sm relative group-hover:shadow-md transition-shadow duration-500"
+      class="product-visual block overflow-hidden rounded-xl border border-black/5 bg-[#faf9f7] shadow-sm relative group-hover:shadow-md transition-shadow duration-500"
+      :aria-busy="!imageLoaded && !imageError"
     >
+      <div
+        v-if="!imageLoaded && !imageError"
+        class="image-placeholder absolute inset-0 aspect-[3/4]"
+        aria-hidden="true"
+      ></div>
       <img
         v-if="!imageError"
         :src="getImageUrl(producto.imagen)"
         :alt="producto.nombre"
         @error="imageError = true"
-        loading="lazy"
+        @load="imageLoaded = true"
+        :loading="priority ? 'eager' : 'lazy'"
+        :fetchpriority="priority ? 'high' : 'low'"
         decoding="async"
         width="600"
         height="800"
-        class="w-full aspect-[3/4] object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+        sizes="(max-width: 640px) calc(100vw - 2rem), (max-width: 1024px) 50vw, 25vw"
+        :class="[
+          'w-full aspect-[3/4] object-cover transition duration-700 ease-out group-hover:scale-105',
+          imageLoaded ? 'opacity-100' : 'opacity-0'
+        ]"
       />
       <div v-else class="w-full aspect-[3/4] flex flex-col items-center justify-center bg-gray-50 text-gray-400">
         <svg class="w-12 h-12 text-gray-300 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -82,7 +94,7 @@
 </template>
 
 <script setup>
-import { ref, inject } from 'vue'
+import { ref, inject, watch } from 'vue'
 import { useCartStore } from '../stores/cart'
 import { useAuthStore } from '../stores/auth'
 import { getImageUrl } from '../lib/api'
@@ -91,14 +103,24 @@ const props = defineProps({
   producto: {
     type: Object,
     required: true
+  },
+  priority: {
+    type: Boolean,
+    default: false
   }
 })
 
 const imageError = ref(false)
+const imageLoaded = ref(false)
 const isFavorite = ref(false)
 const cartStore = useCartStore()
 const authStore = useAuthStore()
 const toast = inject('toast')
+
+watch(() => props.producto.imagen, () => {
+  imageError.value = false
+  imageLoaded.value = false
+})
 
 const toggleFavorite = () => {
   isFavorite.value = !isFavorite.value
@@ -112,6 +134,22 @@ const toggleFavorite = () => {
 </script>
 
 <style scoped>
+.product-visual {
+  contain: layout paint;
+}
+
+.image-placeholder {
+  background:
+    linear-gradient(105deg, transparent 38%, rgb(255 255 255 / 0.72) 48%, transparent 58%),
+    linear-gradient(135deg, #f2eee7, #faf9f7);
+  background-size: 220% 100%, 100% 100%;
+  animation: image-shimmer 1.35s ease-in-out infinite;
+}
+
+@keyframes image-shimmer {
+  to { background-position: -120% 0, 0 0; }
+}
+
 @media (max-width: 640px) {
   a {
     border-radius: 0.75rem;
@@ -127,6 +165,12 @@ const toggleFavorite = () => {
   .tracking-\[0\.25em\],
   .tracking-widest {
     letter-spacing: 0.12em;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .image-placeholder {
+    animation: none;
   }
 }
 </style>

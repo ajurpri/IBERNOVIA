@@ -206,9 +206,10 @@
 
         <div v-else class="catalog-product-grid grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-8 gap-y-12 items-stretch">
           <ProductCard
-            v-for="prod in paginatedProducts"
+            v-for="(prod, index) in paginatedProducts"
             :key="prod.id"
             :producto="prod"
+            :priority="index < 4"
           />
         </div>
 
