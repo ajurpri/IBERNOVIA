@@ -15,7 +15,7 @@
     </section>
 
     <section id="catalogo" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-14">
-      <div class="grid grid-cols-1 gap-6 border-b border-black/6 pb-8">
+      <div class="catalog-controls-shell grid grid-cols-1 gap-6 border-b border-black/6 pb-8" :class="{ 'is-open': mobileFiltersOpen }">
         <div>
           <label for="search" class="block text-[10px] uppercase tracking-[0.25em] text-gray-400 font-bold mb-2">
             Buscar en catalogo
@@ -49,9 +49,21 @@
               </label>
             </div>
           </div>
+          <button
+            type="button"
+            class="mobile-filter-toggle"
+            :aria-expanded="mobileFiltersOpen ? 'true' : 'false'"
+            @click="mobileFiltersOpen = !mobileFiltersOpen"
+          >
+            <span>Filtros</span>
+            <strong v-if="activeFiltersCount">{{ activeFiltersCount }}</strong>
+            <svg :class="{ 'rotate-180': mobileFiltersOpen }" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="m6 9 6 6 6-6" />
+            </svg>
+          </button>
         </div>
 
-        <div>
+        <div class="catalog-filter-block">
           <p class="text-[10px] uppercase tracking-[0.25em] text-gray-400 font-bold mb-3">
             Familias
           </p>
@@ -77,7 +89,7 @@
           </div>
         </div>
 
-        <div v-if="selectedFamily !== 'Todas' && categorias.length">
+        <div v-if="selectedFamily !== 'Todas' && categorias.length" class="catalog-filter-block">
           <p class="text-[10px] uppercase tracking-[0.25em] text-gray-400 font-bold mb-3">
             Categorias dentro de {{ selectedFamily }}
           </p>
@@ -104,7 +116,7 @@
         </div>
 
         <!-- Filtros adicionales y Ordenación -->
-        <div class="flex flex-wrap items-center gap-x-6 gap-y-3 pt-4 border-t border-black/5 mt-2">
+        <div class="catalog-filter-block flex flex-wrap items-center gap-x-6 gap-y-3 pt-4 border-t border-black/5 mt-2">
           <!-- Ordenar (Solo si puede ver precios) -->
           <div v-if="authStore.canSeePrices" class="flex items-center gap-2">
             <label for="sort-select" class="text-[10px] uppercase tracking-[0.25em] text-gray-400 font-bold">
@@ -192,7 +204,7 @@
           <p class="text-sm text-gray-500 mt-2">Prueba otra busqueda o vuelve a la vista general.</p>
         </div>
 
-        <div v-else class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-8 gap-y-12 items-stretch">
+        <div v-else class="catalog-product-grid grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-8 gap-y-12 items-stretch">
           <ProductCard
             v-for="prod in paginatedProducts"
             :key="prod.id"
@@ -258,6 +270,7 @@ const loadError = ref('')
 const searchTerm = ref('')
 const isSearchingImage = ref(false)
 const toast = inject('toast')
+const mobileFiltersOpen = ref(false)
 
 const handleImageSearchUpload = async (event) => {
   const file = event.target.files?.[0]
@@ -512,6 +525,15 @@ const onlyOffers = ref(false)
 const syncFromRoute = ref(false)
 const visibleLimit = ref(24)
 
+const activeFiltersCount = computed(() => {
+  let count = 0
+  if (selectedFamily.value !== 'Todas') count++
+  if (selectedCategory.value !== 'Todos') count++
+  if (sortBy.value !== 'default') count++
+  if (onlyOffers.value) count++
+  return count
+})
+
 const paginatedProducts = computed(() => {
   return visibleProducts.value.slice(0, visibleLimit.value)
 })
@@ -727,6 +749,7 @@ const resetFilters = () => {
   visibleLimit.value = 24
   sortBy.value = 'default'
   onlyOffers.value = false
+  mobileFiltersOpen.value = false
 }
 
 const fetchProductos = async () => {
@@ -760,6 +783,10 @@ watch([searchTerm, selectedFamily, selectedCategory, sortBy, onlyOffers], () => 
 </script>
 
 <style scoped>
+.mobile-filter-toggle {
+  display: none;
+}
+
 @media (max-width: 640px) {
   .tienda-page {
     padding-bottom: 5.75rem;
@@ -779,6 +806,55 @@ watch([searchTerm, selectedFamily, selectedCategory, sortBy, onlyOffers], () => 
 
   #catalogo {
     padding-top: 2rem;
+  }
+
+  .mobile-filter-toggle {
+    width: 100%;
+    min-height: 46px;
+    margin-top: 0.8rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.65rem;
+    border: 1px solid rgb(var(--luxury-black-rgb) / 0.16);
+    border-radius: 999px;
+    background: white;
+    color: var(--luxury-black);
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+  }
+
+  .mobile-filter-toggle strong {
+    min-width: 1.35rem;
+    height: 1.35rem;
+    border-radius: 999px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--luxury-gold);
+    color: white;
+    font-size: 10px;
+    letter-spacing: 0;
+  }
+
+  .mobile-filter-toggle svg {
+    width: 1rem;
+    height: 1rem;
+    transition: transform 0.2s ease;
+  }
+
+  .catalog-filter-block {
+    display: none;
+  }
+
+  .catalog-controls-shell.is-open .catalog-filter-block {
+    display: block;
+  }
+
+  .catalog-controls-shell.is-open .catalog-filter-block.flex {
+    display: flex;
   }
 
   #catalogo button,
@@ -801,6 +877,12 @@ watch([searchTerm, selectedFamily, selectedCategory, sortBy, onlyOffers], () => 
 
   #catalogo select {
     max-width: 100%;
+  }
+
+  .catalog-product-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: 0.9rem;
+    row-gap: 1.8rem;
   }
 }
 </style>

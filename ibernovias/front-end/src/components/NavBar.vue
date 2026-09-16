@@ -2,12 +2,12 @@
   <div class="w-full relative z-[75]">
     <!-- Banner de Alta Empresarial visible en todas las paginas -->
     <div class="business-strip bg-luxury-black text-white text-[11px] sm:text-xs py-2 px-4 border-b border-luxury-gold/30 flex items-center justify-center gap-2 sm:gap-3 text-center tracking-wide shadow-sm">
-      <span class="text-gray-300 font-medium">🏢 ¿Eres tienda o profesional del sector?</span>
+      <span class="text-gray-300 font-medium">Profesionales del sector</span>
       <router-link
         to="/acceso-empresarial"
         class="inline-flex items-center gap-1 font-bold text-luxury-gold hover:text-white transition-colors underline underline-offset-2 uppercase tracking-wider shrink-0"
       >
-        Darse de alta como empresa
+        Solicitar alta
         <svg class="w-3.5 h-3.5 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
         </svg>
@@ -733,41 +733,47 @@ onBeforeUnmount(() => {
 
 @media (max-width: 640px) {
   .business-strip {
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
     align-items: center;
     justify-content: center;
-    row-gap: 0.35rem;
-    padding: 0.55rem 0.75rem;
+    padding: 0.42rem 0.75rem;
     line-height: 1.35;
     letter-spacing: 0.04em;
   }
 
   .business-strip span {
-    width: 100%;
+    width: auto;
+    font-size: 10px;
   }
 
   .business-strip a {
-    white-space: normal;
+    white-space: nowrap;
     justify-content: center;
-    letter-spacing: 0.12em;
+    letter-spacing: 0.1em;
+    font-size: 10px;
   }
 
   .nav-row {
-    height: 68px;
+    height: 64px;
+    gap: 0.35rem;
   }
 
   .brand {
-    letter-spacing: 0.12em;
-    font-size: 1.25rem;
+    letter-spacing: 0.1em;
+    font-size: 1.18rem;
   }
 
   .sub {
-    letter-spacing: 0.24em;
+    letter-spacing: 0.2em;
   }
 
   .icon-btn {
-    min-width: 42px;
-    height: 42px;
+    min-width: 40px;
+    height: 40px;
+  }
+
+  .business-btn {
+    display: none !important;
   }
 
   .results-strip {

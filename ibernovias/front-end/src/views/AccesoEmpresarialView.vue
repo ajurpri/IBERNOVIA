@@ -9,6 +9,10 @@
             <p class="b2b-intro">
               Esta area esta dirigida a tiendas y profesionales del sector que quieran solicitar acceso comercial a Ibernovia.
             </p>
+            <div class="b2b-hero-actions">
+              <a href="#solicitud-alta" class="b2b-hero-primary">Rellenar solicitud</a>
+              <a :href="whatsappAltaUrl" target="_blank" rel="noopener" class="b2b-hero-secondary">Consultar por WhatsApp</a>
+            </div>
           </div>
 
           <div class="b2b-summary">
@@ -37,8 +41,26 @@
 
     <section class="b2b-content">
       <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pb-16 sm:pb-20">
+        <ol class="b2b-process-strip" aria-label="Proceso de alta profesional">
+          <li>
+            <span>01</span>
+            <strong>Recepcion</strong>
+            <p>Recibimos los datos fiscales y de contacto.</p>
+          </li>
+          <li>
+            <span>02</span>
+            <strong>Revision</strong>
+            <p>Comprobamos cada solicitud de forma manual.</p>
+          </li>
+          <li>
+            <span>03</span>
+            <strong>Activacion</strong>
+            <p>Te respondemos con los siguientes pasos.</p>
+          </li>
+        </ol>
+
         <div class="b2b-content-grid">
-          <div class="b2b-form-card">
+          <div id="solicitud-alta" class="b2b-form-card">
             <div class="b2b-form-head">
               <div>
                 <p class="b2b-section-label">Formulario</p>
@@ -176,33 +198,18 @@
 
           <aside class="space-y-6">
             <div class="b2b-info-card">
-              <p class="b2b-section-label">Proceso</p>
-              <h3 class="b2b-side-title">Como gestionamos el alta</h3>
-              <ol class="b2b-steps">
-                <li>
-                  <strong>1. Recepcion</strong>
-                  <p>Recibimos los datos de empresa y contacto.</p>
-                </li>
-                <li>
-                  <strong>2. Revision</strong>
-                  <p>Comprobamos la informacion antes de activar la cuenta.</p>
-                </li>
-                <li>
-                  <strong>3. Respuesta</strong>
-                  <p>Si procede, te avisamos por correo con los siguientes pasos.</p>
-                </li>
-              </ol>
-            </div>
-
-            <div class="b2b-info-card">
               <p class="b2b-section-label">Contacto</p>
-              <h3 class="b2b-side-title">Si prefieres consultarlo antes</h3>
+              <h3 class="b2b-side-title">Atencion directa</h3>
               <div class="b2b-contact-list">
                 <p><strong>Telefono:</strong> 953 51 50 70</p>
+                <p><strong>WhatsApp:</strong> 619 62 56 79</p>
                 <p><strong>Email:</strong> info@ibernovia.es</p>
                 <p><strong>Horario:</strong> 09:00 a 14:00 y 17:00 a 20:00</p>
               </div>
-              <router-link to="/contacto" class="b2b-secondary-link">Ir a contacto</router-link>
+              <div class="b2b-aside-actions">
+                <a :href="whatsappAltaUrl" target="_blank" rel="noopener" class="b2b-whatsapp-link">Escribir por WhatsApp</a>
+                <router-link to="/contacto" class="b2b-secondary-link">Ir a contacto</router-link>
+              </div>
             </div>
           </aside>
         </div>
@@ -229,6 +236,7 @@ const form = ref({
 const sending = ref(false)
 const feedback = ref('')
 const feedbackOk = ref(false)
+const whatsappAltaUrl = `https://wa.me/34619625679?text=${encodeURIComponent('Hola Ibernovia, queria consultar el alta profesional para mi empresa.')}`
 
 const validarEmail = (email) => {
   const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
@@ -371,6 +379,14 @@ ${form.value.mensaje || '(Sin mensaje adicional)'}
   line-height: 1.8;
 }
 
+.b2b-hero-actions,
+.b2b-aside-actions {
+  margin-top: 1.4rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
 .b2b-summary,
 .b2b-form-card,
 .b2b-info-card {
@@ -415,6 +431,49 @@ ${form.value.mensaje || '(Sin mensaje adicional)'}
 
 .b2b-content {
   padding-top: 2rem;
+}
+
+.b2b-process-strip {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0;
+  margin-bottom: 2rem;
+  padding: 0;
+  list-style: none;
+  border-top: 1px solid rgb(var(--luxury-gold-rgb) / 0.16);
+  border-bottom: 1px solid rgb(var(--luxury-gold-rgb) / 0.16);
+}
+
+.b2b-process-strip li {
+  padding: 1.25rem 1.4rem;
+  border-left: 1px solid rgb(var(--luxury-gold-rgb) / 0.12);
+}
+
+.b2b-process-strip li:first-child {
+  border-left: none;
+}
+
+.b2b-process-strip span {
+  display: block;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.2em;
+  color: var(--luxury-gold);
+}
+
+.b2b-process-strip strong {
+  display: block;
+  margin-top: 0.45rem;
+  font-family: 'Fraunces', Georgia, serif;
+  font-size: 1.1rem;
+  font-weight: 400;
+}
+
+.b2b-process-strip p {
+  margin-top: 0.35rem;
+  color: rgb(var(--luxury-black-rgb) / 0.62);
+  font-size: 13px;
+  line-height: 1.6;
 }
 
 .b2b-form-card {
@@ -502,7 +561,10 @@ fieldset {
 }
 
 .b2b-submit-button,
-.b2b-secondary-link {
+.b2b-secondary-link,
+.b2b-hero-primary,
+.b2b-hero-secondary,
+.b2b-whatsapp-link {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -517,11 +579,31 @@ fieldset {
   transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
 }
 
-.b2b-submit-button {
+.b2b-submit-button,
+.b2b-hero-primary {
   width: 100%;
   border: none;
   background: var(--luxury-black);
   color: white;
+}
+
+.b2b-hero-primary,
+.b2b-hero-secondary,
+.b2b-whatsapp-link {
+  width: auto;
+  padding: 0 1.2rem;
+}
+
+.b2b-hero-secondary,
+.b2b-whatsapp-link {
+  border: 1px solid rgb(var(--luxury-black-rgb) / 0.16);
+  color: var(--luxury-black);
+  background: rgb(255 255 255 / 0.58);
+}
+
+.b2b-whatsapp-link {
+  border-color: rgb(37 211 102 / 0.35);
+  color: #1f8f48;
 }
 
 .b2b-submit-button:disabled {
@@ -599,6 +681,19 @@ fieldset {
   .b2b-content-grid {
     grid-template-columns: 1fr;
   }
+
+  .b2b-process-strip {
+    grid-template-columns: 1fr;
+  }
+
+  .b2b-process-strip li {
+    border-left: none;
+    border-top: 1px solid rgb(var(--luxury-gold-rgb) / 0.12);
+  }
+
+  .b2b-process-strip li:first-child {
+    border-top: none;
+  }
 }
 
 @media (max-width: 640px) {
@@ -617,7 +712,10 @@ fieldset {
   .b2b-section-label,
   .b2b-fieldset-title,
   .b2b-submit-button,
-  .b2b-secondary-link {
+  .b2b-secondary-link,
+  .b2b-hero-primary,
+  .b2b-hero-secondary,
+  .b2b-whatsapp-link {
     letter-spacing: 0.14em;
   }
 
@@ -634,12 +732,23 @@ fieldset {
     padding: 1.1rem;
   }
 
+  .b2b-process-strip {
+    margin-bottom: 1.35rem;
+  }
+
+  .b2b-process-strip li {
+    padding: 1rem 0.15rem;
+  }
+
   .b2b-input {
     border-radius: 8px;
   }
 
   .b2b-submit-button,
-  .b2b-secondary-link {
+  .b2b-secondary-link,
+  .b2b-hero-primary,
+  .b2b-hero-secondary,
+  .b2b-whatsapp-link {
     width: 100%;
     padding-left: 1rem;
     padding-right: 1rem;

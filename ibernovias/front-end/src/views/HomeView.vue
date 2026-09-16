@@ -69,6 +69,34 @@
       </div>
     </section>
 
+    <section class="home-families" aria-label="Accesos por familia">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="home-families-head">
+          <div>
+            <p class="home-families-kicker">Explorar catalogo</p>
+            <h2 class="home-families-title">Colecciones principales</h2>
+          </div>
+          <router-link :to="{ path: '/tienda', hash: '#catalogo' }" class="home-families-link">Ver todo</router-link>
+        </div>
+
+        <div class="home-family-grid">
+          <router-link
+            v-for="family in quickFamilies"
+            :key="family.name"
+            :to="{ path: '/tienda', hash: '#catalogo', query: { familia: family.query } }"
+            class="home-family-card"
+          >
+            <img :src="family.image" :alt="family.alt" loading="lazy" decoding="async">
+            <span class="home-family-shade"></span>
+            <span class="home-family-copy">
+              <strong>{{ family.name }}</strong>
+              <small>{{ family.caption }}</small>
+            </span>
+          </router-link>
+        </div>
+      </div>
+    </section>
+
     <!-- Horizontal Infinite Slider Section -->
     <section class="home-featured py-12 bg-[#fdfdfc] border-t border-b border-black/5 overflow-hidden" aria-label="Colección destacada">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 mb-6">
@@ -252,6 +280,43 @@ const toast = inject('toast', null)
 const products = ref([])
 const promociones = ref([])
 const loading = ref(true)
+const quickFamilies = [
+  {
+    name: 'Novia',
+    query: 'Novia',
+    caption: 'Velos, tocados y detalles de ceremonia',
+    image: '/images/catalogo/novia/tocados/3345-ma.webp',
+    alt: 'Tocado de novia Ibernovia'
+  },
+  {
+    name: 'Fiesta',
+    query: 'Fiesta',
+    caption: 'Invitada, madrina y complementos de evento',
+    image: '/images/catalogo/fiesta/tocados/3150-ma.webp',
+    alt: 'Tocado de fiesta Ibernovia'
+  },
+  {
+    name: 'Comunion',
+    query: 'Comunion',
+    caption: 'Piezas delicadas para celebracion',
+    image: '/images/catalogo/comunion/diademas-y-coronas/2835-d.webp',
+    alt: 'Diadema de comunion Ibernovia'
+  },
+  {
+    name: 'Novio',
+    query: 'Novio',
+    caption: 'Gemelos y complementos formales',
+    image: '/images/catalogo/novio/gemelos/5550rng.webp',
+    alt: 'Complemento de novio Ibernovia'
+  },
+  {
+    name: 'Arras',
+    query: 'Arras',
+    caption: 'Cestas, cojines y arras matrimoniales',
+    image: '/images/catalogo/arras/cestas-y-cojines/1403-coj.webp',
+    alt: 'Cojin de arras Ibernovia'
+  }
+]
 
 // Slideshow state
 const currentHeroIndex = ref(0)
@@ -358,6 +423,110 @@ onBeforeUnmount(() => {
   animation-play-state: paused;
 }
 
+.home-families {
+  padding: 3.2rem 0;
+  background: #fffdf9;
+  border-top: 1px solid rgb(var(--luxury-black-rgb) / 0.05);
+}
+
+.home-families-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: end;
+  gap: 1.5rem;
+  margin-bottom: 1.4rem;
+}
+
+.home-families-kicker {
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+  color: var(--luxury-gold);
+}
+
+.home-families-title {
+  margin-top: 0.35rem;
+  font-family: 'Fraunces', Georgia, serif;
+  font-size: clamp(2rem, 4vw, 3.1rem);
+  font-weight: 300;
+  line-height: 1;
+  color: var(--luxury-black);
+}
+
+.home-families-link {
+  padding-bottom: 0.25rem;
+  border-bottom: 1px solid currentColor;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: rgb(var(--luxury-black-rgb) / 0.72);
+}
+
+.home-family-grid {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 0.85rem;
+}
+
+.home-family-card {
+  position: relative;
+  display: block;
+  min-height: 280px;
+  overflow: hidden;
+  border-radius: 8px;
+  background: #eee8df;
+  border: 1px solid rgb(var(--luxury-black-rgb) / 0.06);
+  color: white;
+  isolation: isolate;
+}
+
+.home-family-card img {
+  width: 100%;
+  height: 100%;
+  min-height: 280px;
+  display: block;
+  object-fit: cover;
+  transition: transform 0.7s ease;
+}
+
+.home-family-card:hover img {
+  transform: scale(1.04);
+}
+
+.home-family-shade {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: linear-gradient(180deg, rgb(0 0 0 / 0.02), rgb(0 0 0 / 0.5));
+}
+
+.home-family-copy {
+  position: absolute;
+  left: 1rem;
+  right: 1rem;
+  bottom: 1rem;
+  z-index: 2;
+  display: grid;
+  gap: 0.35rem;
+}
+
+.home-family-copy strong {
+  font-family: 'Fraunces', Georgia, serif;
+  font-size: 1.55rem;
+  font-weight: 300;
+}
+
+.home-family-copy small {
+  max-width: 18ch;
+  font-size: 11px;
+  line-height: 1.45;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgb(255 255 255 / 0.78);
+}
+
 @keyframes scrollMarquee {
   0% {
     transform: translateX(0);
@@ -369,8 +538,8 @@ onBeforeUnmount(() => {
 
 @media (max-width: 640px) {
   .home-hero-section {
-    min-height: 480px;
-    height: min(76vh, 560px);
+    min-height: 500px;
+    height: min(78vh, 590px);
   }
 
   .home-hero-copy {
@@ -383,24 +552,81 @@ onBeforeUnmount(() => {
   }
 
   .home-wordmark {
-    font-size: clamp(2.4rem, 13vw, 3.35rem);
-    letter-spacing: 0.08em;
-    text-indent: 0.08em;
+    font-size: clamp(2.25rem, 12vw, 3.2rem);
+    letter-spacing: 0.07em;
+    text-indent: 0.07em;
   }
 
   .home-subline {
-    max-width: 20rem;
+    max-width: 18rem;
     margin-left: auto;
     margin-right: auto;
     font-size: 0.72rem;
-    line-height: 1.7;
-    letter-spacing: 0.22em;
+    line-height: 1.65;
+    letter-spacing: 0.18em;
+  }
+
+  .home-hero-copy a {
+    width: min(100%, 17rem);
+    justify-content: center;
+    padding-left: 1rem;
+    padding-right: 1rem;
+    letter-spacing: 0.18em;
   }
 
   .home-featured,
   .home-promos {
     padding-top: 2.5rem;
     padding-bottom: 2.5rem;
+  }
+
+  .home-families {
+    padding: 2.5rem 0;
+  }
+
+  .home-families-head {
+    align-items: start;
+    margin-bottom: 1rem;
+  }
+
+  .home-families-kicker,
+  .home-families-link {
+    letter-spacing: 0.14em;
+  }
+
+  .home-family-grid {
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: minmax(142px, 44vw);
+    grid-template-columns: none;
+    gap: 0.65rem;
+    overflow-x: auto;
+    padding-bottom: 0.55rem;
+    scroll-snap-type: x mandatory;
+  }
+
+  .home-family-card {
+    min-height: 210px;
+    scroll-snap-align: start;
+  }
+
+  .home-family-card img {
+    min-height: 210px;
+  }
+
+  .home-family-copy {
+    left: 0.8rem;
+    right: 0.8rem;
+    bottom: 0.85rem;
+  }
+
+  .home-family-copy strong {
+    font-size: 1.28rem;
+  }
+
+  .home-family-copy small {
+    font-size: 9.5px;
+    letter-spacing: 0.05em;
   }
 
   .home-promos .mb-16 {
