@@ -68,7 +68,7 @@
             </span>
           </router-link>
 
-          <div ref="userMenuContainer" class="relative z-[71]">
+          <div ref="userMenuContainer" class="relative z-[71]" :class="{ 'sm:hidden': !authStore.isAuthenticated }">
             <button
               ref="userMenuButton"
               @click="toggleUserMenu"
@@ -116,8 +116,8 @@
     </div>
 
     <Teleport to="body">
-      <div v-if="mobileOpen" class="fixed inset-0 z-[9998] bg-black/45 backdrop-blur-sm" @click.self="mobileOpen = false">
-        <div class="bg-[#ececec] w-11/12 max-w-sm mt-10 mx-auto rounded-md shadow-xl border border-black/10 max-h-[84vh] overflow-hidden flex flex-col">
+      <div v-if="mobileOpen" class="mobile-nav-overlay fixed inset-0 z-[9998] bg-black/30" @click.self="mobileOpen = false">
+        <div class="mobile-nav-panel bg-white w-11/12 max-w-sm ml-auto h-full overflow-hidden flex flex-col">
           <div class="p-4 border-b border-black/10 flex items-center justify-between">
             <span class="font-semibold tracking-[0.2em] text-sm">MENÚ</span>
             <button @click="mobileOpen = false" class="icon-btn" aria-label="Cerrar menú móvil">
@@ -126,7 +126,7 @@
               </svg>
             </button>
           </div>
-          <nav class="p-4 overflow-y-auto max-h-[70vh] space-y-4">
+          <nav class="p-4 overflow-y-auto flex-1 space-y-4">
             <!-- Menú Navegación Rápida -->
             <div class="border-b border-black/10 pb-4 space-y-1">
               <router-link to="/" @click="mobileOpen = false" class="block px-3 py-2.5 rounded-lg text-sm uppercase tracking-wider font-semibold hover:bg-white/60">Inicio</router-link>
@@ -790,4 +790,9 @@ onBeforeUnmount(() => {
 @media (min-width: 1024px) {
   .mobile-menu-toggle { display: none; }
 }
+
+/* Keep the wordmark distinctive; make navigation quiet and readable. */
+.menu-link {text-transform:none;letter-spacing:.01em;font-size:.88rem;}
+.business-btn {border-radius:3px;font-size:.82rem;font-weight:500;letter-spacing:0;text-transform:none;box-shadow:none;}
+.business-btn:hover {transform:none;}
 </style>

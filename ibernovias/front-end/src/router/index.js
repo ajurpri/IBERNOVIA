@@ -67,7 +67,7 @@ const routes = [
     component: CheckoutView,
     meta: {
       requiresBusiness: true,
-      title: 'Checkout | IBERNOVIA'
+      title: 'Presupuesto | IBERNOVIA'
     }
   },
   {
@@ -76,7 +76,7 @@ const routes = [
     component: ConfirmacionView,
     meta: {
       requiresBusiness: true,
-      title: 'Confirmación de Compra | IBERNOVIA'
+      title: 'Presupuesto | IBERNOVIA'
     }
   },
   {

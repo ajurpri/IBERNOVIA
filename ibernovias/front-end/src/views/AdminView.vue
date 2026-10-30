@@ -6,7 +6,7 @@
           <div class="max-w-3xl">
             <p class="admin-kicker">Gestión privada</p>
             <h1 class="admin-title">Panel Administrativo</h1>
-            <p class="admin-subtitle">Una vista limpia para gestionar catálogo, usuarios, eventos y solicitudes con más claridad y menos ruido visual.</p>
+            <p class="admin-subtitle">Catálogo, usuarios y solicitudes.</p>
           </div>
           <button
             @click="authStore.logout()"

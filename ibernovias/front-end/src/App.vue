@@ -7,8 +7,6 @@
       <router-view />
     </main>
 
-    <BackToTop />
-    <WhatsAppButton />
     <FooterSection />
     <CookieBanner />
     <Toast ref="toastRef" />
@@ -20,9 +18,7 @@ import { ref, provide, onMounted } from 'vue'
 import NavBar from './components/NavBar.vue'
 import FooterSection from './components/FooterSection.vue'
 import CookieBanner from './components/CookieBanner.vue'
-import BackToTop from './components/BackToTop.vue'
 import Toast from './components/Toast.vue'
-import WhatsAppButton from './components/WhatsAppButton.vue'
 import { useAuthStore } from './stores/auth'
 
 const authStore = useAuthStore()

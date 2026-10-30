@@ -1,70 +1,21 @@
 <template>
   <div class="b2b-page">
     <section class="b2b-header">
-      <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-14">
-        <p class="b2b-eyebrow">Solicitar alta</p>
-        <div class="b2b-header-grid">
-          <div>
-            <h1 class="b2b-title">Solicitud de alta para empresa</h1>
-            <p class="b2b-intro">
-              Esta área está dirigida a tiendas y profesionales del sector que quieran solicitar acceso comercial a Ibernovia.
-            </p>
-            <p class="mt-4 text-sm">¿Ya tienes cuenta? <router-link to="/auth" class="underline">Acceso profesional</router-link></p>
-            <div class="b2b-hero-actions">
-              <a href="#solicitud-alta" class="b2b-hero-primary">Rellenar solicitud</a>
-              <a :href="whatsappAltaUrl" target="_blank" rel="noopener" class="b2b-hero-secondary">Consultar por WhatsApp</a>
-            </div>
-          </div>
-
-          <div class="b2b-summary">
-            <p class="b2b-summary-title">Revisión manual</p>
-            <p class="b2b-summary-copy">
-              Revisamos cada solicitud antes de activar el acceso profesional.
-            </p>
-            <dl class="b2b-summary-list">
-              <div>
-                <dt>Plazo habitual</dt>
-                <dd>24/48h laborables</dd>
-              </div>
-              <div>
-                <dt>Contacto</dt>
-                <dd>info@ibernovia.es</dd>
-              </div>
-              <div>
-                <dt>Teléfono</dt>
-                <dd>953 51 50 70</dd>
-              </div>
-            </dl>
-          </div>
-        </div>
+      <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <h1 class="b2b-title">Alta profesional</h1>
+        <p class="b2b-intro">Para tiendas y profesionales del sector. Revisamos tu solicitud en un plazo habitual de 24 a 48 horas laborables.</p>
+        <p class="mt-4 text-sm">¿Ya tienes cuenta? <router-link to="/auth" class="underline">Iniciar sesión</router-link></p>
       </div>
     </section>
 
     <section class="b2b-content">
       <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pb-16 sm:pb-20">
-        <ol class="b2b-process-strip" aria-label="Proceso de alta profesional">
-          <li>
-            <span>01</span>
-            <strong>Recepción</strong>
-            <p>Recibimos los datos fiscales y de contacto.</p>
-          </li>
-          <li>
-            <span>02</span>
-            <strong>Revisión</strong>
-            <p>Comprobamos cada solicitud de forma manual.</p>
-          </li>
-          <li>
-            <span>03</span>
-            <strong>Activación</strong>
-            <p>Te respondemos con los siguientes pasos.</p>
-          </li>
-        </ol>
 
         <div class="b2b-content-grid">
           <div id="solicitud-alta" class="b2b-form-card">
             <div class="b2b-form-head">
               <div>
-                <p class="b2b-section-label">Formulario</p>
+
                 <h2 class="b2b-form-title">Datos de la empresa</h2>
               </div>
               <p class="b2b-form-note">Los campos marcados con * son obligatorios.</p>
@@ -200,7 +151,7 @@
           <aside class="space-y-6">
             <div class="b2b-info-card">
               <p class="b2b-section-label">Contacto</p>
-              <h3 class="b2b-side-title">Atencion directa</h3>
+              <h3 class="b2b-side-title">Atención directa</h3>
               <div class="b2b-contact-list">
                 <p><strong>Teléfono:</strong> 953 51 50 70</p>
                 <p><strong>WhatsApp:</strong> 619 62 56 79</p>

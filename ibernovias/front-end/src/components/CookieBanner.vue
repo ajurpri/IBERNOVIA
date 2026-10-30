@@ -14,9 +14,10 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, onBeforeUnmount } from 'vue'
 
 const showBanner = ref(false)
+const reopen = () => { showBanner.value = true }
 
 const accept = () => {
   localStorage.setItem('cookie_consent', 'accepted')
@@ -29,9 +30,11 @@ const reject = () => {
 }
 
 onMounted(() => {
+  window.addEventListener('ibernovia:cookie-preferences', reopen)
   const consent = localStorage.getItem('cookie_consent')
   showBanner.value = !consent
 })
+onBeforeUnmount(() => window.removeEventListener('ibernovia:cookie-preferences', reopen))
 </script>
 
 <style scoped>

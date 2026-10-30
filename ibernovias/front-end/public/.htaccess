@@ -21,7 +21,6 @@
 
 # Cabeceras de Caché (mod_expires) para optimizar carga repetida
 <IfModule mod_expires.c>
-  ExpiresEngine On
   ExpiresActive On
 
   # Por defecto cachear 1 semana

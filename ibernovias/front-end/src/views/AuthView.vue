@@ -2,7 +2,6 @@
   <div class="auth-page min-h-screen bg-[#fdfdfc] flex items-center justify-center py-20 px-4 sm:px-6 lg:px-8">
     <div class="w-full max-w-md space-y-10 animate-fade-in-up">
       <div class="text-center space-y-3">
-        <span class="text-[10px] uppercase tracking-[0.4em] text-luxury-gold font-bold block">ATELIER IBERNOVIA</span>
         <h1 class="font-serif text-4xl md:text-5xl font-light text-luxury-black tracking-wide">Acceso profesional</h1>
         <p class="text-sm text-gray-600">Entra con tu cuenta. Para obtener tarifas profesionales, <router-link to="/acceso-empresarial" class="underline">solicita el alta</router-link>.</p>
       </div>
@@ -27,7 +26,7 @@
                 ? 'border-luxury-gold text-luxury-black'
                 : 'border-transparent text-gray-400 hover:text-luxury-black'
             ]">
-            Crear Cuenta
+            Crear cuenta
           </button>
         </div>
 
@@ -63,11 +62,6 @@
               placeholder="********">
           </div>
 
-          <div class="text-right">
-            <span class="text-[10px] text-gray-400 font-bold uppercase tracking-wider">
-              Acceso seguro
-            </span>
-          </div>
 
           <button
             type="submit"
@@ -78,6 +72,7 @@
         </form>
 
         <form v-if="activeTab === 'register'" @submit.prevent="handleRegister" class="space-y-8">
+          <p class="text-sm text-gray-600 leading-relaxed">Crear una cuenta no activa las tarifas profesionales. Si tienes una tienda, <router-link to="/acceso-empresarial" class="underline">solicita el alta de empresa</router-link> para que revisemos tu acceso.</p>
           <div class="relative group">
             <label for="registerForm-nombre" class="block text-[10px] uppercase tracking-[0.25em] text-gray-400 font-bold mb-1 transition-colors group-focus-within:text-luxury-gold">
               Nombre
@@ -147,7 +142,7 @@
               id="terms"
               class="mt-1 rounded-none border-gray-300 text-luxury-gold focus:ring-luxury-gold">
             <label for="terms" class="text-[10px] text-gray-500 uppercase tracking-wider leading-relaxed">
-              Acepto los términos y condiciones y la política de privacidad de Ibernovia
+              He leído el <router-link to="/legal" class="underline">aviso legal</router-link> y la <router-link to="/privacidad" class="underline">política de privacidad</router-link> de Ibernovia
             </label>
           </div>
 
@@ -155,7 +150,7 @@
             type="submit"
             :disabled="loadingRegister"
             class="w-full py-4 bg-luxury-black text-white hover:bg-luxury-gold hover:text-white text-[11px] font-bold uppercase tracking-[0.25em] transition-all duration-300 rounded-full shadow-md hover:shadow-lg disabled:opacity-50 mt-6">
-            {{ loadingRegister ? 'Creando Cuenta...' : 'Crear Cuenta' }}
+            {{ loadingRegister ? 'Creando Cuenta...' : 'Crear cuenta' }}
           </button>
         </form>
 
@@ -189,10 +184,6 @@
         </template>
       </div>
 
-      <div class="text-center text-[10px] text-gray-400 uppercase tracking-widest space-y-1">
-        <p>Acceso seguro mediante protocolo SSL</p>
-        <p>Atelier Ibernovia - Garantia de confidencialidad</p>
-      </div>
     </div>
   </div>
 </template>
