@@ -10,23 +10,10 @@
           </div>
 
           <p class="footer-copy max-w-xl">
-            Complementos y moda nupcial con una presentación elegante, cuidada y profesional para ceremonia, fiesta y comunión.
+            Complementos de ceremonia para tiendas y profesionales: novia, novio, fiesta, comunión y arras.
           </p>
 
-          <div class="mt-7 flex items-center gap-4">
-            <a href="https://www.instagram.com" target="_blank" rel="noopener" class="social-icon" aria-label="Instagram">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                <rect x="3" y="3" width="18" height="18" rx="5" ry="5" stroke-width="1.8"></rect>
-                <circle cx="12" cy="12" r="4.1" stroke-width="1.8"></circle>
-                <circle cx="17.2" cy="6.8" r="1.1" fill="currentColor" stroke="none"></circle>
-              </svg>
-            </a>
-            <a href="https://www.facebook.com" target="_blank" rel="noopener" class="social-icon" aria-label="Facebook">
-              <svg viewBox="0 0 24 24" fill="currentColor">
-                <path d="M14 8.5V7a1 1 0 0 1 1-1h1.5V3.5H15c-2.48 0-4 1.62-4 4.25v.75H9v3h2v9h3v-9h2.2l.4-3H14Z"/>
-              </svg>
-            </a>
-          </div>
+          <!-- Social profiles hidden until official URLs are confirmed. -->
         </section>
 
         <section>
@@ -35,7 +22,8 @@
             <router-link to="/">Inicio</router-link>
             <router-link to="/tienda">Catálogo</router-link>
             <router-link to="/contacto">Contacto</router-link>
-            <router-link to="/acceso-empresarial">Acceso empresarial</router-link>
+            <router-link to="/auth">Acceso profesional</router-link>
+            <router-link to="/acceso-empresarial">Solicitar alta</router-link>
             <router-link to="/privacidad">Privacidad</router-link>
           </nav>
         </section>

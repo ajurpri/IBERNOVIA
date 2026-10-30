@@ -1,10 +1,10 @@
 <template>
-  <div class="min-h-screen bg-[#fdfdfc] flex items-center justify-center py-20 px-4 sm:px-6 lg:px-8">
+  <div class="auth-page min-h-screen bg-[#fdfdfc] flex items-center justify-center py-20 px-4 sm:px-6 lg:px-8">
     <div class="w-full max-w-md space-y-10 animate-fade-in-up">
       <div class="text-center space-y-3">
         <span class="text-[10px] uppercase tracking-[0.4em] text-luxury-gold font-bold block">ATELIER IBERNOVIA</span>
-        <h1 class="font-serif text-4xl md:text-5xl font-light text-luxury-black tracking-wide">Mi Cuenta</h1>
-        <p class="text-xs text-gray-400 uppercase tracking-widest">Acceso Clientes y Profesionales</p>
+        <h1 class="font-serif text-4xl md:text-5xl font-light text-luxury-black tracking-wide">Acceso profesional</h1>
+        <p class="text-sm text-gray-600">Entra con tu cuenta. Para obtener tarifas profesionales, <router-link to="/acceso-empresarial" class="underline">solicita el alta</router-link>.</p>
       </div>
 
       <div class="bg-white border border-black/5 p-8 md:p-12 space-y-8 shadow-sm">
@@ -17,7 +17,7 @@
                 ? 'border-luxury-gold text-luxury-black'
                 : 'border-transparent text-gray-400 hover:text-luxury-black'
             ]">
-            Iniciar Sesion
+            Iniciar sesión
           </button>
           <button
             @click="activeTab = 'register'"
@@ -40,11 +40,10 @@
 
         <form v-if="activeTab === 'login'" @submit.prevent="handleLogin" class="space-y-8">
           <div class="relative group">
-            <label class="block text-[10px] uppercase tracking-[0.25em] text-gray-400 font-bold mb-1 transition-colors group-focus-within:text-luxury-gold">
+            <label for="loginForm-email" class="block text-[10px] uppercase tracking-[0.25em] text-gray-400 font-bold mb-1 transition-colors group-focus-within:text-luxury-gold">
               Email
             </label>
-            <input
-              v-model="loginForm.email"
+            <input id="loginForm-email" v-model="loginForm.email"
               type="email"
               required
               autocomplete="email"
@@ -53,11 +52,10 @@
           </div>
 
           <div class="relative group">
-            <label class="block text-[10px] uppercase tracking-[0.25em] text-gray-400 font-bold mb-1 transition-colors group-focus-within:text-luxury-gold">
-              Contrasena
+            <label for="loginForm-password" class="block text-[10px] uppercase tracking-[0.25em] text-gray-400 font-bold mb-1 transition-colors group-focus-within:text-luxury-gold">
+              Contraseña
             </label>
-            <input
-              v-model="loginForm.password"
+            <input id="loginForm-password" v-model="loginForm.password"
               type="password"
               required
               autocomplete="current-password"
@@ -81,11 +79,10 @@
 
         <form v-if="activeTab === 'register'" @submit.prevent="handleRegister" class="space-y-8">
           <div class="relative group">
-            <label class="block text-[10px] uppercase tracking-[0.25em] text-gray-400 font-bold mb-1 transition-colors group-focus-within:text-luxury-gold">
+            <label for="registerForm-nombre" class="block text-[10px] uppercase tracking-[0.25em] text-gray-400 font-bold mb-1 transition-colors group-focus-within:text-luxury-gold">
               Nombre
             </label>
-            <input
-              v-model="registerForm.nombre"
+            <input id="registerForm-nombre" v-model="registerForm.nombre"
               type="text"
               required
               autocomplete="given-name"
@@ -94,11 +91,10 @@
           </div>
 
           <div class="relative group">
-            <label class="block text-[10px] uppercase tracking-[0.25em] text-gray-400 font-bold mb-1 transition-colors group-focus-within:text-luxury-gold">
+            <label for="registerForm-apellido" class="block text-[10px] uppercase tracking-[0.25em] text-gray-400 font-bold mb-1 transition-colors group-focus-within:text-luxury-gold">
               Apellido
             </label>
-            <input
-              v-model="registerForm.apellido"
+            <input id="registerForm-apellido" v-model="registerForm.apellido"
               type="text"
               required
               autocomplete="family-name"
@@ -107,11 +103,10 @@
           </div>
 
           <div class="relative group">
-            <label class="block text-[10px] uppercase tracking-[0.25em] text-gray-400 font-bold mb-1 transition-colors group-focus-within:text-luxury-gold">
+            <label for="registerForm-email" class="block text-[10px] uppercase tracking-[0.25em] text-gray-400 font-bold mb-1 transition-colors group-focus-within:text-luxury-gold">
               Email
             </label>
-            <input
-              v-model="registerForm.email"
+            <input id="registerForm-email" v-model="registerForm.email"
               type="email"
               required
               autocomplete="email"
@@ -120,31 +115,29 @@
           </div>
 
           <div class="relative group">
-            <label class="block text-[10px] uppercase tracking-[0.25em] text-gray-400 font-bold mb-1 transition-colors group-focus-within:text-luxury-gold">
-              Contrasena
+            <label for="registerForm-password" class="block text-[10px] uppercase tracking-[0.25em] text-gray-400 font-bold mb-1 transition-colors group-focus-within:text-luxury-gold">
+              Contraseña
             </label>
-            <input
-              v-model="registerForm.password"
+            <input id="registerForm-password" v-model="registerForm.password"
               type="password"
               required
               minlength="6"
               autocomplete="new-password"
               class="w-full pb-3 pt-1 border-b border-gray-300 bg-transparent rounded-none focus:outline-none focus:border-luxury-gold transition-colors text-sm text-luxury-black placeholder-gray-400/30"
               placeholder="********">
-            <p class="text-[9px] text-gray-400 tracking-wider uppercase mt-1">Minimo 6 caracteres</p>
+            <p class="text-[9px] text-gray-400 tracking-wider uppercase mt-1">Mínimo 6 caracteres</p>
           </div>
 
           <div class="relative group">
-            <label class="block text-[10px] uppercase tracking-[0.25em] text-gray-400 font-bold mb-1 transition-colors group-focus-within:text-luxury-gold">
-              Confirmar Contrasena
+            <label for="registerForm-confirmPassword" class="block text-[10px] uppercase tracking-[0.25em] text-gray-400 font-bold mb-1 transition-colors group-focus-within:text-luxury-gold">
+              Confirmar Contraseña
             </label>
-            <input
-              v-model="registerForm.confirmPassword"
+            <input id="registerForm-confirmPassword" v-model="registerForm.confirmPassword"
               type="password"
               required
               autocomplete="new-password"
               class="w-full pb-3 pt-1 border-b border-gray-300 bg-transparent rounded-none focus:outline-none focus:border-luxury-gold transition-colors text-sm text-luxury-black placeholder-gray-400/30"
-              placeholder="repite tu contrasena">
+              placeholder="repite tu contraseña">
           </div>
 
           <div class="flex items-start gap-3 pt-2">
@@ -154,7 +147,7 @@
               id="terms"
               class="mt-1 rounded-none border-gray-300 text-luxury-gold focus:ring-luxury-gold">
             <label for="terms" class="text-[10px] text-gray-500 uppercase tracking-wider leading-relaxed">
-              Acepto los terminos y condiciones y la politica de privacidad de Ibernovia
+              Acepto los términos y condiciones y la política de privacidad de Ibernovia
             </label>
           </div>
 

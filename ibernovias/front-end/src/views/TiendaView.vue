@@ -3,12 +3,12 @@
     <section class="border-b border-black/5 bg-white">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14 sm:py-16">
         <div class="max-w-3xl">
-          <p class="text-[10px] uppercase tracking-[0.35em] text-luxury-gold font-bold mb-4">Catalogo Ibernovia</p>
+          <p class="text-[10px] uppercase tracking-[0.35em] text-luxury-gold font-bold mb-4">Catálogo Ibernovia</p>
           <h1 class="font-serif text-4xl sm:text-5xl lg:text-6xl leading-[1.02] text-luxury-black mb-5">
-            Coleccion para profesionales del sector ceremonia
+            Colección para profesionales del sector ceremonia
           </h1>
           <p class="text-sm sm:text-base text-gray-600 leading-relaxed max-w-2xl">
-            Consulta nuestras familias y categorias de producto. El catalogo esta visible para consulta general, y las tarifas quedan reservadas a clientes profesionales validados.
+            Consulta nuestras familias y categorías de producto. El catálogo está visible para consulta general, y las tarifas quedan reservadas a clientes profesionales validados.
           </p>
         </div>
       </div>
@@ -18,7 +18,7 @@
       <div class="catalog-controls-shell grid grid-cols-1 gap-6 border-b border-black/6 pb-8" :class="{ 'is-open': mobileFiltersOpen }">
         <div>
           <label for="search" class="block text-[10px] uppercase tracking-[0.25em] text-gray-400 font-bold mb-2">
-            Buscar en catalogo
+            Buscar en catálogo
           </label>
           <div class="relative flex items-center">
             <input
@@ -31,7 +31,7 @@
             >
             <div class="absolute right-3 flex items-center gap-2">
               <span v-if="isSearchingImage" class="animate-spin h-5 w-5 border-2 border-t-transparent border-luxury-gold rounded-full" role="status"></span>
-              <label 
+              <label
                 v-else
                 class="cursor-pointer text-gray-400 hover:text-luxury-gold transition-colors p-1"
                 title="Buscar por imagen con IA"
@@ -91,7 +91,7 @@
 
         <div v-if="selectedFamily !== 'Todas' && categorias.length" class="catalog-filter-block">
           <p class="text-[10px] uppercase tracking-[0.25em] text-gray-400 font-bold mb-3">
-            Categorias dentro de {{ selectedFamily }}
+            Categorías dentro de {{ selectedFamily }}
           </p>
           <div class="flex flex-wrap gap-x-5 gap-y-3">
             <button
@@ -136,14 +136,14 @@
           <!-- Filtro Ofertas -->
           <div class="flex items-center gap-2">
             <label class="relative inline-flex items-center cursor-pointer select-none">
-              <input 
-                type="checkbox" 
-                v-model="onlyOffers" 
+              <input
+                type="checkbox"
+                v-model="onlyOffers"
                 class="sr-only peer"
               >
               <div class="w-9 h-5 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-luxury-gold"></div>
               <span class="ml-2.5 text-[10px] uppercase tracking-[0.25em] text-gray-500 font-bold peer-checked:text-luxury-gold transition-colors">
-                Solo en oferta 🔥
+                Solo en oferta
               </span>
             </label>
           </div>
@@ -160,11 +160,11 @@
               @click="printCatalog"
               class="text-[11px] uppercase tracking-[0.18em] font-semibold text-luxury-black hover:text-luxury-gold transition-colors flex items-center gap-1.5"
             >
-              📄 Descargar Catálogo (PDF)
+              Descargar catálogo (PDF)
             </button>
 
             <router-link
-              to="/acceso-empresarial"
+              to="/auth"
               class="text-[11px] uppercase tracking-[0.18em] font-semibold text-luxury-gold hover:text-luxury-black transition-colors"
             >
               Acceso profesional
@@ -237,7 +237,7 @@
 
           <div class="flex flex-col sm:flex-row gap-3">
             <router-link
-              to="/acceso-empresarial"
+              to="/auth"
               class="inline-flex items-center justify-center px-8 py-3 bg-luxury-black text-white font-bold uppercase tracking-widest text-xs rounded-full hover:bg-luxury-gold transition"
             >
               Solicitar alta
@@ -276,16 +276,16 @@ const mobileFiltersOpen = ref(false)
 const handleImageSearchUpload = async (event) => {
   const file = event.target.files?.[0]
   if (!file) return
-  
+
   isSearchingImage.value = true
   if (toast) toast.show('Analizando imagen con IA...', 'info', 3000)
-  
+
   try {
     const base64Image = await compressImageForSearch(file)
     const res = await apiClient.post('/api/productos/buscar-por-imagen', {
       image: base64Image
     })
-    
+
     if (res.data && res.data.keywords) {
       searchTerm.value = res.data.keywords
       const el = document.getElementById('catalogo')
@@ -316,7 +316,7 @@ const compressImageForSearch = (file) => {
         const max_dim = 600
         let w = img.width
         let h = img.height
-        
+
         if (w > max_dim || h > max_dim) {
           if (w > h) {
             h = Math.round((h * max_dim) / w)
@@ -326,7 +326,7 @@ const compressImageForSearch = (file) => {
             h = max_dim
           }
         }
-        
+
         canvas.width = w
         canvas.height = h
         const ctx = canvas.getContext('2d')
@@ -345,20 +345,20 @@ const printCatalog = () => {
     if (toast) toast.show('No hay productos para exportar', 'warning', 2500)
     return
   }
-  
+
   const printWindow = window.open('', '_blank')
   if (!printWindow) {
     if (toast) toast.show('✗ El navegador bloqueó la ventana emergente. Por favor, permítela.', 'error', 3000)
     return
   }
-  
+
   const productCardsHtml = productsToPrint.map(p => {
     const imageUrl = getImageUrl(p.imagen)
-    const precioHtml = authStore.canSeePrices && p.precio 
+    const precioHtml = authStore.canSeePrices && p.precio
       ? `<div class="price">${p.enOferta && p.precioOferta ? p.precioOferta : p.precio} €</div>`
       : ''
     const refHtml = p.nombre ? `<div class="ref">Ref: ${p.nombre}</div>` : ''
-    
+
     return `
       <div class="card">
         <div class="img-wrapper">
@@ -373,7 +373,7 @@ const printCatalog = () => {
       </div>
     `
   }).join('')
-  
+
   const htmlContent = `
     <!DOCTYPE html>
     <html lang="es">
@@ -493,16 +493,16 @@ const printCatalog = () => {
         <div class="logo">IBERNOVIA</div>
         <div class="catalog-title">Colección: ${selectedFamily.value} / ${selectedCategory.value}</div>
       </header>
-      
+
       <div class="grid">
         ${productCardsHtml}
       </div>
-      
+
       <footer>
         <p>Ibernovia Atelier - Calle Forjadores, 1, 23740 Andújar, Jaén - Tlf: 953 51 50 70 - info@ibernovia.es</p>
         <p>Documento generado dinámicamente como catálogo comercial de referencia.</p>
       </footer>
-      
+
       ` + `<script>` + `
         window.addEventListener('load', () => {
           setTimeout(() => {
@@ -514,7 +514,7 @@ const printCatalog = () => {
     </body>
     </html>
   `
-  
+
   printWindow.document.open()
   printWindow.document.write(htmlContent)
   printWindow.document.close()

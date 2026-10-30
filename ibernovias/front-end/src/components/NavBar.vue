@@ -1,6 +1,6 @@
 <template>
   <div class="w-full relative z-[75]">
-    <!-- Banner de Alta Empresarial visible en todas las paginas -->
+    <!-- Banner de Acceso profesionalrial visible en todas las paginas -->
     <div class="business-strip bg-luxury-black text-white text-[11px] sm:text-xs py-2 px-4 border-b border-luxury-gold/30 flex items-center justify-center gap-2 sm:gap-3 text-center tracking-wide shadow-sm">
       <span class="text-gray-300 font-medium">Profesionales del sector</span>
       <router-link
@@ -27,7 +27,7 @@
 
           <div class="hidden lg:flex items-center gap-8">
             <router-link to="/" class="menu-link">Inicio</router-link>
-            <router-link :to="{ path: '/tienda', hash: '#catalogo' }" class="menu-link">Catalogo</router-link>
+            <router-link :to="{ path: '/tienda', hash: '#catalogo' }" class="menu-link">Catálogo</router-link>
             <button type="button" class="menu-link" @click="openEventsModal">Eventos</button>
             <router-link to="/contacto" class="menu-link">Contacto</router-link>
           </div>
@@ -45,10 +45,10 @@
             </button>
 
             <router-link
-              to="/acceso-empresarial"
+              to="/auth"
               class="business-btn hidden sm:inline-flex"
             >
-              Alta Empresa
+              Acceso profesional
             </router-link>
 
           <router-link
@@ -74,7 +74,7 @@
               @click="toggleUserMenu"
               :aria-expanded="showUserMenu ? 'true' : 'false'"
               class="icon-btn"
-              aria-label="Menu de usuario"
+              aria-label="Menú de usuario"
             >
               <svg v-if="!authStore.isAuthenticated" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M16 7a4 4 0 1 1-8 0 4 4 0 0 1 8 0ZM12 14a7 7 0 0 0-7 7h14a7 7 0 0 0-7-7Z" />
@@ -86,7 +86,7 @@
               <div v-if="showUserMenu" class="fixed w-56 bg-white border border-black/15 rounded-md shadow-xl z-[9999]" :style="userMenuStyles" ref="userMenuDropdown">
                 <div v-if="!authStore.isAuthenticated" class="p-4">
                   <router-link to="/auth" @click="showUserMenu = false" class="block text-center bg-black text-white py-2 font-semibold uppercase text-xs tracking-wider hover:bg-black/80 transition rounded">
-                    Iniciar sesion
+                    Iniciar sesión
                   </router-link>
                 </div>
                 <div v-else>
@@ -99,14 +99,14 @@
                     <router-link v-else to="/acceso-empresarial" @click="showUserMenu = false" class="menu-item">Alta empresarial</router-link>
                     <router-link to="/cuenta" @click="showUserMenu = false" class="menu-item">Mi cuenta</router-link>
                     <router-link v-if="authStore.isAdmin" to="/admin" @click="showUserMenu = false" class="menu-item">Panel admin</router-link>
-                    <button @click="handleLogout" class="w-full text-left px-3 py-2 text-sm text-red-600 hover:bg-red-50 rounded">Cerrar sesion</button>
+                    <button @click="handleLogout" class="w-full text-left px-3 py-2 text-sm text-red-600 hover:bg-red-50 rounded">Cerrar sesión</button>
                   </nav>
                 </div>
               </div>
             </Teleport>
           </div>
 
-          <button @click="toggleMobileMenu" class="icon-btn lg:hidden" aria-label="Abrir menu movil">
+          <button @click="toggleMobileMenu" class="icon-btn mobile-menu-toggle" aria-label="Abrir menú móvil">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M4 6h16M4 12h16M4 18h16"/>
             </svg>
@@ -120,7 +120,7 @@
         <div class="bg-[#ececec] w-11/12 max-w-sm mt-10 mx-auto rounded-md shadow-xl border border-black/10 max-h-[84vh] overflow-hidden flex flex-col">
           <div class="p-4 border-b border-black/10 flex items-center justify-between">
             <span class="font-semibold tracking-[0.2em] text-sm">MENÚ</span>
-            <button @click="mobileOpen = false" class="icon-btn" aria-label="Cerrar menu movil">
+            <button @click="mobileOpen = false" class="icon-btn" aria-label="Cerrar menú móvil">
               <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
               </svg>
@@ -135,39 +135,40 @@
               <router-link to="/contacto" @click="mobileOpen = false" class="block px-3 py-2.5 rounded-lg text-sm uppercase tracking-wider font-semibold hover:bg-white/60">Contacto</router-link>
             </div>
 
+            <router-link to="/auth" @click="mobileOpen = false" class="block px-3 py-3 text-sm font-semibold">Acceso profesional</router-link>
             <!-- Categorías en Acordeón -->
             <div>
               <p class="px-3 pb-3 text-xs uppercase tracking-[0.18em] text-black/60 font-bold">Colecciones</p>
               <div v-if="mobileCategories.length === 0" class="px-3 py-2 text-xs text-black/60">Cargando categorías...</div>
               <ul class="space-y-2">
                 <li v-for="family in mobileCategories" :key="family.name" class="bg-white/50 rounded-lg overflow-hidden border border-black/5">
-                  <button 
-                    @click="toggleFamily(family.name)" 
+                  <button
+                    @click="toggleFamily(family.name)"
                     class="w-full flex items-center justify-between px-4 py-3 text-sm font-semibold hover:bg-white/80 transition"
                   >
                     <span>{{ family.name }}</span>
-                    <svg 
-                      :class="['w-4 h-4 transition-transform duration-200', expandedFamily === family.name ? 'rotate-180' : '']" 
+                    <svg
+                      :class="['w-4 h-4 transition-transform duration-200', expandedFamily === family.name ? 'rotate-180' : '']"
                       fill="none" stroke="currentColor" viewBox="0 0 24 24"
                     >
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
                     </svg>
                   </button>
-                  
+
                   <div v-if="expandedFamily === family.name" class="bg-white/80 border-t border-black/5 p-3 space-y-2">
                     <div class="grid grid-cols-2 gap-2">
-                      <router-link 
-                        :to="{ path: '/tienda', hash: '#catalogo', query: { familia: family.name } }" 
+                      <router-link
+                        :to="{ path: '/tienda', hash: '#catalogo', query: { familia: family.name } }"
                         @click="mobileOpen = false"
                         class="block px-3 py-2 bg-white/90 rounded border border-black/5 text-xs text-center font-bold text-luxury-gold uppercase tracking-wider hover:bg-luxury-gold hover:text-white transition"
                       >
                         Ver Todo
                       </router-link>
-                      <router-link 
-                        v-for="cat in family.categories" 
-                        :key="cat" 
-                        :to="{ path: '/tienda', hash: '#catalogo', query: { familia: family.name, categoria: cat } }" 
-                        @click="mobileOpen = false" 
+                      <router-link
+                        v-for="cat in family.categories"
+                        :key="cat"
+                        :to="{ path: '/tienda', hash: '#catalogo', query: { familia: family.name, categoria: cat } }"
+                        @click="mobileOpen = false"
                         class="block px-3 py-2 bg-white/70 hover:bg-white rounded border border-black/5 text-xs text-center text-black/80 truncate"
                       >
                         {{ cat }}
@@ -194,7 +195,7 @@
                 ref="searchInput"
                 v-model="searchQuery"
                 type="text"
-                placeholder="Que estas buscando?"
+                placeholder="¿Qué estás buscando?" aria-label="Buscar por nombre o referencia"
                 class="search-input"
               />
               <button type="button" @click="closeSearch" class="close-search-btn" aria-label="Cerrar buscador">
@@ -282,7 +283,7 @@ import { computed, nextTick, onBeforeUnmount, onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useCartStore } from '../stores/cart'
 import { useAuthStore } from '../stores/auth'
-import { apiClient, fetchCachedProducts, getImageUrl } from '../lib/api'
+import { fetchCachedProducts, getImageUrl } from '../lib/api'
 import BusinessAccessModal from './BusinessAccessModal.vue'
 import EventsModal from './EventsModal.vue'
 
@@ -389,7 +390,7 @@ const mobileCategories = computed(() => {
 
 const getProductImage = (product) => {
   if (product && product.imagen) return getImageUrl(product.imagen)
-  return 'https://placehold.co/400x400/e5e5e5/3a3a3a?text=Ibernovia'
+  return '/logo/logo.jpg'
 }
 
 const loadAllProducts = async () => {
@@ -513,7 +514,6 @@ const handleDocumentKeydown = (event) => {
 }
 
 onMounted(() => {
-  loadAllProducts()
   document.addEventListener('click', handleDocumentClick)
   document.addEventListener('keydown', handleDocumentKeydown)
   window.addEventListener('resize', updateUserMenuPosition)
@@ -768,8 +768,8 @@ onBeforeUnmount(() => {
   }
 
   .icon-btn {
-    min-width: 40px;
-    height: 40px;
+    min-width: 44px;
+    height: 44px;
   }
 
   .business-btn {
@@ -786,5 +786,8 @@ onBeforeUnmount(() => {
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
   }
+}
+@media (min-width: 1024px) {
+  .mobile-menu-toggle { display: none; }
 }
 </style>

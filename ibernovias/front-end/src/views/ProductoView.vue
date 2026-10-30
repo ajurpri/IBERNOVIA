@@ -1,5 +1,5 @@
 <template>
-  <div class="min-h-screen bg-white py-6 sm:py-8 md:py-12">
+  <div class="public-product-page min-h-screen bg-white py-6 sm:py-8 md:py-12">
     <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
       <!-- Breadcrumb -->
       <div class="mb-6 sm:mb-8 text-xs sm:text-sm text-gray-500">
@@ -26,7 +26,7 @@
         <!-- Galería de Imágenes -->
         <div class="flex flex-col gap-4">
           <!-- Imagen Principal -->
-          <div 
+          <div
             class="bg-gray-50 aspect-[3/4] overflow-hidden rounded-2xl border border-black/5 relative shadow-sm cursor-zoom-in"
             @mousemove="handleZoomMouseMove"
             @mouseenter="isZoomActive = true"
@@ -34,7 +34,7 @@
           >
                <img
                  :src="getImageUrl(currentImageUrl)"
-                 :alt="producto.nombre"
+                 :alt="productName(producto)"
                  @error="imagenError = true"
                  loading="eager"
                  fetchpriority="high"
@@ -61,14 +61,14 @@
               class="w-20 aspect-[3/4] rounded-lg overflow-hidden border-2 bg-gray-50 transition duration-300"
               :class="selectedImageIndex === 0 ? 'border-luxury-gold scale-[1.03] shadow' : 'border-black/5 hover:border-gray-300'"
             >
-              <img :src="getImageUrl(producto.imagen)" :alt="producto.nombre" class="w-full h-full object-cover" loading="lazy" fetchpriority="low" decoding="async">
+              <img :src="getImageUrl(producto.imagen)" :alt="productName(producto)" class="w-full h-full object-contain p-3" loading="lazy" fetchpriority="low" decoding="async">
             </button>
             <button
               @click="selectImage(1)"
               class="w-20 aspect-[3/4] rounded-lg overflow-hidden border-2 bg-gray-50 transition duration-300"
               :class="selectedImageIndex === 1 ? 'border-luxury-gold scale-[1.03] shadow' : 'border-black/5 hover:border-gray-300'"
             >
-              <img :src="getImageUrl(producto.imagen2)" :alt="producto.nombre" class="w-full h-full object-cover" loading="lazy" fetchpriority="low" decoding="async">
+              <img :src="getImageUrl(producto.imagen2)" :alt="productName(producto)" class="w-full h-full object-contain p-3" loading="lazy" fetchpriority="low" decoding="async">
             </button>
           </div>
 
@@ -94,10 +94,10 @@
           <!-- Nombre y precio -->
           <div class="mb-5 sm:mb-6 pb-5 sm:pb-6 border-b border-gray-200">
             <h1 class="font-serif text-2xl sm:text-3xl md:text-4xl text-luxury-black mb-3">
-              {{ producto.nombre }}
+              {{ productName(producto) }}
             </h1>
-            <p class="text-gray-500 text-sm mb-5 sm:mb-6 leading-relaxed">
-              {{ producto.descripcion }}
+            <p class="whitespace-pre-line text-gray-600 text-sm mb-5 sm:mb-6 leading-relaxed">
+              {{ sentenceCase(producto.descripcion) }}
             </p>
             <div v-if="authStore.canSeePrices && producto.precio !== null && producto.precio !== undefined" class="flex items-baseline gap-3">
               <template v-if="producto.enOferta">
@@ -114,16 +114,19 @@
             <div v-else class="rounded-lg border border-luxury-gold/30 bg-luxury-gray/60 px-4 py-4">
               <p class="text-sm text-gray-600">Catálogo público. Tarifas y solicitudes de presupuesto disponibles solo para clientes profesionales.</p>
               <router-link to="/acceso-empresarial" class="inline-block mt-2 text-xs uppercase tracking-widest font-semibold text-luxury-black hover:text-luxury-gold transition">
-                Solicitar acceso empresarial
+                Solicitar alta
               </router-link>
             </div>
           </div>
 
-          <!-- SKU y Ref -->
+          <a :href="getImageUrl(currentImageUrl)" target="_blank" rel="noopener" class="inline-block mb-4 underline text-sm">Ver fotografía ampliada</a>
+          <a :href="productWhatsAppUrl(producto)" target="_blank" rel="noopener" class="product-enquiry mb-6">Consultar este producto por WhatsApp</a>
+
+          <!-- Commercial reference -->
           <div class="mb-6 pb-6 border-b border-gray-200 space-y-2 text-sm">
             <div>
               <span class="text-gray-500">Referencia:</span>
-              <span class="font-mono text-gray-900 ml-2">#{{ producto.id }}</span>
+              <span class="font-mono text-gray-900 ml-2">{{ productReference(producto) }}</span>
             </div>
             <div v-if="authStore.canSeePrices">
               <span class="text-gray-500">Stock:</span>
@@ -133,14 +136,14 @@
 
           <!-- Selector de Cantidad y Agregar al Carrito -->
           <div v-if="authStore.canRequestQuote" class="mb-6 sm:mb-8">
-            <label class="block text-xs sm:text-sm font-bold uppercase tracking-widest text-gray-700 mb-3">Cantidad</label>
+            <label for="product-quantity" class="block text-xs sm:text-sm font-bold uppercase tracking-widest text-gray-700 mb-3">Cantidad</label>
             <div class="flex gap-4 items-end">
               <div class="flex items-center border border-gray-300 rounded">
                 <button @click="cantidad > 1 && cantidad--" class="px-3 sm:px-4 py-2 text-gray-600 hover:bg-gray-100 text-lg">−</button>
-                <input 
-                  v-model.number="cantidad" 
-                  type="number" 
-                  min="1" 
+                <input
+                  id="product-quantity" v-model.number="cantidad"
+                  type="number"
+                  min="1"
                   :max="producto.stock"
                   class="w-14 sm:w-16 text-center border-0 focus:outline-none text-base sm:text-lg font-semibold"
                 >
@@ -160,10 +163,10 @@
 
           <router-link
             v-else
-            to="/acceso-empresarial"
+            to="/auth"
             class="block w-full text-center bg-luxury-black text-white py-3.5 sm:py-4 font-bold uppercase tracking-widest text-sm sm:text-lg hover:bg-luxury-gold hover:text-luxury-black transition mb-3"
           >
-            Solicitar condiciones comerciales
+            Acceso profesional: tarifas y condiciones
           </router-link>
 
           <!-- Link a Carrito -->
@@ -204,7 +207,7 @@
           <h2 class="font-serif text-xl sm:text-2xl md:text-3xl text-luxury-black mb-2">También te podría gustar</h2>
           <div class="h-0.5 w-12 bg-luxury-gold mx-auto"></div>
         </div>
-        
+
         <div class="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6">
           <div v-for="rel in relatedProducts" :key="rel.id" class="group cursor-pointer">
             <router-link :to="`/producto/${rel.id}`" class="block">
@@ -212,7 +215,7 @@
                 <img
                   :src="getImageUrl(rel.imagen)"
                   :alt="rel.nombre"
-                  class="w-full h-full object-cover group-hover:scale-105 transition duration-500"
+                  class="w-full h-full object-contain p-3 group-hover:scale-105 transition duration-500"
                   loading="lazy"
                   decoding="async"
                   width="400"
@@ -243,6 +246,7 @@
 import { ref, onMounted, watch, computed } from 'vue'
 import { useRoute } from 'vue-router'
 import { apiClient, getImageUrl } from '../lib/api'
+import { productName, productReference, sentenceCase, productWhatsAppUrl } from '../lib/productPresentation'
 import { useCartStore } from '../stores/cart'
 import { useAuthStore } from '../stores/auth'
 
@@ -275,7 +279,7 @@ const handleZoomMouseMove = (event) => {
   const rect = container.getBoundingClientRect()
   const x = ((event.clientX - rect.left) / rect.width) * 100
   const y = ((event.clientY - rect.top) / rect.height) * 100
-  
+
   zoomStyle.value = {
     transform: 'scale(2.2)',
     transformOrigin: `${x}% ${y}%`,
@@ -289,7 +293,7 @@ const selectImage = (index) => {
 }
 
 const mainImageClass = computed(() => [
-  'w-full h-full object-cover transition duration-500',
+  'w-full h-full object-contain p-3 transition duration-500',
   !imagenError.value ? '' : 'hidden'
 ])
 
@@ -302,10 +306,10 @@ const loadProductData = async (id) => {
     producto.value = res.data
     selectedImageIndex.value = 0
     imagenError.value = false
-    
+
     if (producto.value) {
       // Inyectar SEO dinámico del producto
-      const title = `${producto.value.nombre} | IBERNOVIA`
+      const title = `${productName(producto.value)} · ${productReference(producto.value)} | IBERNOVIA`
       const desc = producto.value.descripcion || `Detalles de ${producto.value.nombre} (${producto.value.categoria}) en IBERNOVIA.`
       document.title = title
 
@@ -351,12 +355,14 @@ const loadProductData = async (id) => {
       const resRel = await apiClient.get(`/api/productos/familia/${familiaEncoded}`)
       relatedProducts.value = resRel.data
         .filter(p => p.id !== producto.value.id)
+        .sort((a, b) => Number(b.categoria === producto.value.categoria) - Number(a.categoria === producto.value.categoria))
         .slice(0, 4)
     } else if (producto.value.categoria) {
       const categoriaEncoded = encodeURIComponent(producto.value.categoria)
       const resRel = await apiClient.get(`/api/productos/categoria/${categoriaEncoded}`)
       relatedProducts.value = resRel.data
         .filter(p => p.id !== producto.value.id)
+        .sort((a, b) => Number(b.categoria === producto.value.categoria) - Number(a.categoria === producto.value.categoria))
         .slice(0, 4)
     }
   } catch (e) {

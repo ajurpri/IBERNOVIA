@@ -24,7 +24,7 @@ const routes = [
     component: HomeView,
     meta: {
       title: 'IBERNOVIA | Inicio',
-      description: 'IBERNOVIA Atelier: diseño nupcial y complementos profesionales.'
+      description: 'Ibernovia: complementos de ceremonia para tiendas y profesionales.'
     }
   },
   {
@@ -148,7 +148,7 @@ const router = createRouter({
       return savedPosition
     }
     if (to.hash) {
-      return { el: to.hash, behavior: 'smooth' }
+      return { el: to.hash, behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' }
     }
     return { top: 0 }
   }
@@ -156,7 +156,7 @@ const router = createRouter({
 
 router.afterEach((to) => {
   const defaultTitle = 'IBERNOVIA | Complementos Nupciales'
-  const defaultDesc = 'IBERNOVIA: complementos nupciales de alta costura en Andújar, Jaén. Tienda con asesoramiento personalizado y diseños exclusivos.'
+  const defaultDesc = 'Ibernovia: complementos de ceremonia para tiendas y profesionales en Andújar, Jaén. Catálogo público y tarifas tras validación profesional.'
   const title = to.meta?.title || defaultTitle
   const desc = to.meta?.description || defaultDesc
 

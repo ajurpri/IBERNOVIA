@@ -2,13 +2,14 @@
   <div class="b2b-page">
     <section class="b2b-header">
       <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-14">
-        <p class="b2b-eyebrow">Acceso profesional</p>
+        <p class="b2b-eyebrow">Solicitar alta</p>
         <div class="b2b-header-grid">
           <div>
             <h1 class="b2b-title">Solicitud de alta para empresa</h1>
             <p class="b2b-intro">
-              Esta area esta dirigida a tiendas y profesionales del sector que quieran solicitar acceso comercial a Ibernovia.
+              Esta área está dirigida a tiendas y profesionales del sector que quieran solicitar acceso comercial a Ibernovia.
             </p>
+            <p class="mt-4 text-sm">¿Ya tienes cuenta? <router-link to="/auth" class="underline">Acceso profesional</router-link></p>
             <div class="b2b-hero-actions">
               <a href="#solicitud-alta" class="b2b-hero-primary">Rellenar solicitud</a>
               <a :href="whatsappAltaUrl" target="_blank" rel="noopener" class="b2b-hero-secondary">Consultar por WhatsApp</a>
@@ -16,7 +17,7 @@
           </div>
 
           <div class="b2b-summary">
-            <p class="b2b-summary-title">Revision manual</p>
+            <p class="b2b-summary-title">Revisión manual</p>
             <p class="b2b-summary-copy">
               Revisamos cada solicitud antes de activar el acceso profesional.
             </p>
@@ -30,7 +31,7 @@
                 <dd>info@ibernovia.es</dd>
               </div>
               <div>
-                <dt>Telefono</dt>
+                <dt>Teléfono</dt>
                 <dd>953 51 50 70</dd>
               </div>
             </dl>
@@ -44,17 +45,17 @@
         <ol class="b2b-process-strip" aria-label="Proceso de alta profesional">
           <li>
             <span>01</span>
-            <strong>Recepcion</strong>
+            <strong>Recepción</strong>
             <p>Recibimos los datos fiscales y de contacto.</p>
           </li>
           <li>
             <span>02</span>
-            <strong>Revision</strong>
+            <strong>Revisión</strong>
             <p>Comprobamos cada solicitud de forma manual.</p>
           </li>
           <li>
             <span>03</span>
-            <strong>Activacion</strong>
+            <strong>Activación</strong>
             <p>Te respondemos con los siguientes pasos.</p>
           </li>
         </ol>
@@ -114,7 +115,7 @@
                   </label>
 
                   <label class="b2b-input-group">
-                    <span class="b2b-input-label">Telefono *</span>
+                    <span class="b2b-input-label">Teléfono *</span>
                     <input
                       v-model="form.telefono"
                       required
@@ -152,7 +153,7 @@
                 <legend class="b2b-fieldset-title">Actividad</legend>
 
                 <label class="b2b-input-group">
-                  <span class="b2b-input-label">Informacion adicional</span>
+                  <span class="b2b-input-label">Información adicional</span>
                   <textarea
                     v-model="form.mensaje"
                     rows="5"
@@ -201,7 +202,7 @@
               <p class="b2b-section-label">Contacto</p>
               <h3 class="b2b-side-title">Atencion directa</h3>
               <div class="b2b-contact-list">
-                <p><strong>Telefono:</strong> 953 51 50 70</p>
+                <p><strong>Teléfono:</strong> 953 51 50 70</p>
                 <p><strong>WhatsApp:</strong> 619 62 56 79</p>
                 <p><strong>Email:</strong> info@ibernovia.es</p>
                 <p><strong>Horario:</strong> 09:00 a 14:00 y 17:00 a 20:00</p>
@@ -243,7 +244,7 @@ const validarEmail = (email) => {
   return regex.test(email)
 }
 
-const validarTelefono = (telefono) => {
+const validarTeléfono = (telefono) => {
   const regex = /^[\d\s+\-()]{9,}$/
   return regex.test(telefono.replace(/\s/g, ''))
 }
@@ -255,7 +256,7 @@ const validarFormulario = () => {
   if (!form.value.cif.trim()) errores.push('El CIF/NIF es requerido')
   if (!form.value.contacto.trim()) errores.push('El nombre de contacto es requerido')
   if (!form.value.telefono.trim()) errores.push('El telefono es requerido')
-  if (!validarTelefono(form.value.telefono)) errores.push('El telefono no tiene formato valido')
+  if (!validarTeléfono(form.value.telefono)) errores.push('El telefono no tiene formato valido')
   if (!form.value.email.trim()) errores.push('El email es requerido')
   if (!validarEmail(form.value.email)) errores.push('El email no es valido')
   if (!form.value.provincia.trim()) errores.push('La provincia es requerida')
@@ -287,7 +288,7 @@ SOLICITUD DE ACCESO EMPRESARIAL
 Empresa: ${form.value.empresa}
 CIF/NIF: ${form.value.cif}
 Contacto: ${form.value.contacto}
-Telefono: ${form.value.telefono}
+Teléfono: ${form.value.telefono}
 Email: ${form.value.email}
 Provincia: ${form.value.provincia}
 

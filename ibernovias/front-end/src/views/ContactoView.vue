@@ -98,11 +98,10 @@
           <h2 class="font-serif text-2xl font-light text-luxury-black tracking-wide border-b border-black/5 pb-4 mb-2">Escribenos</h2>
 
           <div class="relative group">
-            <label class="block text-[10px] uppercase tracking-[0.25em] text-gray-400 font-bold mb-1 transition-colors group-focus-within:text-luxury-gold">
+            <label for="contact-form-nombre" class="block text-[10px] uppercase tracking-[0.25em] text-gray-400 font-bold mb-1 transition-colors group-focus-within:text-luxury-gold">
               Nombre completo
             </label>
-            <input
-              v-model="form.nombre"
+            <input id="contact-form-nombre" v-model="form.nombre"
               type="text"
               required
               autocomplete="name"
@@ -111,11 +110,10 @@
           </div>
 
           <div class="relative group">
-            <label class="block text-[10px] uppercase tracking-[0.25em] text-gray-400 font-bold mb-1 transition-colors group-focus-within:text-luxury-gold">
+            <label for="contact-form-email" class="block text-[10px] uppercase tracking-[0.25em] text-gray-400 font-bold mb-1 transition-colors group-focus-within:text-luxury-gold">
               Correo electronico
             </label>
-            <input
-              v-model="form.email"
+            <input id="contact-form-email" v-model="form.email"
               type="email"
               required
               autocomplete="email"
@@ -124,11 +122,10 @@
           </div>
 
           <div class="relative group">
-            <label class="block text-[10px] uppercase tracking-[0.25em] text-gray-400 font-bold mb-1 transition-colors group-focus-within:text-luxury-gold">
+            <label for="contact-form-asunto" class="block text-[10px] uppercase tracking-[0.25em] text-gray-400 font-bold mb-1 transition-colors group-focus-within:text-luxury-gold">
               Asunto
             </label>
-            <input
-              v-model="form.asunto"
+            <input id="contact-form-asunto" v-model="form.asunto"
               type="text"
               required
               autocomplete="off"
@@ -137,11 +134,10 @@
           </div>
 
           <div class="relative group">
-            <label class="block text-[10px] uppercase tracking-[0.25em] text-gray-400 font-bold mb-1 transition-colors group-focus-within:text-luxury-gold">
+            <label for="contact-form-mensaje" class="block text-[10px] uppercase tracking-[0.25em] text-gray-400 font-bold mb-1 transition-colors group-focus-within:text-luxury-gold">
               Mensaje
             </label>
-            <textarea
-              v-model="form.mensaje"
+            <textarea id="contact-form-mensaje" v-model="form.mensaje"
               required
               rows="4"
               autocomplete="off"
@@ -216,7 +212,7 @@ const submitForm = async () => {
       console.error('Error enviando correo por PHP:', err)
     })
 
-    mensaje.value = 'Gracias por tu mensaje. Lo hemos recibido y te hemos enviado una confirmacion por correo.'
+    mensaje.value = 'Gracias por tu mensaje. Lo hemos recibido y te hemos enviado una confirmación por correo.'
     exito.value = true
     form.value = { nombre: '', email: '', asunto: '', mensaje: '' }
   } catch (error) {

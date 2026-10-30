@@ -1,81 +1,27 @@
 <template>
   <div class="home-page min-h-screen bg-[#fdfdfc] flex flex-col justify-between">
-    
-    <!-- Hero Section (Minimalist Full-Bleed Editorial Banner) -->
-    <section class="home-hero-section relative h-[85vh] min-h-[550px] flex items-center justify-center overflow-hidden" aria-label="Portada">
-      
-      <!-- Fading Campaign Background -->
-      <div class="absolute inset-0 z-0 bg-[#fbfbfa]">
-        <div 
-          v-for="(img, idx) in heroImages" 
-          :key="idx"
-          class="absolute inset-0 transition-opacity duration-1500 ease-in-out"
-          :class="currentHeroIndex === idx ? 'opacity-100' : 'opacity-0'"
-        >
-          <img
-            :src="img.url"
-            :alt="img.alt"
-            class="w-full h-full object-cover select-none pointer-events-none"
-            :loading="idx === 0 ? 'eager' : 'lazy'"
-            :fetchpriority="idx === 0 ? 'high' : 'low'"
-            decoding="async"
-          />
-        </div>
-        
-        <!-- Light Frosted Editorial Overlay -->
-        <div class="absolute inset-0 bg-[#fdfdfc]/80 backdrop-blur-[1px] z-10"></div>
-        <div class="absolute inset-0 bg-gradient-to-b from-[#fdfdfc]/10 via-transparent to-[#fdfdfc] z-10"></div>
-      </div>
 
-      <!-- Centered Premium Typography & Content -->
-      <div class="home-hero-copy relative z-20 max-w-4xl mx-auto px-6 text-center space-y-6 sm:space-y-8 animate-fade-in-up">
-        <p class="home-eyebrow text-[10px] sm:text-xs uppercase tracking-[0.45em] text-luxury-gold font-bold mb-2">
-          Colección Atelier 2026
-        </p>
-        
-        <div class="space-y-4">
-          <h1 class="home-wordmark font-serif text-5xl sm:text-7xl lg:text-8xl font-light tracking-[0.15em] text-luxury-black leading-none">
-            IBERNOVIA
-          </h1>
-          <p class="home-subline font-serif text-base sm:text-lg lg:text-xl tracking-[0.55em] text-luxury-black/50 uppercase font-light">
-            ALTA COSTURA & COMPLEMENTOS
-          </p>
-        </div>
-        
-        <div class="w-16 h-[1px] bg-luxury-gold mx-auto my-6 sm:my-8"></div>
-        
-        <p class="text-xs sm:text-sm text-gray-500 leading-relaxed max-w-lg mx-auto tracking-wide font-light">
-          Descubra nuestros complementos exclusivos para novia, novio, fiesta, madrina, comunión y arras.
-        </p>
-        
-        <div class="pt-6 sm:pt-8">
-          <router-link
-            to="/acceso-empresarial"
-            class="inline-flex items-center px-10 py-3.5 border border-luxury-black text-luxury-black hover:bg-luxury-black hover:text-white transition-all duration-500 text-[10px] uppercase tracking-[0.25em] font-bold"
-          >
-            Acceso Empresarial
-          </router-link>
+    <section class="home-hero" aria-label="Portada">
+      <div class="home-hero-copy">
+        <p class="home-eyebrow">Complementos de ceremonia</p>
+        <h1 class="home-wordmark">IBERNOVIA</h1>
+        <p class="home-hero-description">Complementos de novia, novio, fiesta, comunión y arras para tiendas y profesionales.</p>
+        <div class="home-hero-actions">
+          <router-link to="/tienda" class="home-primary">Explorar catálogo</router-link>
+          <router-link to="/auth" class="home-secondary">Acceso profesional</router-link>
         </div>
       </div>
-
-      <!-- Discrete Slideshow Indicators (Bottom Center) -->
-      <div class="absolute bottom-8 left-1/2 -translate-x-1/2 z-20 flex gap-3">
-        <button 
-          v-for="(_, idx) in heroImages" 
-          :key="idx"
-          @click="currentHeroIndex = idx"
-          class="w-1.5 h-1.5 rounded-full transition-all duration-500"
-          :class="currentHeroIndex === idx ? 'bg-luxury-gold w-6' : 'bg-luxury-black/25 hover:bg-luxury-black/50'"
-          :aria-label="`Ver imagen ${idx + 1}`"
-        ></button>
-      </div>
+      <picture class="home-hero-photo">
+        <source media="(max-width: 640px)" srcset="/images/portada/velo-640.webp 640w, /images/portada/velo-960.webp 960w" sizes="100vw">
+        <img src="/images/catalogo/novia/velos/17815-lentejuelas.webp" alt="Detalle del velo de novia del catálogo Ibernovia" width="1200" height="797" loading="eager" fetchpriority="high" decoding="async">
+      </picture>
     </section>
 
     <section class="home-families" aria-label="Accesos por familia">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="home-families-head">
           <div>
-            <p class="home-families-kicker">Explorar catalogo</p>
+            <p class="home-families-kicker">Explorar catálogo</p>
             <h2 class="home-families-title">Colecciones principales</h2>
           </div>
           <router-link :to="{ path: '/tienda', hash: '#catalogo' }" class="home-families-link">Ver todo</router-link>
@@ -88,7 +34,7 @@
             :to="{ path: '/tienda', hash: '#catalogo', query: { familia: family.query } }"
             class="home-family-card"
           >
-            <img :src="family.image" :alt="family.alt" loading="lazy" fetchpriority="low" decoding="async">
+            <img :src="family.image" :alt="family.alt" width="400" height="533" loading="lazy" fetchpriority="low" decoding="async">
             <span class="home-family-shade"></span>
             <span class="home-family-copy">
               <strong>{{ family.name }}</strong>
@@ -99,80 +45,22 @@
       </div>
     </section>
 
-    <!-- Horizontal Infinite Slider Section -->
+    <!-- Static selection; no duplicated products or automatic movement. -->
     <section class="home-featured py-12 bg-[#fdfdfc] border-t border-b border-black/5 overflow-hidden" aria-label="Colección destacada">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 mb-6">
         <div class="text-center md:text-left">
           <h2 class="font-serif text-2xl sm:text-3xl text-luxury-black tracking-wide">Nuestra Selección</h2>
-          <p class="text-xs uppercase tracking-widest text-gray-500 mt-1">Avance de catálogo • Diseños exclusivos para profesionales</p>
+          <p class="text-xs uppercase tracking-widest text-gray-500 mt-1">Complementos para tiendas y profesionales</p>
         </div>
       </div>
 
-      <!-- Marquee container -->
-      <div v-if="loading" class="flex justify-center py-8">
-        <div class="animate-spin rounded-full h-8 w-8 border-2 border-luxury-gold border-t-transparent"></div>
-      </div>
-      
-      <div v-else-if="products.length > 0" class="relative w-full overflow-hidden py-4">
-        <!-- Overlays de gradiente para difuminado lateral premium -->
-        <div class="absolute left-0 top-0 bottom-0 w-12 sm:w-28 bg-gradient-to-r from-[#fdfdfc] to-transparent z-10 pointer-events-none"></div>
-        <div class="absolute right-0 top-0 bottom-0 w-12 sm:w-28 bg-gradient-to-l from-[#fdfdfc] to-transparent z-10 pointer-events-none"></div>
-
-        <div class="flex marquee-track">
-          <!-- Wrapper 1 -->
-          <div class="flex gap-6 pr-6 shrink-0">
-            <div 
-              v-for="prod in products" 
-              :key="`marquee-1-${prod.id}`" 
-              class="w-[150px] sm:w-[190px] shrink-0 group cursor-pointer"
-              @click="router.push(`/producto/${prod.id}`)"
-            >
-              <div class="aspect-[3/4] rounded-xl overflow-hidden bg-gray-50 border border-black/5 shadow-sm">
-                <img 
-                  :src="getProductImage(prod)" 
-                  :alt="prod.nombre" 
-                  class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                  loading="lazy"
-                  fetchpriority="low"
-                  decoding="async"
-                />
-              </div>
-              <h3 class="text-[11px] sm:text-xs font-semibold tracking-wider text-luxury-black mt-2.5 truncate text-center uppercase group-hover:text-luxury-gold transition-colors">
-                {{ prod.nombre }}
-              </h3>
-              <p class="text-[9px] sm:text-[10px] tracking-widest text-gray-400 text-center uppercase mt-0.5">
-                {{ prod.categoria }}
-              </p>
-            </div>
-          </div>
-
-          <!-- Wrapper 2 (Duplicado para scroll infinito sin cortes) -->
-          <div class="flex gap-6 pr-6 shrink-0" aria-hidden="true">
-            <div 
-              v-for="prod in products" 
-              :key="`marquee-2-${prod.id}`" 
-              class="w-[150px] sm:w-[190px] shrink-0 group cursor-pointer"
-              @click="router.push(`/producto/${prod.id}`)"
-            >
-              <div class="aspect-[3/4] rounded-xl overflow-hidden bg-gray-50 border border-black/5 shadow-sm">
-                <img 
-                  :src="getProductImage(prod)" 
-                  :alt="prod.nombre" 
-                  class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                  loading="lazy"
-                  fetchpriority="low"
-                  decoding="async"
-                />
-              </div>
-              <h3 class="text-[11px] sm:text-xs font-semibold tracking-wider text-luxury-black mt-2.5 truncate text-center uppercase group-hover:text-luxury-gold transition-colors">
-                {{ prod.nombre }}
-              </h3>
-              <p class="text-[9px] sm:text-[10px] tracking-widest text-gray-400 text-center uppercase mt-0.5">
-                {{ prod.categoria }}
-              </p>
-            </div>
-          </div>
-        </div>
+      <p v-if="loading" class="text-center py-8 text-sm" role="status">Cargando selección…</p>
+      <div v-else-if="products.length > 0" class="featured-products max-w-7xl mx-auto px-4 sm:px-6">
+        <router-link v-for="prod in products" :key="prod.id" :to="`/producto/${prod.id}`" class="featured-product">
+          <img :src="getProductImage(prod)" :alt="productName(prod)" width="400" height="533" loading="lazy" fetchpriority="low" decoding="async">
+          <h3>{{ productName(prod) }}</h3>
+          <p>Referencia: {{ productReference(prod) }}</p>
+        </router-link>
       </div>
 
       <div v-else class="text-center py-6 text-sm text-gray-500">
@@ -183,7 +71,7 @@
     <!-- Promotions Section (Editorial & Luxury Aesthetic) -->
     <section v-if="promociones.length > 0" class="home-promos py-16 bg-[#faf9f5] border-t border-black/5" aria-label="Promociones especiales">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        
+
         <!-- Refined Title Area -->
         <div class="text-center max-w-3xl mx-auto mb-16 animate-fade-in-up">
           <p class="text-xs uppercase tracking-[0.3em] text-luxury-gold font-bold mb-3">
@@ -200,18 +88,18 @@
 
         <!-- Promotions Cards Grid -->
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 sm:gap-10">
-          <div 
-            v-for="promo in promociones" 
+          <div
+            v-for="promo in promociones"
             :key="promo.id"
             class="bg-white rounded-2xl border border-black/5 overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 flex flex-col justify-between group"
           >
             <div>
               <!-- Promotion Image with Gold Overlay on Hover -->
               <div class="relative aspect-[16/9] w-full overflow-hidden bg-gray-50">
-                <img 
-                  v-if="promo.imagen" 
-                  :src="getImageUrl(promo.imagen)" 
-                  :alt="promo.titulo" 
+                <img
+                  v-if="promo.imagen"
+                  :src="getImageUrl(promo.imagen)"
+                  :alt="promo.titulo"
                   class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-102"
                   loading="lazy"
                   fetchpriority="low"
@@ -222,8 +110,8 @@
                   <span class="font-serif text-5xl font-light text-luxury-gold/30">%</span>
                 </div>
                 <!-- Discount Gold Badge -->
-                <span 
-                  v-if="promo.descuento" 
+                <span
+                  v-if="promo.descuento"
                   class="absolute top-4 left-4 bg-luxury-black text-[#faf9f5] text-[10px] font-bold uppercase tracking-[0.2em] px-3.5 py-1.5 rounded-full shadow-md z-10"
                 >
                   {{ promo.descuento }}
@@ -238,7 +126,7 @@
                 <p class="text-xs sm:text-sm text-gray-600 leading-relaxed">
                   {{ promo.descripcion }}
                 </p>
-                <div v-if="promo.precioOriginal || promo.precioOferta" class="flex items-center gap-3 pt-2">
+                <div v-if="authStore.canSeePrices && (promo.precioOriginal || promo.precioOferta)" class="flex items-center gap-3 pt-2">
                   <span v-if="promo.precioOriginal" class="text-sm line-through text-gray-400 font-light">
                     {{ promo.precioOriginal }}€
                   </span>
@@ -256,7 +144,7 @@
                   <p class="text-[9px] uppercase tracking-widest text-gray-400 font-bold mb-0.5">Código de Cupón</p>
                   <p class="font-mono text-sm font-bold text-luxury-black uppercase tracking-wider">{{ promo.codigo }}</p>
                 </div>
-                <button 
+                <button
                   @click="copyToClipboard(promo.codigo)"
                   class="text-xs text-luxury-gold hover:text-luxury-black font-bold uppercase tracking-wider transition-colors focus:outline-none"
                   title="Copiar cupón"
@@ -264,7 +152,7 @@
                   Copiar
                 </button>
               </div>
-              
+
               <!-- Expiry date -->
               <div v-if="promo.fechaFin" class="mt-4 flex items-center justify-center gap-2 text-[10px] uppercase tracking-widest text-gray-400">
                 <span>Válido hasta: {{ formatDate(promo.fechaFin) }}</span>
@@ -280,12 +168,13 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onBeforeUnmount, inject } from 'vue'
-import { useRouter } from 'vue-router'
+import { ref, onMounted, inject } from 'vue'
 import { apiClient, fetchCachedProducts, getImageUrl } from '../lib/api'
+import { productName, productReference } from '../lib/productPresentation'
+import { useAuthStore } from '../stores/auth'
 
-const router = useRouter()
 const toast = inject('toast', null)
+const authStore = useAuthStore()
 const products = ref([])
 const promociones = ref([])
 const loading = ref(true)
@@ -305,11 +194,11 @@ const quickFamilies = [
     alt: 'Tocado de fiesta Ibernovia'
   },
   {
-    name: 'Comunion',
+    name: 'Comunión',
     query: 'Comunion',
-    caption: 'Piezas delicadas para celebracion',
+    caption: 'Piezas delicadas para celebración',
     image: '/images/catalogo/comunion/diademas-y-coronas/2835-d.webp',
-    alt: 'Diadema de comunion Ibernovia'
+    alt: 'Diadema de comunión Ibernovia'
   },
   {
     name: 'Novio',
@@ -323,35 +212,13 @@ const quickFamilies = [
     query: 'Arras',
     caption: 'Cestas, cojines y arras matrimoniales',
     image: '/images/catalogo/arras/cestas-y-cojines/1403-coj.webp',
-    alt: 'Cojin de arras Ibernovia'
+    alt: 'Cojín de arras Ibernovia'
   }
 ]
 
-// Slideshow state
-const currentHeroIndex = ref(0)
-const heroImages = ref([
-  {
-    url: '/images/catalogo/novia/velos/17815-lentejuelas.webp',
-    alt: 'Velo de Novia con Lentejuelas - Ibernovia Atelier'
-  },
-  {
-    url: '/images/catalogo/comunion/diademas-y-coronas/2835-d.webp',
-    alt: 'Diadema de Comunión - Ibernovia Atelier'
-  },
-  {
-    url: '/images/catalogo/novia/tocados/3345-ma.webp',
-    alt: 'Tocado de Novia Artesanal - Ibernovia Atelier'
-  },
-  {
-    url: '/images/catalogo/fiesta/tocados/3150-ma.webp',
-    alt: 'Tocado de Fiesta y Madrina - Ibernovia Atelier'
-  }
-])
-let heroInterval = null
-
 const getProductImage = (product) => {
   if (product && product.imagen) return getImageUrl(product.imagen)
-  return 'https://placehold.co/400x400/e5e5e5/3a3a3a?text=Ibernovia'
+  return '/logo/logo.jpg'
 }
 
 const formatDate = (dateString) => {
@@ -370,11 +237,6 @@ const copyToClipboard = (text) => {
 }
 
 onMounted(async () => {
-  // Slideshow rotation every 5 seconds
-  heroInterval = setInterval(() => {
-    currentHeroIndex.value = (currentHeroIndex.value + 1) % heroImages.value.length
-  }, 5000)
-
   try {
     const [productsResult, promosResult] = await Promise.allSettled([
       fetchCachedProducts(),
@@ -384,7 +246,7 @@ onMounted(async () => {
     if (productsResult.status === 'fulfilled') {
       products.value = productsResult.value
         .filter(p => p.activo !== false)
-        .slice(0, 15)
+        .slice(0, 6)
     }
 
     if (promosResult.status === 'fulfilled') {
@@ -395,45 +257,9 @@ onMounted(async () => {
   }
 })
 
-onBeforeUnmount(() => {
-  if (heroInterval) {
-    clearInterval(heroInterval)
-  }
-})
 </script>
 
 <style scoped>
-/* Transiciones suaves en la carga (Cubic-Bezier) */
-.animate-fade-in-up {
-  animation: fadeInUp 1.2s cubic-bezier(0.16, 1, 0.3, 1) both;
-}
-
-.delay-150 {
-  animation-delay: 150ms;
-}
-
-@keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(24px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-/* Infinite Marquee CSS Slider */
-.marquee-track {
-  display: flex;
-  width: max-content;
-  animation: scrollMarquee 35s linear infinite;
-}
-
-.marquee-track:hover {
-  animation-play-state: paused;
-}
-
 .home-families {
   padding: 3.2rem 0;
   background: #fffdf9;
@@ -449,7 +275,7 @@ onBeforeUnmount(() => {
 }
 
 .home-families-kicker {
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 800;
   letter-spacing: 0.26em;
   text-transform: uppercase;
@@ -468,7 +294,7 @@ onBeforeUnmount(() => {
 .home-families-link {
   padding-bottom: 0.25rem;
   border-bottom: 1px solid currentColor;
-  font-size: 11px;
+  font-size: 13px;
   font-weight: 800;
   letter-spacing: 0.18em;
   text-transform: uppercase;
@@ -510,7 +336,7 @@ onBeforeUnmount(() => {
   position: absolute;
   inset: 0;
   z-index: 1;
-  background: linear-gradient(180deg, rgb(0 0 0 / 0.02), rgb(0 0 0 / 0.5));
+  background: linear-gradient(180deg, rgb(0 0 0 / 0.02), rgb(0 0 0 / 0.7));
 }
 
 .home-family-copy {
@@ -531,60 +357,15 @@ onBeforeUnmount(() => {
 
 .home-family-copy small {
   max-width: 18ch;
-  font-size: 11px;
+  font-size: 13px;
   line-height: 1.45;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: rgb(255 255 255 / 0.78);
+  color: #fff;
 }
 
-@keyframes scrollMarquee {
-  0% {
-    transform: translateX(0);
-  }
-  100% {
-    transform: translateX(-50%);
-  }
-}
 
 @media (max-width: 640px) {
-  .home-hero-section {
-    min-height: 500px;
-    height: min(78vh, 590px);
-  }
-
-  .home-hero-copy {
-    padding-left: 1rem;
-    padding-right: 1rem;
-  }
-
-  .home-eyebrow {
-    letter-spacing: 0.2em;
-  }
-
-  .home-wordmark {
-    font-size: clamp(2.25rem, 12vw, 3.2rem);
-    letter-spacing: 0.07em;
-    text-indent: 0.07em;
-  }
-
-  .home-subline {
-    max-width: 18rem;
-    margin-left: auto;
-    margin-right: auto;
-    font-size: 0.72rem;
-    line-height: 1.65;
-    letter-spacing: 0.18em;
-  }
-
-  .home-hero-copy a {
-    width: min(100%, 17rem);
-    justify-content: center;
-    padding-left: 1rem;
-    padding-right: 1rem;
-    letter-spacing: 0.18em;
-  }
-
   .home-featured,
   .home-promos {
     padding-top: 2.5rem;
@@ -636,7 +417,7 @@ onBeforeUnmount(() => {
   }
 
   .home-family-copy small {
-    font-size: 9.5px;
+    font-size: 12px;
     letter-spacing: 0.05em;
   }
 
@@ -647,5 +428,32 @@ onBeforeUnmount(() => {
   .home-promos .rounded-2xl {
     border-radius: 0.75rem;
   }
+}
+
+.home-hero {display:grid;grid-template-columns:1fr 1fr;min-height:660px;background:#fcfaf6;align-items:center;}
+.home-hero-copy {padding:5rem clamp(1.5rem,5vw,6rem);}
+.home-eyebrow {font-size:.8rem;letter-spacing:.16em;text-transform:uppercase;color:#795333;margin-bottom:1.8rem;}
+.home-wordmark {font-family:'Fraunces',Georgia,serif;font-size:clamp(2.7rem,5.2vw,5.8rem);font-weight:300;letter-spacing:.045em;line-height:1.1;color:#2d2924;}
+.home-hero-description {font-size:1rem;line-height:1.9;color:#575047;max-width:36ch;margin:2rem 0;}
+.home-hero-actions {display:flex;flex-wrap:wrap;gap:1rem;}
+.home-hero-actions a {display:inline-flex;align-items:center;justify-content:center;min-height:48px;padding:.85rem 1.25rem;font-size:.85rem;border:1px solid #2d2924;}
+.home-primary {background:#2d2924;color:#fff;}
+.home-secondary {color:#2d2924;}
+.home-hero-photo {display:block;height:100%;min-height:660px;overflow:hidden;}
+.home-hero-photo img {width:100%;height:100%;object-fit:cover;object-position:52% center;}
+.featured-products {display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:1.5rem;}
+.featured-product img {width:100%;aspect-ratio:3/4;object-fit:contain;padding:.75rem;background:#f7f4ef;border:1px solid #e9e3da;}
+.featured-product h3 {font-family:'Fraunces',Georgia,serif;font-size:1rem;line-height:1.5;margin-top:1rem;}
+.featured-product p {font-size:.8rem;color:#655e55;margin-top:.4rem;}
+@media(max-width:900px){.featured-products{grid-template-columns:repeat(3,minmax(0,1fr));}}
+@media(max-width:640px){
+ .home-hero{grid-template-columns:1fr;min-height:0;}
+ .home-hero-copy{padding:3rem 1.25rem 2.5rem;}
+ .home-wordmark{font-size:clamp(2.4rem,11vw,3.6rem);}
+ .home-hero-description{margin:1.5rem 0;}
+ .home-hero-actions{gap:.65rem;}
+ .home-hero-actions a{flex:1 1 auto;padding:.85rem .8rem;}
+ .home-hero-photo{height:auto;min-height:0;aspect-ratio:1200/797;}
+ .featured-products{grid-template-columns:repeat(2,minmax(0,1fr));gap:1.25rem;}
 }
 </style>
