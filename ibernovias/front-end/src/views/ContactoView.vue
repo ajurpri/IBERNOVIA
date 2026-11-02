@@ -94,11 +94,7 @@
         </div>
 
         <div class="md:col-span-7 space-y-10">
-          <aside class="border-l-2 border-luxury-gold pl-6" aria-labelledby="paola-title">
-            <h2 id="paola-title" class="font-serif text-2xl">Encuentra nuestros complementos en Paola Novias</h2>
-            <p class="mt-3 text-gray-600 leading-relaxed">En Andújar puedes encontrar los complementos de Ibernovia en Paola Novias. Consulta con la tienda la disponibilidad antes de tu visita.</p>
-            <a href="/complementos-novia-andujar.html" class="inline-block mt-4 underline underline-offset-4">Más sobre nuestros complementos en Andújar</a>
-          </aside>
+          <p class="text-sm text-gray-600 leading-relaxed">Si compras para ti, escríbenos y te indicamos tu tienda más cercana. En Andújar, nuestra tienda oficial es <a href="/complementos-novia-andujar.html" class="underline underline-offset-4">Paola Novias</a>.</p>
         <form @submit.prevent="submitForm" class="space-y-8">
           <h2 class="font-serif text-2xl font-light text-luxury-black tracking-wide border-b border-black/5 pb-4 mb-2">Escríbenos</h2>
 

@@ -43,20 +43,13 @@
       </div>
     </section>
 
-    <section class="max-w-7xl mx-auto w-full px-6 py-16 md:py-24 grid md:grid-cols-2 gap-10 items-start" aria-labelledby="local-title">
+    <aside class="retail-note" aria-label="Compra en tienda">
       <div>
-        <p class="text-xs tracking-widest uppercase text-luxury-gold mb-4">Andújar · Jaén</p>
-        <h2 id="local-title" class="font-serif text-3xl md:text-4xl leading-tight">Complementos para cada celebración</h2>
-        <p class="mt-5 text-gray-600 leading-relaxed">Descubre las colecciones de Ibernovia para novia, novio, fiesta, comunión y arras. Velos, tocados, diademas, pendientes y otros detalles para completar tu conjunto de ceremonia.</p>
-        <p class="mt-4 text-gray-600 leading-relaxed">Nuestro catálogo se puede consultar libremente. Las tarifas y solicitudes de presupuesto están reservadas a tiendas y profesionales con acceso validado.</p>
+        <p>¿No eres profesional? Consúltanos dónde comprar nuestros complementos cerca de ti.</p>
+        <p class="retail-note-detail">En Andújar, <a href="/complementos-novia-andujar.html">Paola Novias</a> es nuestra tienda oficial.</p>
       </div>
-      <div class="border-l-2 border-luxury-gold pl-7 md:pl-10">
-        <p class="text-xs tracking-widest uppercase text-gray-500 mb-4">Dónde encontrarnos</p>
-        <h3 class="font-serif text-3xl">En Andújar, en Paola Novias</h3>
-        <p class="mt-5 text-gray-600 leading-relaxed">Puedes encontrar los complementos de Ibernovia en Paola Novias, en Andújar. Consulta con la tienda la disponibilidad de la pieza que te interesa antes de tu visita.</p>
-        <a href="/complementos-novia-andujar.html" class="inline-block mt-6 underline underline-offset-4 text-luxury-black">Complementos de novia y ceremonia en Andújar →</a>
-      </div>
-    </section>
+      <router-link to="/contacto" class="retail-note-link">Consultar tienda <span aria-hidden="true">→</span></router-link>
+    </aside>
 
     <!-- Moving product selection; photography stays unobstructed. -->
     <section ref="featuredSection" class="home-featured py-12 bg-[#fdfdfc] border-t border-b border-black/5 overflow-hidden" aria-label="Colección destacada">
@@ -228,6 +221,29 @@ onBeforeUnmount(() => selectionObserver?.disconnect())
 </script>
 
 <style scoped>
+.retail-note {
+  width: calc(100% - 48px);
+  max-width: 1200px;
+  margin: 0 auto 48px;
+  padding: 20px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px 32px;
+  background: #f5f2ec;
+  color: #49423b;
+  font-size: 14px;
+  line-height: 1.7;
+}
+.retail-note p { margin: 0; }
+.retail-note .retail-note-detail { margin-top: 3px; color: #6b6258; font-size: 13px; }
+.retail-note a { text-underline-offset: 4px; }
+.retail-note-detail a { text-decoration: underline; }
+.retail-note-link { white-space: nowrap; text-decoration: underline; }
+@media (max-width: 640px) {
+  .retail-note { width: calc(100% - 32px); padding: 18px 20px; flex-direction: column; align-items: flex-start; gap: 10px; }
+}
+
 .home-hero {
   position: relative;
   display: flex;

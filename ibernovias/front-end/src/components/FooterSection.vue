@@ -21,7 +21,7 @@
             <router-link to="/">Inicio</router-link>
             <router-link to="/tienda">Catálogo</router-link>
             <router-link to="/contacto">Contacto</router-link>
-            <a href="/complementos-novia-andujar.html">En Andújar: Paola Novias</a>
+            <a href="/complementos-novia-andujar.html">Dónde comprar</a>
             <router-link to="/auth">Acceso profesional</router-link>
             <router-link to="/acceso-empresarial">Solicitar alta</router-link>
           </nav>
