@@ -1,0 +1,8 @@
+﻿from pathlib import Path
+p=Path('ibernovias/front-end/src/components/NavBar.vue');s=p.read_text(encoding='utf-8');s=s.replace('</style>','''
+/* Keep the wordmark distinctive; make navigation quiet and readable. */
+.menu-link {text-transform:none;letter-spacing:.01em;font-size:.88rem;}
+.business-btn {border-radius:3px;font-size:.82rem;font-weight:500;letter-spacing:0;text-transform:none;box-shadow:none;}
+.business-btn:hover {transform:none;}
+</style>''');p.write_text(s,encoding='utf-8')
+p=Path('REVISION_IBERNOVIA_2026-10-30.md');s=p.read_text(encoding='utf-8');s=s.replace('# Revisión de Ibernovia — versión local, sin publicar','# Revisión de Ibernovia — versión local, sin publicar\n\n**Revisión posterior al rechazo visual del propietario:** los cambios actuales quedan SIN COMMIT. Se ha recuperado la portada centrada sobre la fotografía, restaurado el movimiento de 15 productos (pausable y con movimiento reducido), y simplificado catálogo, filtros, tarjetas y tipografía de navegación. El commit local `1bf18c7` corresponde a la primera propuesta rechazada; no identifica la revisión actual. Las cifras de rendimiento de abajo pertenecen a esa primera propuesta y deben volver a medirse. No se ha publicado nada.');s=s.replace('- Selección de inicio estática: seis productos, sin duplicación ni desplazamiento automático. Se mantienen las familias.','- Selección de inicio con 15 productos y movimiento recuperado por indicación posterior del propietario. Botón de pausa, pausa con foco/ratón y alternativa sin animación para movimiento reducido. Se mantienen las familias.');p.write_text(s,encoding='utf-8')

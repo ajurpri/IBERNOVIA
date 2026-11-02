@@ -1,0 +1,7 @@
+﻿from pathlib import Path
+p=Path('ibernovias/front-end/src/components/ProductCard.vue');s=p.read_text(encoding='utf-8').replace("import { ref, inject, watch } from 'vue'","import { ref, inject, watch, computed } from 'vue'\nimport { favoriteIds, toggleFavoriteId } from '../stores/favorites'").replace("import { useCartStore } from '../stores/cart'\n",'').replace('const cartStore = useCartStore()\n','').replace('const isFavorite = ref(false)',"const isFavorite = computed(() => favoriteIds.value.includes(String(props.producto.id)))").replace('isFavorite.value = !isFavorite.value','toggleFavoriteId(props.producto.id)')
+# Separate the favorite button from the link for valid keyboard semantics.
+s=s.replace('    <!-- Image Wrapper -->','    <div class="relative">\n    <!-- Image Wrapper -->').replace('      <!-- Favorite Button -->','    </router-link>\n      <!-- Favorite Button -->').replace('    </router-link>\n\n    <!-- Details below image -->','    </div>\n\n    <!-- Details below image -->')
+s=s.replace('aria-label="Marcar favorito"',':aria-label="`${isFavorite ? \'Quitar de favoritos\' : \'Marcar favorito\'}: ${productReference(producto)}`"').replace('button[aria-label="Marcar favorito"]','button[aria-pressed]')
+p.write_text(s,encoding='utf-8')
+p=Path('ibernovias/front-end/src/components/EventsModal.vue');s=p.read_text(encoding='utf-8').replace('ref, onMounted','ref').replace('onMounted(() => {\n  loadEvents()\n})\n','');p.write_text(s,encoding='utf-8')

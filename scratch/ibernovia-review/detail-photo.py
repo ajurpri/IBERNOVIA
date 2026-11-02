@@ -1,0 +1,2 @@
+﻿from pathlib import Path
+p=Path('ibernovias/front-end/src/views/ProductoView.vue');s=p.read_text(encoding='utf-8').replace('bg-gray-50 aspect-[3/4] overflow-hidden rounded-2xl border border-black/5 relative shadow-sm cursor-zoom-in','product-gallery aspect-[4/5] overflow-hidden relative cursor-zoom-in').replace('object-contain p-3','object-contain').replace('aspect-[3/4] bg-gray-100 mb-3 overflow-hidden relative','aspect-[4/5] mb-3 overflow-hidden relative').replace('También te podría gustar','Otros productos');p.write_text(s,encoding='utf-8')

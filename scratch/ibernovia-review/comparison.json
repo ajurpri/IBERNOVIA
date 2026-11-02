@@ -1,0 +1,65 @@
+{
+  "before": {
+    "assets": {
+      "index-*.js": {
+        "bytes": 51274,
+        "gzipBytes": 16584
+      },
+      "index-*.css": {
+        "bytes": 71877,
+        "gzipBytes": 13463
+      },
+      "HomeView-*.js": {
+        "bytes": 12764,
+        "gzipBytes": 4431
+      },
+      "HomeView-*.css": {
+        "bytes": 4002,
+        "gzipBytes": 1311
+      },
+      "productPresentation-*.js": {
+        "bytes": 0,
+        "gzipBytes": 0
+      }
+    },
+    "htmlGetMs": [
+      8.55,
+      22.14,
+      15.82
+    ]
+  },
+  "after": {
+    "assets": {
+      "index-*.js": {
+        "bytes": 40400,
+        "gzipBytes": 12979
+      },
+      "index-*.css": {
+        "bytes": 60987,
+        "gzipBytes": 12137
+      },
+      "HomeView-*.js": {
+        "bytes": 7267,
+        "gzipBytes": 3006
+      },
+      "HomeView-*.css": {
+        "bytes": 6405,
+        "gzipBytes": 1760
+      },
+      "productPresentation-*.js": {
+        "bytes": 799,
+        "gzipBytes": 504
+      }
+    },
+    "htmlGetMs": [
+      3.11,
+      19.4,
+      15.66
+    ]
+  },
+  "previewRoutes": "6 routes return 200; local POST rejected with 503; noindex enabled",
+  "heroVariants": {
+    "velo-640.webp": 67050,
+    "velo-960.webp": 189786
+  }
+}

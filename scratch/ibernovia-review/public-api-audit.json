@@ -1,0 +1,34 @@
+[
+  {
+    "path": "/api/productos",
+    "status": 200,
+    "rows": 683,
+    "rowsWithPrices": 0,
+    "cache": "no-cache, no-store, max-age=0, must-revalidate"
+  },
+  {
+    "path": "/api/productos/639",
+    "status": 200,
+    "rows": 1,
+    "rowsWithPrices": 0,
+    "cache": "no-cache, no-store, max-age=0, must-revalidate"
+  },
+  {
+    "path": "/api/productos/familia/Novia",
+    "status": 200,
+    "rows": 118,
+    "rowsWithPrices": 0,
+    "cache": "no-cache, no-store, max-age=0, must-revalidate"
+  },
+  {
+    "path": "/api/productos/categoria/Abanicos",
+    "status": 200,
+    "rows": 47,
+    "rowsWithPrices": 0,
+    "cache": "no-cache, no-store, max-age=0, must-revalidate"
+  },
+  {
+    "path": "/api/promociones",
+    "error": "HTTP Error 403: Forbidden"
+  }
+]
