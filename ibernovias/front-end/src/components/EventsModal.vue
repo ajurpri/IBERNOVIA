@@ -3,12 +3,12 @@
     <transition name="modal-fade">
       <div
         v-if="showModal"
-        class="fixed inset-0 z-[9999] bg-black/50 backdrop-blur-sm p-4 flex items-center justify-center"
+        class="fixed inset-0 z-[9999] events-overlay bg-black/30 p-4 flex items-center justify-center"
         @click.self="closeModal"
       >
         <!-- Modal Card Container -->
         <div class="w-full max-w-2xl max-h-[85dvh] rounded-2xl border border-black/5 bg-[#fdfdfc] shadow-2xl overflow-hidden flex flex-col animate-modal-slide">
-          
+
           <!-- Header -->
           <div class="px-6 py-5 border-b border-black/5 flex items-start justify-between gap-4">
             <div>
@@ -32,11 +32,11 @@
             <div v-if="loading" class="py-12 text-center text-sm text-gray-400 font-light font-serif italic">
               Cargando agenda de eventos...
             </div>
-            
+
             <div v-else-if="events.length === 0" class="py-12 text-center text-sm text-gray-400 font-light font-serif italic">
               No hay eventos próximos programados en este momento.
             </div>
-            
+
             <article
               v-else
               v-for="eventItem in events"
@@ -62,17 +62,17 @@
           <!-- Footer -->
           <div class="px-6 py-5 border-t border-black/5 bg-transparent flex flex-col sm:flex-row items-center justify-between gap-4">
             <p class="text-xs text-gray-400 text-center sm:text-left max-w-sm leading-relaxed text-balance">
-              ¿Deseas asistir a alguno de nuestros desfiles o presentaciones? Solicita tu acreditación profesional.
+              Para consultar información sobre la agenda, contacta con Ibernovia.
             </p>
             <router-link
-              to="/acceso-empresarial"
+              to="/contacto"
               class="inline-flex justify-center items-center px-6 py-3 bg-luxury-black text-white hover:bg-luxury-gold hover:text-white text-[10px] font-bold uppercase tracking-[0.2em] transition-all duration-300 rounded-full shadow-md hover:shadow-lg hover:-translate-y-0.5"
               @click="closeModal"
             >
-              Solicitar acceso
+              Contacto
             </router-link>
           </div>
-          
+
         </div>
       </div>
     </transition>
@@ -80,7 +80,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref } from 'vue'
 import { apiClient } from '../lib/api'
 
 const showModal = ref(false)
@@ -90,9 +90,9 @@ const loading = ref(false)
 const formatEventDate = (dateString) => {
   if (!dateString) return ''
   const date = new Date(dateString)
-  return date.toLocaleDateString('es-ES', { 
-    day: '2-digit', 
-    month: 'short', 
+  return date.toLocaleDateString('es-ES', {
+    day: '2-digit',
+    month: 'short',
     year: 'numeric',
     hour: '2-digit',
     minute: '2-digit'
@@ -123,9 +123,6 @@ const closeModal = () => {
   showModal.value = false
 }
 
-onMounted(() => {
-  loadEvents()
-})
 
 defineExpose({ openModal, closeModal })
 </script>

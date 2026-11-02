@@ -1,16 +1,10 @@
 <template>
-  <div class="tienda-page min-h-screen bg-[#fcfaf6]">
-    <section class="border-b border-black/5 bg-white">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14 sm:py-16">
-        <div class="max-w-3xl">
-          <p class="text-[10px] uppercase tracking-[0.35em] text-luxury-gold font-bold mb-4">Catalogo Ibernovia</p>
-          <h1 class="font-serif text-4xl sm:text-5xl lg:text-6xl leading-[1.02] text-luxury-black mb-5">
-            Coleccion para profesionales del sector ceremonia
-          </h1>
-          <p class="text-sm sm:text-base text-gray-600 leading-relaxed max-w-2xl">
-            Consulta nuestras familias y categorias de producto. El catalogo esta visible para consulta general, y las tarifas quedan reservadas a clientes profesionales validados.
-          </p>
-        </div>
+  <div class="tienda-page min-h-screen bg-[#fdfdfc]">
+    <section class="catalog-heading">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <h1>Catálogo</h1>
+        <p>Complementos de novia, novio, fiesta, comunión y arras.</p>
+        <p class="catalog-access-note">Tarifas disponibles con <router-link to="/auth">acceso profesional</router-link>.</p>
       </div>
     </section>
 
@@ -18,23 +12,23 @@
       <div class="catalog-controls-shell grid grid-cols-1 gap-6 border-b border-black/6 pb-8" :class="{ 'is-open': mobileFiltersOpen }">
         <div>
           <label for="search" class="block text-[10px] uppercase tracking-[0.25em] text-gray-400 font-bold mb-2">
-            Buscar en catalogo
+            Buscar en catálogo
           </label>
           <div class="relative flex items-center">
             <input
               id="search"
               v-model="searchTerm"
               type="search"
-              placeholder="Ej. velo, tocado, novia..."
+              placeholder="Buscar por nombre o referencia"
               class="w-full h-12 pl-4 pr-12 rounded-2xl border border-gray-200 bg-[#fcfaf6] text-sm text-luxury-black placeholder-gray-400/70 focus:outline-none focus:border-luxury-gold transition-colors"
               aria-label="Buscar productos"
             >
             <div class="absolute right-3 flex items-center gap-2">
               <span v-if="isSearchingImage" class="animate-spin h-5 w-5 border-2 border-t-transparent border-luxury-gold rounded-full" role="status"></span>
-              <label 
+              <label
                 v-else
                 class="cursor-pointer text-gray-400 hover:text-luxury-gold transition-colors p-1"
-                title="Buscar por imagen con IA"
+                title="Buscar productos similares con una foto"
               >
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
                   <path stroke-linecap="round" stroke-linejoin="round" d="M6.827 6.175A2.31 2.31 0 0 1 5.186 7.23c-.38.054-.757.112-1.134.175C2.999 7.58 2.25 8.507 2.25 9.574V18a2.25 2.25 0 0 0 2.25 2.25h15A2.25 2.25 0 0 0 21.75 18V9.574c0-1.067-.75-1.994-1.802-2.169a47.865 47.865 0 0 0-1.134-.175 2.31 2.31 0 0 1-1.64-1.055l-.822-1.316A2.192 2.192 0 0 0 14.68 4h-5.36a2.192 2.192 0 0 0-1.677.777l-.822 1.316Z" />
@@ -44,7 +38,7 @@
                   type="file"
                   @change="handleImageSearchUpload"
                   accept="image/*"
-                  class="hidden"
+                  class="sr-only" aria-label="Buscar productos similares con una foto"
                 >
               </label>
             </div>
@@ -72,6 +66,7 @@
               type="button"
               @click="selectedFamily = 'Todas'"
               class="text-sm transition-colors"
+              :aria-pressed="selectedFamily === 'Todas'"
               :class="selectedFamily === 'Todas' ? 'text-luxury-black font-semibold' : 'text-gray-500 hover:text-luxury-black'"
             >
               Todas <span class="text-gray-400">({{ productos.length }})</span>
@@ -82,6 +77,7 @@
               type="button"
               @click="selectedFamily = fam"
               class="text-sm transition-colors"
+              :aria-pressed="selectedFamily === fam"
               :class="selectedFamily === fam ? 'text-luxury-black font-semibold' : 'text-gray-500 hover:text-luxury-black'"
             >
               {{ fam }} <span class="text-gray-400">({{ familyCounts[fam] || 0 }})</span>
@@ -91,13 +87,14 @@
 
         <div v-if="selectedFamily !== 'Todas' && categorias.length" class="catalog-filter-block">
           <p class="text-[10px] uppercase tracking-[0.25em] text-gray-400 font-bold mb-3">
-            Categorias dentro de {{ selectedFamily }}
+            Categorías dentro de {{ selectedFamily }}
           </p>
           <div class="flex flex-wrap gap-x-5 gap-y-3">
             <button
               type="button"
               @click="selectedCategory = 'Todos'"
               class="text-sm transition-colors"
+              :aria-pressed="selectedCategory === 'Todos'"
               :class="selectedCategory === 'Todos' ? 'text-luxury-black font-semibold' : 'text-gray-500 hover:text-luxury-black'"
             >
               Todas <span class="text-gray-400">({{ familyCounts[selectedFamily] || 0 }})</span>
@@ -108,6 +105,7 @@
               type="button"
               @click="selectedCategory = cat"
               class="text-sm transition-colors"
+              :aria-pressed="selectedCategory === cat"
               :class="selectedCategory === cat ? 'text-luxury-black font-semibold' : 'text-gray-500 hover:text-luxury-black'"
             >
               {{ cat }} <span class="text-gray-400">({{ categoryCounts[cat] || 0 }})</span>
@@ -136,14 +134,14 @@
           <!-- Filtro Ofertas -->
           <div class="flex items-center gap-2">
             <label class="relative inline-flex items-center cursor-pointer select-none">
-              <input 
-                type="checkbox" 
-                v-model="onlyOffers" 
+              <input
+                type="checkbox"
+                v-model="onlyOffers"
                 class="sr-only peer"
               >
               <div class="w-9 h-5 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-luxury-gold"></div>
               <span class="ml-2.5 text-[10px] uppercase tracking-[0.25em] text-gray-500 font-bold peer-checked:text-luxury-gold transition-colors">
-                Solo en oferta 🔥
+                Solo en oferta
               </span>
             </label>
           </div>
@@ -160,11 +158,11 @@
               @click="printCatalog"
               class="text-[11px] uppercase tracking-[0.18em] font-semibold text-luxury-black hover:text-luxury-gold transition-colors flex items-center gap-1.5"
             >
-              📄 Descargar Catálogo (PDF)
+              Descargar catálogo (PDF)
             </button>
 
             <router-link
-              to="/acceso-empresarial"
+              to="/auth"
               class="text-[11px] uppercase tracking-[0.18em] font-semibold text-luxury-gold hover:text-luxury-black transition-colors"
             >
               Acceso profesional
@@ -187,7 +185,7 @@
       </div>
 
       <div v-else-if="loadError" class="mt-10 rounded-2xl border border-red-100 bg-red-50/60 p-6 text-red-700">
-        <p class="font-semibold text-sm">No se pudo cargar el catalogo.</p>
+        <p class="font-semibold text-sm">No se pudo cargar el catálogo.</p>
         <p class="text-xs mt-1">{{ loadError }}</p>
         <button
           type="button"
@@ -201,7 +199,7 @@
       <div v-else class="mt-10">
         <div v-if="visibleProducts.length === 0" class="rounded-2xl border border-black/5 bg-white p-10 text-center">
           <p class="font-serif text-2xl text-luxury-black">No hay productos con esos filtros</p>
-          <p class="text-sm text-gray-500 mt-2">Prueba otra busqueda o vuelve a la vista general.</p>
+          <p class="text-sm text-gray-500 mt-2">Prueba otra búsqueda o vuelve a la vista general.</p>
         </div>
 
         <div v-else class="catalog-product-grid grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-8 gap-y-12 items-stretch">
@@ -228,10 +226,10 @@
       <div class="mt-14 pt-8 border-t border-black/6">
         <div class="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6">
           <div class="max-w-2xl">
-            <p class="text-[10px] uppercase tracking-[0.3em] text-luxury-gold font-bold mb-3">Area profesional</p>
-            <h2 class="font-serif text-3xl sm:text-4xl text-luxury-black mb-3">Tarifas y condiciones reservadas para clientes validados</h2>
+            <p class="text-[10px] uppercase tracking-[0.3em] text-luxury-gold font-bold mb-3">Área profesional</p>
+            <h2 class="font-serif text-3xl sm:text-4xl text-luxury-black mb-3">¿Tienes una tienda?</h2>
             <p class="text-gray-600 text-sm leading-relaxed">
-              Si eres empresa del sector, solicita acceso para consultar la informacion comercial disponible para perfiles profesionales.
+              Solicita el alta profesional para consultar tarifas y condiciones. Si ya tienes cuenta, entra desde Acceso profesional.
             </p>
           </div>
 
@@ -276,16 +274,16 @@ const mobileFiltersOpen = ref(false)
 const handleImageSearchUpload = async (event) => {
   const file = event.target.files?.[0]
   if (!file) return
-  
+
   isSearchingImage.value = true
-  if (toast) toast.show('Analizando imagen con IA...', 'info', 3000)
-  
+  if (toast) toast.show('Buscando productos similares...', 'info', 3000)
+
   try {
     const base64Image = await compressImageForSearch(file)
     const res = await apiClient.post('/api/productos/buscar-por-imagen', {
       image: base64Image
     })
-    
+
     if (res.data && res.data.keywords) {
       searchTerm.value = res.data.keywords
       const el = document.getElementById('catalogo')
@@ -316,7 +314,7 @@ const compressImageForSearch = (file) => {
         const max_dim = 600
         let w = img.width
         let h = img.height
-        
+
         if (w > max_dim || h > max_dim) {
           if (w > h) {
             h = Math.round((h * max_dim) / w)
@@ -326,7 +324,7 @@ const compressImageForSearch = (file) => {
             h = max_dim
           }
         }
-        
+
         canvas.width = w
         canvas.height = h
         const ctx = canvas.getContext('2d')
@@ -345,20 +343,20 @@ const printCatalog = () => {
     if (toast) toast.show('No hay productos para exportar', 'warning', 2500)
     return
   }
-  
+
   const printWindow = window.open('', '_blank')
   if (!printWindow) {
     if (toast) toast.show('✗ El navegador bloqueó la ventana emergente. Por favor, permítela.', 'error', 3000)
     return
   }
-  
+
   const productCardsHtml = productsToPrint.map(p => {
     const imageUrl = getImageUrl(p.imagen)
-    const precioHtml = authStore.canSeePrices && p.precio 
+    const precioHtml = authStore.canSeePrices && p.precio
       ? `<div class="price">${p.enOferta && p.precioOferta ? p.precioOferta : p.precio} €</div>`
       : ''
     const refHtml = p.nombre ? `<div class="ref">Ref: ${p.nombre}</div>` : ''
-    
+
     return `
       <div class="card">
         <div class="img-wrapper">
@@ -373,7 +371,7 @@ const printCatalog = () => {
       </div>
     `
   }).join('')
-  
+
   const htmlContent = `
     <!DOCTYPE html>
     <html lang="es">
@@ -486,6 +484,7 @@ const printCatalog = () => {
             margin: 1.5cm;
           }
         }
+
       </style>
     </head>
     <body>
@@ -493,16 +492,16 @@ const printCatalog = () => {
         <div class="logo">IBERNOVIA</div>
         <div class="catalog-title">Colección: ${selectedFamily.value} / ${selectedCategory.value}</div>
       </header>
-      
+
       <div class="grid">
         ${productCardsHtml}
       </div>
-      
+
       <footer>
         <p>Ibernovia Atelier - Calle Forjadores, 1, 23740 Andújar, Jaén - Tlf: 953 51 50 70 - info@ibernovia.es</p>
         <p>Documento generado dinámicamente como catálogo comercial de referencia.</p>
       </footer>
-      
+
       ` + `<script>` + `
         window.addEventListener('load', () => {
           setTimeout(() => {
@@ -514,7 +513,7 @@ const printCatalog = () => {
     </body>
     </html>
   `
-  
+
   printWindow.document.open()
   printWindow.document.write(htmlContent)
   printWindow.document.close()
@@ -718,7 +717,7 @@ const applyQueryFilters = () => {
   const queryOnlyOffers = q.ofertas === 'true'
 
   searchTerm.value = querySearch
-  selectedFamily.value = familias.value.includes(queryFamily) ? queryFamily : 'Todas'
+  selectedFamily.value = familias.value.find(family => normalizeForSearch(family) === normalizeForSearch(queryFamily)) || 'Todas'
   selectedCategory.value = categorias.value.includes(queryCategory) ? queryCategory : 'Todos'
   sortBy.value = ['default', 'price-asc', 'price-desc'].includes(querySortBy) ? querySortBy : 'default'
   onlyOffers.value = queryOnlyOffers
@@ -757,7 +756,8 @@ const fetchProductos = async () => {
   isLoading.value = true
   loadError.value = ''
   try {
-    productos.value = await fetchCachedProducts()
+    // Revalidate on entry so changes saved by an administrator are visible.
+    productos.value = await fetchCachedProducts(true)
   } catch (error) {
     loadError.value = error?.message || 'Error desconocido'
     console.error('Error cargando productos:', error)
@@ -886,4 +886,36 @@ watch([searchTerm, selectedFamily, selectedCategory, sortBy, onlyOffers], () => 
     row-gap: 1.8rem;
   }
 }
+
+.catalog-heading {padding:2.5rem 0 2rem;background:#fff;border-bottom:1px solid #e8e4de;}
+.catalog-heading h1 {font-family:'Fraunces',Georgia,serif;font-size:2.6rem;font-weight:300;letter-spacing:-.02em;line-height:1.15;margin-bottom:.8rem;}
+.catalog-heading p {font-size:.95rem;color:#514b44;line-height:1.7;}
+.catalog-heading .catalog-access-note {margin-top:.35rem;font-size:.8rem;color:#6a625a;}
+.catalog-access-note a {text-decoration:underline;text-underline-offset:3px;}
+#catalogo {padding-top:1.5rem;}
+.catalog-controls-shell {gap:1rem;padding-bottom:1.25rem;}
+.catalog-controls-shell label,.catalog-controls-shell p,.catalog-controls-shell a,.catalog-controls-shell button,.catalog-controls-shell span {text-transform:none;letter-spacing:normal;}
+.catalog-controls-shell input[type=search] {background:#fff;border-radius:3px;max-width:100%;font-size:.9rem;}
+.catalog-controls-shell input::placeholder {color:#77716a;opacity:1;}
+.catalog-filter-block button {padding:.35rem .2rem;border-bottom:1px solid transparent;}
+.catalog-filter-block button[aria-pressed=true] {border-bottom-color:#6d5139;color:#302a24;font-weight:600;}
+.catalog-filter-block.pt-4 {padding-top:.75rem;margin-top:0;}
+.catalog-controls-shell .mt-2 {margin-top:0;}
+.catalog-controls-shell .tracking-\[0\.25em\] {font-size:.85rem;}
+.catalog-product-grid {grid-template-columns:repeat(2,minmax(0,1fr));column-gap:1rem;row-gap:2rem;}
+.tienda-page .rounded-full {border-radius:3px;}
+.tienda-page .mt-14 h2 {font-size:1.8rem;font-weight:300;}
+.tienda-page .mt-14 a {font-size:.85rem;letter-spacing:normal;text-transform:none;font-weight:500;}
+@media(min-width:768px){.catalog-product-grid{grid-template-columns:repeat(3,minmax(0,1fr));column-gap:1.5rem;}}
+@media(min-width:1200px){.catalog-product-grid{grid-template-columns:repeat(4,minmax(0,1fr));}}
+@media(max-width:640px){
+ .catalog-heading{padding:1.75rem 0 1.5rem;}
+ .catalog-heading h1{font-size:2.1rem;}
+ .catalog-heading p{font-size:.85rem;}
+ .catalog-controls-shell{gap:.75rem;}
+ .mobile-filter-toggle{font-size:.85rem;font-weight:500;letter-spacing:normal;text-transform:none;border-radius:3px;}
+}
+
+.tienda-page .catalog-controls-shell :is(label,p,a,button,span) {letter-spacing:normal;text-transform:none;}
+.catalog-product-grid {margin-top:-.5rem;}
 </style>

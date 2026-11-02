@@ -1,18 +1,15 @@
 <template>
   <div class="signature-shell flex flex-col w-full min-h-screen overflow-x-hidden">
     <a href="#main-content" class="skip-link">Saltar al contenido</a>
-    <NavBar /> 
-    
+    <NavBar />
+
     <main id="main-content" tabindex="-1" class="flex-1 w-full">
       <router-view />
     </main>
 
-    <BackToTop />
     <FooterSection />
     <CookieBanner />
     <Toast ref="toastRef" />
-    <WhatsAppButton />
-    <FloatingChat />
   </div>
 </template>
 
@@ -21,10 +18,7 @@ import { ref, provide, onMounted } from 'vue'
 import NavBar from './components/NavBar.vue'
 import FooterSection from './components/FooterSection.vue'
 import CookieBanner from './components/CookieBanner.vue'
-import BackToTop from './components/BackToTop.vue'
 import Toast from './components/Toast.vue'
-import WhatsAppButton from './components/WhatsAppButton.vue'
-import FloatingChat from './components/FloatingChat.vue'
 import { useAuthStore } from './stores/auth'
 
 const authStore = useAuthStore()

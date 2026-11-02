@@ -6,7 +6,7 @@
     @click="scrollToTop"
     aria-label="Volver arriba"
   >
-    ↑
+    Volver arriba ↑
   </button>
 </template>
 
@@ -20,7 +20,7 @@ const handleScroll = () => {
 }
 
 const scrollToTop = () => {
-  window.scrollTo({ top: 0, behavior: 'smooth' })
+  window.scrollTo({ top: 0, behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' })
 }
 
 onMounted(() => {
@@ -34,39 +34,6 @@ onBeforeUnmount(() => {
 </script>
 
 <style scoped>
-.back-to-top {
-  position: fixed;
-  right: 20px;
-  bottom: 106px;
-  z-index: 60;
-  height: 44px;
-  width: 44px;
-  border-radius: 999px;
-  border: 1px solid rgba(212, 175, 55, 0.5);
-  background: rgba(255, 255, 255, 0.95);
-  color: #1a1a1a;
-  font-size: 18px;
-  font-weight: 700;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
-  transition: transform 0.2s ease, box-shadow 0.2s ease, opacity 0.2s ease;
-}
-
-.back-to-top:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.16);
-}
-
-.back-to-top:focus-visible {
-  outline: 2px solid rgba(212, 175, 55, 0.9);
-  outline-offset: 2px;
-}
-
-@media (max-width: 640px) {
-  .back-to-top {
-    right: 18px;
-    bottom: 72px;
-    height: 40px;
-    width: 40px;
-  }
-}
+.back-to-top {display:block;position:static;padding:.75rem 0;min-height:44px;color:#514b43;font-size:.85rem;}
+.back-to-top:hover {text-decoration:underline;text-underline-offset:4px;}
 </style>

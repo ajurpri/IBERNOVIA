@@ -1,5 +1,5 @@
 <template>
-  <section class="min-h-screen bg-white py-12 md:py-16">
+  <section class="reading-page min-h-screen bg-white py-12 md:py-16">
     <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
       <h1 class="font-serif text-4xl text-luxury-black mb-6">Aviso Legal</h1>
       <p class="text-gray-600 mb-8">Última actualización: febrero 2026</p>

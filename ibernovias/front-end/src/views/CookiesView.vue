@@ -1,5 +1,5 @@
 <template>
-  <section class="min-h-screen bg-white py-12 md:py-16">
+  <section class="reading-page min-h-screen bg-white py-12 md:py-16">
     <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
       <h1 class="font-serif text-4xl text-luxury-black mb-6">Política de Cookies</h1>
       <p class="text-gray-600 mb-8">Última actualización: febrero 2026</p>
@@ -11,7 +11,7 @@
           <li><strong>Necesarias</strong>: permiten el funcionamiento del sitio.</li>
           <li><strong>Preferencias</strong>: recuerdan opciones seleccionadas por el usuario.</li>
         </ul>
-        <p>Puedes aceptar o rechazar el uso de cookies en cualquier momento desde el aviso de cookies o eliminándolas desde tu navegador.</p>
+        <p>Puedes volver a abrir el aviso desde «Preferencias de cookies», en el pie de página.</p>
       </div>
     </div>
   </section>

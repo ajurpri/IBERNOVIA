@@ -1,4 +1,4 @@
-import { createRouter, createWebHistory } from 'vue-router'
+import { createRouter, createWebHashHistory } from 'vue-router'
 import { useAuthStore } from '../stores/auth'
 
 // Lazy load para vistas de rutas (Vue Router)
@@ -23,8 +23,8 @@ const routes = [
     name: 'Home',
     component: HomeView,
     meta: {
-      title: 'IBERNOVIA | Inicio',
-      description: 'IBERNOVIA Atelier: diseño nupcial y complementos profesionales.'
+      title: 'Ibernovia | Complementos de novia y ceremonia en Andújar',
+      description: 'Velos, tocados y complementos de novia, novio, fiesta y comunión. Catálogo profesional Ibernovia. En Andújar, encuéntralos en Paola Novias.'
     }
   },
   {
@@ -67,7 +67,7 @@ const routes = [
     component: CheckoutView,
     meta: {
       requiresBusiness: true,
-      title: 'Checkout | IBERNOVIA'
+      title: 'Presupuesto | IBERNOVIA'
     }
   },
   {
@@ -76,7 +76,7 @@ const routes = [
     component: ConfirmacionView,
     meta: {
       requiresBusiness: true,
-      title: 'Confirmación de Compra | IBERNOVIA'
+      title: 'Presupuesto | IBERNOVIA'
     }
   },
   {
@@ -141,14 +141,15 @@ const routes = [
 ]
 
 const router = createRouter({
-  history: createWebHistory(),
+  // FTP hosting does not provide a server fallback for application routes.
+  history: createWebHashHistory(import.meta.env.BASE_URL),
   routes,
   scrollBehavior(to, from, savedPosition) {
     if (savedPosition) {
       return savedPosition
     }
     if (to.hash) {
-      return { el: to.hash, behavior: 'smooth' }
+      return { el: to.hash, behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' }
     }
     return { top: 0 }
   }
@@ -156,7 +157,7 @@ const router = createRouter({
 
 router.afterEach((to) => {
   const defaultTitle = 'IBERNOVIA | Complementos Nupciales'
-  const defaultDesc = 'IBERNOVIA: complementos nupciales de alta costura en Andújar, Jaén. Tienda con asesoramiento personalizado y diseños exclusivos.'
+  const defaultDesc = 'Ibernovia: complementos de ceremonia para tiendas y profesionales en Andújar, Jaén. Catálogo público y tarifas tras validación profesional.'
   const title = to.meta?.title || defaultTitle
   const desc = to.meta?.description || defaultDesc
 
@@ -182,7 +183,7 @@ router.afterEach((to) => {
   updateMetaTag('meta[name="description"]', 'content', desc)
   updateMetaTag('meta[property="og:title"]', 'content', title)
   updateMetaTag('meta[property="og:description"]', 'content', desc)
-  updateMetaTag('meta[property="og:url"]', 'content', 'https://www.ibernovia.es' + to.path)
+  updateMetaTag('meta[property="og:url"]', 'content', 'https://www.ibernovia.es/' + router.resolve(to).href)
   updateMetaTag('meta[name="twitter:title"]', 'content', title)
   updateMetaTag('meta[name="twitter:description"]', 'content', desc)
 
@@ -193,7 +194,7 @@ router.afterEach((to) => {
     canonicalLink.setAttribute('rel', 'canonical')
     document.head.appendChild(canonicalLink)
   }
-  canonicalLink.setAttribute('href', 'https://www.ibernovia.es' + to.path)
+  canonicalLink.setAttribute('href', 'https://www.ibernovia.es/')
 })
 
 // Guard para proteger rutas autenticadas

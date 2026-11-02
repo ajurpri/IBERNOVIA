@@ -17,80 +17,16 @@
 
 <script setup>
 const phone = '34619625679'
-const message = 'Hola Ibernovia, queria hacer una consulta sobre vuestros productos.'
+const message = 'Hola Ibernovia, quería hacer una consulta sobre vuestros productos.'
 const whatsappUrl = `https://wa.me/${phone}?text=${encodeURIComponent(message)}`
 </script>
 
 <style scoped>
-.whatsapp-float {
-  position: fixed;
-  left: 1rem;
-  bottom: 1rem;
-  z-index: 98;
-  min-height: 54px;
-  display: inline-flex;
-  align-items: center;
-  gap: 0.65rem;
-  padding: 0.65rem 0.95rem 0.65rem 0.72rem;
-  border-radius: 999px;
-  background: #25d366;
-  color: white;
-  box-shadow: 0 16px 36px rgb(0 0 0 / 0.18);
-  border: 1px solid rgb(255 255 255 / 0.42);
-  text-decoration: none;
-  transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
-}
-
-.whatsapp-float:hover {
-  transform: translateY(-2px);
-  background: #1fbd5a;
-  box-shadow: 0 18px 42px rgb(0 0 0 / 0.22);
-}
-
-.whatsapp-icon {
-  width: 34px;
-  height: 34px;
-  border-radius: 999px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  background: rgb(255 255 255 / 0.18);
-  flex: 0 0 auto;
-}
-
-.whatsapp-icon svg {
-  width: 26px;
-  height: 26px;
-}
-
-.whatsapp-copy {
-  font-size: 11px;
-  font-weight: 800;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  white-space: nowrap;
-}
-
-@media (max-width: 640px) {
-  .whatsapp-float {
-    left: 0.75rem;
-    bottom: 0.75rem;
-    min-height: 48px;
-    padding: 0.55rem;
-  }
-
-  .whatsapp-copy {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    overflow: hidden;
-    clip: rect(0, 0, 0, 0);
-    white-space: nowrap;
-  }
-
-  .whatsapp-icon {
-    width: 38px;
-    height: 38px;
-  }
-}
+.whatsapp-float {position:relative;align-self:center;margin:0;width:max-content;display:flex;align-items:center;gap:.5rem;padding:.6rem 1rem;min-height:48px;color:#21643c;text-decoration:none;}
+.whatsapp-float:hover {background:#eff6f1;}
+.whatsapp-icon {width:26px;height:26px;display:inline-flex;}
+.whatsapp-icon svg {width:26px;height:26px;}
+.whatsapp-copy {font-size:14px;font-weight:600;}
+/* In normal flow on mobile, so it cannot cover products or cookie controls. */
+@media(max-width:640px){.whatsapp-float{position:relative;left:auto;bottom:auto;align-self:center;margin:0;}}
 </style>

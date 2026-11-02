@@ -1,8 +1,7 @@
 <template>
   <footer class="footer-premium">
-    <div class="footer-glow"></div>
     <div class="max-w-7xl mx-auto px-6 py-14 lg:py-16 relative z-10">
-      <div class="grid grid-cols-1 lg:grid-cols-[1.15fr_0.85fr_0.9fr] gap-10 lg:gap-14 items-start">
+      <div class="grid grid-cols-1 md:grid-cols-[1.15fr_0.85fr_0.9fr] gap-10 lg:gap-14 items-start">
         <section>
           <div class="mb-6">
             <span class="brand-title">IBERNOVIA</span>
@@ -10,23 +9,10 @@
           </div>
 
           <p class="footer-copy max-w-xl">
-            Complementos y moda nupcial con una presentación elegante, cuidada y profesional para ceremonia, fiesta y comunión.
+            Complementos de ceremonia para tiendas y profesionales: novia, novio, fiesta, comunión y arras.
           </p>
 
-          <div class="mt-7 flex items-center gap-4">
-            <a href="https://www.instagram.com" target="_blank" rel="noopener" class="social-icon" aria-label="Instagram">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                <rect x="3" y="3" width="18" height="18" rx="5" ry="5" stroke-width="1.8"></rect>
-                <circle cx="12" cy="12" r="4.1" stroke-width="1.8"></circle>
-                <circle cx="17.2" cy="6.8" r="1.1" fill="currentColor" stroke="none"></circle>
-              </svg>
-            </a>
-            <a href="https://www.facebook.com" target="_blank" rel="noopener" class="social-icon" aria-label="Facebook">
-              <svg viewBox="0 0 24 24" fill="currentColor">
-                <path d="M14 8.5V7a1 1 0 0 1 1-1h1.5V3.5H15c-2.48 0-4 1.62-4 4.25v.75H9v3h2v9h3v-9h2.2l.4-3H14Z"/>
-              </svg>
-            </a>
-          </div>
+          <!-- Social profiles hidden until official URLs are confirmed. -->
         </section>
 
         <section>
@@ -35,8 +21,9 @@
             <router-link to="/">Inicio</router-link>
             <router-link to="/tienda">Catálogo</router-link>
             <router-link to="/contacto">Contacto</router-link>
-            <router-link to="/acceso-empresarial">Acceso empresarial</router-link>
-            <router-link to="/privacidad">Privacidad</router-link>
+            <a href="/complementos-novia-andujar.html">En Andújar: Paola Novias</a>
+            <router-link to="/auth">Acceso profesional</router-link>
+            <router-link to="/acceso-empresarial">Solicitar alta</router-link>
           </nav>
         </section>
 
@@ -65,30 +52,32 @@
 
       <div class="footer-bottom mt-12 pt-6">
         <p>&copy; 2026 IBERNOVIA. Todos los derechos reservados.</p>
+        <nav aria-label="Información legal" class="flex flex-wrap gap-x-5 gap-y-3 mt-4">
+          <router-link to="/privacidad">Privacidad</router-link>
+          <router-link to="/legal">Aviso legal</router-link>
+          <router-link to="/cookies">Cookies</router-link>
+          <button type="button" @click="openCookiePreferences">Preferencias de cookies</button>
+        </nav>
+        <p class="site-credit">
+          Web realizada por <a href="https://alvaroo.dev" target="_blank" rel="noopener noreferrer">alvaroo.dev</a>
+          <span aria-hidden="true"> · </span>
+          <a href="https://www.instagram.com/alvaroo.dev/" target="_blank" rel="noopener noreferrer" aria-label="Instagram de alvaroo.dev">Instagram</a>
+        </p>
       </div>
     </div>
   </footer>
 </template>
 
 <script setup>
+const openCookiePreferences = () => window.dispatchEvent(new Event('ibernovia:cookie-preferences'))
 </script>
 
 <style scoped>
 .footer-premium {
   position: relative;
   overflow: hidden;
-  background:
-    radial-gradient(circle at top left, rgb(196 160 106 / 0.12), transparent 35%),
-    radial-gradient(circle at top right, rgb(255 255 255 / 0.05), transparent 25%),
-    #171513;
+  background: #24211d;
   color: #f5f2ec;
-}
-
-.footer-glow {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  background: linear-gradient(180deg, rgb(255 255 255 / 0.02), transparent 20%, transparent 80%, rgb(168 117 71 / 0.04));
 }
 
 .brand-title {
@@ -106,7 +95,7 @@
   font-size: 0.65rem;
   font-weight: 700;
   letter-spacing: 0.38em;
-  text-transform: uppercase;
+  text-transform: none;
   color: #a87547;
   display: block;
   line-height: 1.2;
@@ -120,8 +109,8 @@
 
 .footer-title {
   font-size: 0.78rem;
-  text-transform: uppercase;
-  letter-spacing: 0.24em;
+  text-transform: none;
+  letter-spacing: 0.02em;
   color: rgb(255 255 255 / 0.85);
   margin-bottom: 1.25rem;
 }
@@ -134,12 +123,11 @@
 
 .footer-links a {
   color: rgb(255 255 255 / 0.72);
-  transition: color 0.25s ease, transform 0.25s ease;
+  transition: color 0.2s ease;
 }
 
 .footer-links a:hover {
   color: #a87547;
-  transform: translateX(3px);
 }
 
 .footer-contact {
@@ -154,9 +142,9 @@
 
 .contact-label {
   font-size: 0.72rem;
-  text-transform: uppercase;
-  letter-spacing: 0.2em;
-  color: rgb(255 255 255 / 0.48);
+  text-transform: none;
+  letter-spacing: 0.02em;
+  color: rgb(255 255 255 / 0.68);
 }
 
 .footer-contact a {
@@ -174,44 +162,23 @@
   font-size: 0.98rem;
 }
 
-.social-icon {
-  width: 2.8rem;
-  height: 2.8rem;
-  border-radius: 999px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  border: 1px solid rgb(255 255 255 / 0.12);
-  background: rgb(255 255 255 / 0.04);
-  color: rgb(255 255 255 / 0.72);
-  transition: transform 0.25s ease, background 0.25s ease, border-color 0.25s ease, color 0.25s ease;
-}
-
-.social-icon svg {
-  width: 1.1rem;
-  height: 1.1rem;
-}
-
-.social-icon:hover {
-  transform: translateY(-2px);
-  background: rgb(168 117 71 / 0.12);
-  border-color: rgb(168 117 71 / 0.45);
-  color: #a87547;
-}
-
 .footer-bottom {
   border-top: 1px solid rgb(255 255 255 / 0.08);
-  color: rgb(255 255 255 / 0.45);
+  color: rgb(255 255 255 / 0.68);
   font-size: 0.78rem;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
+  letter-spacing: normal;
+  text-transform: none;
 }
+
+.site-credit {margin-top:1.25rem;font-size:.75rem;line-height:1.6;color:#c8c1b8;}
+.site-credit a {text-decoration:underline;text-underline-offset:3px;}
+.site-credit a:hover {color:#fff;}
 
 @media (max-width: 640px) {
   .footer-premium .max-w-7xl {
     padding-left: 1rem;
     padding-right: 1rem;
-    padding-bottom: 6.5rem;
+    padding-bottom: 2rem;
   }
 
   .brand-title {
@@ -219,8 +186,7 @@
     letter-spacing: 0.16em;
   }
 
-  .brand-subtitle,
-  .footer-bottom {
+  .brand-subtitle {
     letter-spacing: 0.18em;
   }
 }

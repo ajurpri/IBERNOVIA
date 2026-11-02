@@ -2,16 +2,15 @@
   <div class="contact-page min-h-screen bg-[#fdfdfc] py-16 md:py-24 px-4 sm:px-6 lg:px-8">
     <div class="max-w-6xl mx-auto">
       <div class="text-center mb-16 md:mb-20 animate-fade-in-up">
-        <span class="text-[10px] uppercase tracking-[0.4em] text-luxury-gold font-bold block mb-4">ATELIER IBERNOVIA</span>
         <h1 class="font-serif text-5xl md:text-6xl font-light text-luxury-black tracking-wide mb-6">Contacto</h1>
         <p class="text-sm text-gray-500 max-w-xl mx-auto leading-relaxed text-balance">
           Soporte general, consultas sobre colecciones y alta profesional para boutiques y tiendas del sector.
         </p>
       </div>
 
-      <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-24 items-start animate-fade-in-up delay-150">
-        <div class="lg:col-span-5 space-y-10">
-          <h2 class="font-serif text-2xl font-light text-luxury-black tracking-wide border-b border-black/5 pb-4">Nuestras Oficinas</h2>
+      <div class="grid grid-cols-1 md:grid-cols-12 gap-12 lg:gap-24 items-start animate-fade-in-up delay-150">
+        <div class="md:col-span-5 space-y-10">
+          <h2 class="font-serif text-2xl font-light text-luxury-black tracking-wide border-b border-black/5 pb-4">Datos de contacto</h2>
 
           <div class="space-y-8">
             <div class="flex gap-4">
@@ -22,7 +21,7 @@
                 </svg>
               </span>
               <div>
-                <h3 class="text-[10px] uppercase tracking-[0.2em] text-gray-400 font-bold mb-2">Direccion</h3>
+                <h3 class="text-[10px] uppercase tracking-[0.2em] text-gray-400 font-bold mb-2">Dirección</h3>
                 <p class="text-luxury-black font-serif text-lg leading-relaxed">
                   Calle Forjadores, 1<br>
                   23740 Andújar, Jaén
@@ -51,8 +50,8 @@
                 </svg>
               </span>
               <div>
-                <h3 class="text-[10px] uppercase tracking-[0.2em] text-gray-400 font-bold mb-1">Telefono</h3>
-                <p class="text-luxury-black font-serif text-lg">953 51 50 70</p>
+                <h3 class="text-[10px] uppercase tracking-[0.2em] text-gray-400 font-bold mb-1">Teléfono</h3>
+                <p class="text-luxury-black font-serif text-lg"><a href="tel:+34953515070">953 51 50 70</a></p>
               </div>
             </div>
 
@@ -63,7 +62,7 @@
                 </svg>
               </span>
               <div>
-                <h3 class="text-[10px] uppercase tracking-[0.2em] text-gray-400 font-bold mb-1">Contacto Digital</h3>
+                <h3 class="text-[10px] uppercase tracking-[0.2em] text-gray-400 font-bold mb-1">Correo electrónico</h3>
                 <p class="text-luxury-black font-serif text-lg hover:text-luxury-gold transition-colors">
                   <a href="mailto:info@ibernovia.es">info@ibernovia.es</a>
                 </p>
@@ -77,32 +76,37 @@
                 </svg>
               </span>
               <div>
-                <h3 class="text-[10px] uppercase tracking-[0.2em] text-gray-400 font-bold mb-2">Horarios de Atencion</h3>
+                <h3 class="text-[10px] uppercase tracking-[0.2em] text-gray-400 font-bold mb-2">Horario de atención</h3>
                 <p class="text-luxury-black font-serif text-base leading-relaxed">
-                  Lunes a Viernes<br>
+                  Lunes a viernes<br>
                   09:00 a 14:00 · 17:00 a 20:00
                 </p>
-                <p class="text-gray-400 text-xs mt-1">Sabados y Domingos cerrado</p>
+                <p class="text-gray-400 text-xs mt-1">Sábados y domingos cerrado</p>
               </div>
             </div>
           </div>
 
           <div class="pt-8 border-t border-black/5 mt-8">
             <p class="font-serif italic text-gray-500 text-sm leading-relaxed text-balance">
-              Si deseas visitarnos o realizar una consulta mas concreta sobre la coleccion, te recomendamos contactarnos previamente.
+              Si deseas visitarnos o realizar una consulta más concreta sobre la colección, te recomendamos contactarnos previamente.
             </p>
           </div>
         </div>
 
-        <form @submit.prevent="submitForm" class="lg:col-span-7 space-y-8 pt-4">
-          <h2 class="font-serif text-2xl font-light text-luxury-black tracking-wide border-b border-black/5 pb-4 mb-2">Escribenos</h2>
+        <div class="md:col-span-7 space-y-10">
+          <aside class="border-l-2 border-luxury-gold pl-6" aria-labelledby="paola-title">
+            <h2 id="paola-title" class="font-serif text-2xl">Encuentra nuestros complementos en Paola Novias</h2>
+            <p class="mt-3 text-gray-600 leading-relaxed">En Andújar puedes encontrar los complementos de Ibernovia en Paola Novias. Consulta con la tienda la disponibilidad antes de tu visita.</p>
+            <a href="/complementos-novia-andujar.html" class="inline-block mt-4 underline underline-offset-4">Más sobre nuestros complementos en Andújar</a>
+          </aside>
+        <form @submit.prevent="submitForm" class="space-y-8">
+          <h2 class="font-serif text-2xl font-light text-luxury-black tracking-wide border-b border-black/5 pb-4 mb-2">Escríbenos</h2>
 
           <div class="relative group">
-            <label class="block text-[10px] uppercase tracking-[0.25em] text-gray-400 font-bold mb-1 transition-colors group-focus-within:text-luxury-gold">
+            <label for="contact-form-nombre" class="block text-[10px] uppercase tracking-[0.25em] text-gray-400 font-bold mb-1 transition-colors group-focus-within:text-luxury-gold">
               Nombre completo
             </label>
-            <input
-              v-model="form.nombre"
+            <input id="contact-form-nombre" v-model="form.nombre"
               type="text"
               required
               autocomplete="name"
@@ -111,24 +115,22 @@
           </div>
 
           <div class="relative group">
-            <label class="block text-[10px] uppercase tracking-[0.25em] text-gray-400 font-bold mb-1 transition-colors group-focus-within:text-luxury-gold">
-              Correo electronico
+            <label for="contact-form-email" class="block text-[10px] uppercase tracking-[0.25em] text-gray-400 font-bold mb-1 transition-colors group-focus-within:text-luxury-gold">
+              Correo electrónico
             </label>
-            <input
-              v-model="form.email"
+            <input id="contact-form-email" v-model="form.email"
               type="email"
               required
               autocomplete="email"
               class="w-full pb-3 pt-1 border-b border-gray-300 bg-transparent rounded-none focus:outline-none focus:border-luxury-gold transition-colors text-sm text-luxury-black placeholder-gray-400/40"
-              placeholder="Introduce tu direccion de correo">
+              placeholder="Introduce tu dirección de correo">
           </div>
 
           <div class="relative group">
-            <label class="block text-[10px] uppercase tracking-[0.25em] text-gray-400 font-bold mb-1 transition-colors group-focus-within:text-luxury-gold">
+            <label for="contact-form-asunto" class="block text-[10px] uppercase tracking-[0.25em] text-gray-400 font-bold mb-1 transition-colors group-focus-within:text-luxury-gold">
               Asunto
             </label>
-            <input
-              v-model="form.asunto"
+            <input id="contact-form-asunto" v-model="form.asunto"
               type="text"
               required
               autocomplete="off"
@@ -137,16 +139,15 @@
           </div>
 
           <div class="relative group">
-            <label class="block text-[10px] uppercase tracking-[0.25em] text-gray-400 font-bold mb-1 transition-colors group-focus-within:text-luxury-gold">
+            <label for="contact-form-mensaje" class="block text-[10px] uppercase tracking-[0.25em] text-gray-400 font-bold mb-1 transition-colors group-focus-within:text-luxury-gold">
               Mensaje
             </label>
-            <textarea
-              v-model="form.mensaje"
+            <textarea id="contact-form-mensaje" v-model="form.mensaje"
               required
               rows="4"
               autocomplete="off"
               class="w-full pb-3 pt-1 border-b border-gray-300 bg-transparent rounded-none focus:outline-none focus:border-luxury-gold transition-colors text-sm text-luxury-black placeholder-gray-400/40 resize-none"
-              placeholder="Escribe aqui tu mensaje..."></textarea>
+              placeholder="Escribe aquí tu mensaje..."></textarea>
           </div>
 
           <div class="pt-4">
@@ -154,7 +155,7 @@
               type="submit"
               :disabled="enviando"
               class="inline-flex justify-center items-center px-10 py-4 bg-luxury-black text-white hover:bg-luxury-gold hover:text-white text-[11px] font-bold uppercase tracking-[0.25em] transition-all duration-300 rounded-full shadow-md hover:shadow-lg hover:-translate-y-0.5 disabled:opacity-50">
-              {{ enviando ? 'Enviando...' : 'Enviar Mensaje' }}
+              {{ enviando ? 'Enviando...' : 'Enviar mensaje' }}
             </button>
           </div>
 
@@ -162,6 +163,7 @@
             {{ mensaje }}
           </p>
         </form>
+        </div>
       </div>
     </div>
   </div>
@@ -216,7 +218,7 @@ const submitForm = async () => {
       console.error('Error enviando correo por PHP:', err)
     })
 
-    mensaje.value = 'Gracias por tu mensaje. Lo hemos recibido y te hemos enviado una confirmacion por correo.'
+    mensaje.value = 'Gracias por tu mensaje. Hemos recibido tu consulta.'
     exito.value = true
     form.value = { nombre: '', email: '', asunto: '', mensaje: '' }
   } catch (error) {
