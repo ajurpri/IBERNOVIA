@@ -1,5 +1,5 @@
 <template>
-  <div class="group h-full flex flex-col bg-transparent overflow-hidden transition-all duration-300">
+  <div class="product-card group h-full flex flex-col bg-transparent overflow-hidden" :class="{ 'reference-only': referenceOnly }">
 
     <div class="relative">
     <!-- Image Wrapper -->
@@ -31,12 +31,13 @@
     </div>
 
     <div class="product-details pt-3 pb-2 flex-1 flex flex-col">
-      <h3 class="product-name text-luxury-black">
+      <h3 v-if="!referenceOnly" class="product-name text-luxury-black">
         {{ productName(producto) }}
       </h3>
-      <p v-if="producto.enOferta && producto.tagOferta" class="product-offer">{{ producto.tagOferta }}</p>
+      <p v-if="!referenceOnly && producto.enOferta && producto.tagOferta" class="product-offer">{{ producto.tagOferta }}</p>
       <div class="product-reference-row">
-        <p v-if="productName(producto) !== productReference(producto)">Referencia: {{ productReference(producto) }}</p>
+        <h3 v-if="referenceOnly" class="catalog-reference"><router-link :to="`/producto/${producto.id}`"><span>Ref.</span> {{ productReference(producto) }}</router-link></h3>
+        <p v-else-if="productName(producto) !== productReference(producto)">Referencia: {{ productReference(producto) }}</p>
         <button
           @click.stop.prevent="toggleFavorite"
           :aria-pressed="isFavorite ? 'true' : 'false'"
@@ -64,6 +65,10 @@ import { getImageUrl } from '../lib/api'
 import { productName, productReference } from '../lib/productPresentation'
 
 const props = defineProps({
+  referenceOnly: {
+    type: Boolean,
+    default: false
+  },
   producto: {
     type: Object,
     required: true
@@ -97,6 +102,16 @@ const toggleFavorite = () => {
 <style scoped>
 .product-visual {aspect-ratio:1;}
 .product-photo {display:block;}
+.product-card {min-width:0;}
+.reference-only .product-visual {background:#fff;border:1px solid #e9e5df;overflow:hidden;}
+.reference-only .product-photo {width:100%;height:100%;object-fit:contain;padding:clamp(.5rem,1.5vw,1.25rem);}
+.reference-only .product-details {padding:.5rem 0 0;}
+.reference-only .product-reference-row {min-height:44px;gap:.5rem;border-bottom:1px solid #e5dfd6;}
+.catalog-reference {font-size:.875rem;font-weight:600;line-height:1.5;overflow-wrap:anywhere;}
+.catalog-reference span {font-size:.7rem;font-weight:400;color:#766b5e;margin-right:.25rem;}
+.catalog-reference a {display:block;padding:.5rem 0;}
+.reference-only .favorite-control {margin-right:0;}
+.reference-only .product-visual:hover {border-color:#b9a58d;}
 .product-offer {font-size:.75rem;color:#815733;margin-top:.25rem;}
 .product-name {font-family:'Manrope','Segoe UI',sans-serif;letter-spacing:0;font-size:.9rem;font-weight:500;line-height:1.55;}
 .product-reference-row {display:flex;align-items:center;justify-content:space-between;gap:.25rem;}

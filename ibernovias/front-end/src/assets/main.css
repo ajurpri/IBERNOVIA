@@ -91,7 +91,6 @@ a {
 .tienda-page button {min-height:44px;}
 .product-enquiry {display:block;text-align:center;padding:.85rem 1rem;border:1px solid #b8cbbd;color:#21643c;background:#f4f8f4;font-size:.9rem;}
 body:has(.cookie-banner) .whatsapp-float {visibility:hidden;}
-@media(max-width:640px){body:has(.cookie-banner) .whatsapp-float{visibility:visible;}}
 .animate-fade-in-up {animation:none !important;opacity:1;transform:none;}
 .animate-subtle-zoom {animation:none !important;}
 .footer-premium .contact-label,.footer-premium .footer-bottom {color:#c8c1b8;}

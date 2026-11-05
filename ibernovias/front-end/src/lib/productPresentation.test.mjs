@@ -21,6 +21,6 @@ test('WhatsApp includes public reference and canonical URL, excludes prices and 
   const text = url.searchParams.get('text')
   assert.equal(url.origin,'https://wa.me')
   assert.match(text,/Referencia: 1239-AB/)
-  assert.match(text,/https:\/\/www\.ibernovia\.es\/producto\/639/)
+  assert.match(text,/https:\/\/www\.ibernovia\.es\/#\/producto\/639/)
   assert.doesNotMatch(text,/9876|5432|private@/)
 })

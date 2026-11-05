@@ -3,12 +3,12 @@
 
     <section class="home-hero" aria-label="Portada">
       <picture class="home-hero-photo">
-        <source media="(max-width: 640px)" srcset="/images/portada/velo-640.webp 640w, /images/portada/velo-960.webp 960w" sizes="100vw">
-        <img src="/images/catalogo/novia/velos/17815-lentejuelas.webp" alt="Detalle de un velo del catálogo Ibernovia" width="1200" height="797" loading="eager" fetchpriority="high" decoding="async">
+        <source v-if="!heroFallback" media="(max-width: 640px)" srcset="/images/portada/campana-burdeos-movil-480.webp 480w, /images/portada/campana-burdeos-movil-768.webp 768w" sizes="100vw">
+        <source v-if="!heroFallback" srcset="/images/portada/campana-burdeos-960.webp 960w, /images/portada/campana-burdeos-1536.webp 1536w" sizes="100vw">
+        <img :key="heroFallback" src="/images/catalogo/novia/velos/17815-lentejuelas.webp" @error="heroFallback = true" :alt="heroFallback ? 'Detalle de un velo Ibernovia' : 'Composición de campaña con tocado floral y pendientes sobre fondo burdeos'" width="1536" height="1024" loading="eager" fetchpriority="high" decoding="async">
       </picture>
       <div class="home-hero-copy">
-        <h1 class="home-wordmark">IBERNOVIA</h1>
-        <p class="home-subline">Complementos de novia y ceremonia</p>
+        <h1 class="home-wordmark">Complementos de novia y ceremonia</h1>
         <p class="home-hero-description">Para tiendas y profesionales.</p>
         <div class="home-hero-actions">
           <router-link to="/tienda" class="home-primary">Explorar catálogo</router-link>
@@ -33,8 +33,10 @@
             :to="{ path: '/tienda', hash: '#catalogo', query: { familia: family.query } }"
             class="home-family-card"
           >
-            <img v-if="familiesReady" :src="family.image" :alt="family.alt" width="600" height="400" loading="eager" fetchpriority="low" decoding="async">
-            <span v-else class="home-family-image-space" aria-hidden="true"></span>
+            <span class="home-family-visual">
+              <img v-if="familiesReady" :src="family.image" :alt="family.alt" width="600" height="400" loading="lazy" fetchpriority="low" decoding="async">
+              <span v-else class="home-family-image-space" aria-hidden="true"></span>
+            </span>
             <span class="home-family-copy">
               <strong>{{ family.name }}</strong>
             </span>
@@ -43,32 +45,27 @@
       </div>
     </section>
 
-    <aside class="retail-note" aria-label="Compra en tienda">
-      <div>
-        <p>¿No eres profesional? Consúltanos dónde comprar nuestros complementos cerca de ti.</p>
-        <p class="retail-note-detail">En Andújar, <a href="/complementos-novia-andujar.html">Paola Novias</a> es nuestra tienda oficial.</p>
-      </div>
-      <router-link to="/contacto" class="retail-note-link">Consultar tienda <span aria-hidden="true">→</span></router-link>
-    </aside>
+
 
     <!-- Moving product selection; photography stays unobstructed. -->
     <section ref="featuredSection" class="home-featured py-12 bg-[#fdfdfc] border-t border-b border-black/5 overflow-hidden" aria-label="Colección destacada">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-6">
         <div class="home-families-head">
-          <h2 class="home-families-title">Nuestra selección</h2>
+          <div>
+            <h2 class="home-families-title">Nuestra selección</h2>
+          </div>
           <router-link to="/tienda" class="home-families-link">Ver catálogo</router-link>
         </div>
       </div>
 
       <p v-if="loading" class="text-center py-8 text-sm" role="status">Cargando selección…</p>
       <div v-else-if="products.length > 0" class="featured-window">
-        <div class="featured-track">
+        <div class="featured-track" :class="{ 'is-paused': !selectionVisible }">
           <div v-for="copy in 2" :key="copy" class="featured-group" :aria-hidden="copy === 2 ? 'true' : undefined">
             <router-link v-for="prod in products" :key="prod.id" :to="`/producto/${prod.id}`" class="featured-product" :tabindex="copy === 2 ? -1 : undefined">
               <img v-if="selectionReady" :src="getProductImage(prod)" :alt="productName(prod)" width="600" height="400" loading="eager" fetchpriority="low" decoding="async">
               <span v-else class="featured-image-space" aria-hidden="true"></span>
-              <h3>{{ productName(prod) }}</h3>
-              <p v-if="productName(prod) !== productReference(prod)">Referencia: {{ productReference(prod) }}</p>
+              <h3><span>Ref.</span> {{ productReference(prod) }}</h3>
             </router-link>
           </div>
         </div>
@@ -78,6 +75,14 @@
         No se pudieron cargar los productos destacados
       </div>
     </section>
+
+    <aside class="retail-note" aria-label="Compra en tienda">
+      <div>
+        <p>¿No eres profesional? Consúltanos dónde comprar nuestros complementos cerca de ti.</p>
+        <p class="retail-note-detail">En Andújar, <a href="/complementos-novia-andujar.html">Paola Novias</a> es nuestra tienda oficial.</p>
+      </div>
+      <router-link to="/contacto" class="retail-note-link">Consultar tienda</router-link>
+    </aside>
 
     <section v-if="promociones.length > 0" class="home-promos" aria-label="Promociones">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -113,11 +118,14 @@ import { useAuthStore } from '../stores/auth'
 const toast = inject('toast', null)
 const authStore = useAuthStore()
 const products = ref([])
+const heroFallback = ref(false)
 const familiesSection = ref(null)
 const familiesReady = ref(false)
 const featuredSection = ref(null)
 const selectionReady = ref(false)
+const selectionVisible = ref(false)
 let selectionObserver
+let motionObserver
 const promociones = ref([])
 const loading = ref(true)
 const quickFamilies = [
@@ -180,6 +188,10 @@ const copyToClipboard = (text) => {
 
 onMounted(async () => {
   if ('IntersectionObserver' in window) {
+    motionObserver = new IntersectionObserver(([entry]) => {
+      selectionVisible.value = entry.isIntersecting
+    })
+    if (featuredSection.value) motionObserver.observe(featuredSection.value)
     selectionObserver = new IntersectionObserver((entries) => {
       for (const entry of entries) {
         if (!entry.isIntersecting) continue
@@ -191,33 +203,30 @@ onMounted(async () => {
     if (featuredSection.value) selectionObserver.observe(featuredSection.value)
     if (familiesSection.value) selectionObserver.observe(familiesSection.value)
   } else {
+    selectionVisible.value = true
     selectionReady.value = true
     familiesReady.value = true
   }
 
-  try {
-    const [productsResult, promosResult] = await Promise.allSettled([
-      fetchCachedProducts(),
-      apiClient.get('/api/promociones')
-    ])
-
-    if (productsResult.status === 'fulfilled') {
-      const available = productsResult.value.filter(p => p.activo !== false)
+  // Render each section as soon as its own request completes.
+  await Promise.allSettled([
+    fetchCachedProducts().then((catalog) => {
+      const available = catalog.filter(p => p.activo !== false)
       // A small display selection from existing references; the full catalogue is unchanged.
       const displayIds = [564, 518, 393, 632, 357, 639, 403, 631, 355, 578]
       products.value = displayIds.map(id => available.find(product => product.id === id)).filter(Boolean)
       if (!products.value.length) products.value = available.slice(0, 15)
-    }
-
-    if (promosResult.status === 'fulfilled') {
-      promociones.value = Array.isArray(promosResult.value.data) ? promosResult.value.data : []
-    }
-  } finally {
-    loading.value = false
-  }
+    }).finally(() => { loading.value = false }),
+    apiClient.get('/api/promociones').then(({ data }) => {
+      promociones.value = Array.isArray(data) ? data : []
+    })
+  ])
 })
 
-onBeforeUnmount(() => selectionObserver?.disconnect())
+onBeforeUnmount(() => {
+  selectionObserver?.disconnect()
+  motionObserver?.disconnect()
+})
 </script>
 
 <style scoped>
@@ -230,7 +239,8 @@ onBeforeUnmount(() => selectionObserver?.disconnect())
   align-items: center;
   justify-content: space-between;
   gap: 16px 32px;
-  background: #f5f2ec;
+  background: transparent;
+  border-top: 1px solid #e8e3dc;
   color: #49423b;
   font-size: 14px;
   line-height: 1.7;
@@ -244,78 +254,68 @@ onBeforeUnmount(() => selectionObserver?.disconnect())
   .retail-note { width: calc(100% - 32px); padding: 18px 20px; flex-direction: column; align-items: flex-start; gap: 10px; }
 }
 
-.home-hero {
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 460px;
-  height: min(70svh, 700px);
-  overflow: hidden;
-  background: #fcfaf6;
-}
-.home-hero-photo {position:absolute;inset:0;}
-.home-hero-photo img {width:100%;height:100%;object-fit:cover;object-position:center;}
-.home-hero::after {content:'';position:absolute;inset:0;background:linear-gradient(180deg,rgba(253,253,252,.78),rgba(253,253,252,.68) 55%,rgba(253,253,252,.24));}
-.home-hero-copy {position:relative;z-index:1;text-align:center;max-width:900px;padding:3rem 1.5rem;}
-.home-eyebrow {font-size:.8rem;letter-spacing:.2em;text-transform:uppercase;color:#715035;margin-bottom:1.5rem;}
-.home-wordmark {font-family:'Fraunces',Georgia,serif;font-size:clamp(3rem,7vw,6rem);font-weight:300;letter-spacing:.09em;line-height:1.1;color:#2d2924;}
-.home-subline {font-family:'Fraunces',Georgia,serif;font-size:clamp(1.1rem,2vw,1.5rem);letter-spacing:.025em;margin-top:1.2rem;color:#3a342d;}
-.home-rule {width:4rem;height:1px;background:#a87547;margin:1.8rem auto;}
-.home-hero-description {font-size:.95rem;line-height:1.8;color:#3d3730;margin:1.25rem auto 2rem;}
-.home-hero-actions {display:flex;justify-content:center;flex-wrap:wrap;gap:1rem;}
-.home-hero-actions a {display:inline-flex;align-items:center;justify-content:center;min-height:48px;padding:.85rem 1.5rem;font-size:.85rem;border:1px solid #2d2924;}
-.home-primary {background:#2d2924;color:#fff;}
-.home-secondary {color:#2d2924;background:rgba(253,253,252,.65);}
+/* One full-width photograph; the lace remains visible above the copy. */
+.home-hero {position:relative;display:flex;align-items:center;min-height:520px;height:min(76svh,760px);background:#450812;isolation:isolate;}
+.home-hero-photo {position:absolute;inset:0;display:block;overflow:hidden;z-index:-2;}
+.home-hero-photo img {display:block;width:100%;height:100%;object-fit:cover;object-position:50% 42%;}
+.home-hero::after {content:'';position:absolute;inset:0;z-index:-1;pointer-events:none;background:linear-gradient(90deg,rgba(35,0,8,.25),transparent 55%);}
+.home-hero-copy {width:100%;max-width:1280px;margin:0 auto;padding:3rem 2rem;color:#fff;}
+.home-wordmark {max-width:13ch;font-family:'Fraunces',Georgia,serif;font-size:clamp(2.2rem,4vw,3.8rem);font-weight:300;letter-spacing:-.025em;line-height:1.12;color:#fff;text-wrap:balance;}
+.home-hero-description {font-size:.85rem;line-height:1.7;color:#f2eee6;margin:1rem 0 1.5rem;}
+.home-hero-actions {display:flex;align-items:center;flex-wrap:wrap;gap:1rem 1.5rem;}
+.home-hero-actions a {display:inline-flex;align-items:center;justify-content:center;min-height:46px;font-size:.8rem;}
+.home-primary {background:#fff;color:#292822;padding:.8rem 1.5rem;}
+.home-secondary {color:#fff;text-decoration:underline;text-underline-offset:5px;}
 
-.home-families {padding:clamp(2.5rem,5vw,4.5rem) 0;background:#fdfdfc;}
-.home-families-head {display:flex;justify-content:space-between;align-items:end;gap:1.5rem;margin-bottom:1.8rem;}
-.home-families-kicker {font-size:.75rem;letter-spacing:.12em;text-transform:uppercase;color:#795333;}
-.home-families-title {margin-top:.4rem;font-family:'Fraunces',Georgia,serif;font-size:clamp(1.8rem,3vw,2.5rem);font-weight:300;line-height:1.2;}
-.home-families-link {white-space:nowrap;font-size:.85rem;text-decoration:underline;text-underline-offset:4px;}
+/* Photography-led layout with a shared rhythm for both sections. */
+.home-families {padding:clamp(2.5rem,5vw,4rem) 0;background:#fff;}
+.home-families-head {display:flex;justify-content:space-between;align-items:end;gap:1rem;margin-bottom:1.75rem;}
+.home-families-title {font-family:'Fraunces',Georgia,serif;font-size:clamp(1.65rem,2.8vw,2.2rem);font-weight:300;line-height:1.15;letter-spacing:-.025em;}
+.home-families-link {white-space:nowrap;font-size:.8rem;text-decoration:underline;text-underline-offset:5px;min-height:44px;display:inline-flex;align-items:center;}
 .home-family-grid {display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:1.25rem;}
-.home-family-card {display:block;color:#302a24;}
-.home-family-card img,.home-family-image-space {display:block;width:100%;height:auto;aspect-ratio:1200/797;object-fit:contain;}
-.home-family-copy {display:block;margin-top:.85rem;}
-.home-family-copy strong {font-family:'Manrope','Segoe UI',sans-serif;font-size:.95rem;font-weight:500;}
-
-.home-featured {border:0;padding-top:1rem;padding-bottom:clamp(3rem,6vw,5rem);}
+.home-family-card {display:block;min-width:0;color:#302a24;}
+.home-family-visual {display:block;overflow:hidden;background:#f7f6f3;}
+.home-family-card img,.home-family-image-space {display:block;width:100%;height:auto;aspect-ratio:4/5;object-fit:contain;padding:.75rem;}
+.home-family-copy {display:block;text-align:left;padding:1rem 0 .25rem;}
+.home-family-copy strong {font-family:'Fraunces',Georgia,serif;font-size:1.35rem;font-weight:400;}
+.home-featured {border:0;border-top:1px solid #eeeae4;background:#fff;padding:clamp(2.5rem,5vw,4rem) 0;}
 .featured-window {overflow:hidden;}
-.featured-track {display:flex;width:max-content;animation:selection-scroll 150s linear infinite;}
-.featured-group {display:flex;gap:2rem;padding-right:2rem;flex-shrink:0;}
-.featured-product {display:block;width:340px;flex-shrink:0;}
-.featured-product img,.featured-image-space {display:block;width:100%;height:240px;object-fit:contain;}
-.featured-product h3 {font-family:'Manrope','Segoe UI',sans-serif;font-size:.9rem;font-weight:500;line-height:1.5;margin-top:.85rem;}
-.featured-product p {font-size:.8rem;color:#655e55;margin-top:.35rem;}
-.featured-window:hover .featured-track,.featured-window:focus-within .featured-track {animation-play-state:paused;}
+.featured-track {display:flex;width:max-content;animation:selection-scroll 110s linear infinite;}
+.featured-track.is-paused,.featured-window:focus-within .featured-track {animation-play-state:paused;}
+.featured-group {display:flex;gap:1.25rem;padding-right:1.25rem;flex-shrink:0;}
+.featured-product {display:block;width:260px;flex-shrink:0;background:#fff;}
+.featured-product img,.featured-image-space {display:block;width:100%;height:260px;padding:.5rem;object-fit:contain;}
+.featured-product h3 {display:flex;align-items:center;justify-content:flex-start;gap:.4rem;margin:0;padding:1rem 0;font-family:'Manrope','Segoe UI',sans-serif;font-size:.85rem;font-weight:500;line-height:1.5;}
+.featured-product h3 > span {font-size:.7rem;color:#7c6c58;font-weight:400;}
 @keyframes selection-scroll {to {transform:translateX(-50%);}}
-
+@media(hover:hover) and (pointer:fine) {
+  .featured-window:hover .featured-track {animation-play-state:paused;}
+  .home-family-card:hover .home-family-copy {text-decoration:underline;text-underline-offset:5px;}
+}
 @media(max-width:640px){
-  .home-hero{min-height:420px;height:64svh;}
-  .home-hero-copy{padding:2rem 1rem;}
-  .home-wordmark{font-size:clamp(2.25rem,11vw,3.2rem);letter-spacing:.07em;}
-  .home-subline{font-size:1.1rem;letter-spacing:.02em;}
-  .home-hero-actions{gap:.65rem;}
+  .home-hero{align-items:flex-end;min-height:560px;height:80svh;max-height:740px;}
+  .home-hero-photo img{object-position:50% 0;}
+  .home-hero::after{background:linear-gradient(0deg,rgba(35,0,8,.5),transparent 48%);}
+  .home-hero-copy{padding:2rem 1.25rem;}
+  .home-wordmark{max-width:20ch;font-size:clamp(1.9rem,7.8vw,2.65rem);letter-spacing:-.025em;}
+  .home-hero-actions{gap:1rem;}
+  .home-hero-description{margin:1rem 0 1.25rem;}
   .home-hero-actions a{padding:.85rem 1rem;}
-  .home-families,.home-featured,.home-promos{padding-top:2.5rem;padding-bottom:2.5rem;}
-  .home-families-head{align-items:start;gap:1rem;}
-  .home-family-grid{grid-auto-flow:column;grid-auto-columns:minmax(220px,74vw);grid-template-columns:none;gap:1rem;overflow-x:auto;padding-bottom:.75rem;scroll-snap-type:x proximity;}
-  .home-family-card{scroll-snap-align:start;}
-  .home-family-copy strong{font-size:.9rem;}
-  .featured-product{width:300px;}
-  .featured-product img,.featured-image-space{height:210px;}
-  .home-promos .mb-16{margin-bottom:2.25rem;}
+  .home-families-head{align-items:end;gap:.75rem;}
+  .home-family-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:1.75rem 1rem;}
+  .home-family-card img,.home-family-image-space{aspect-ratio:1;padding:.65rem;}
+  .home-family-copy{padding:.65rem 0;}
+  .home-family-copy strong{font-size:1.15rem;}
+  .featured-group{gap:.85rem;padding-right:.85rem;}
+  .featured-product{width:190px;}
+  .featured-product img,.featured-image-space{height:190px;padding:.65rem;}
+  .featured-track{animation-duration:85s;}
 }
 @media(prefers-reduced-motion:reduce){
-  .featured-track{animation:none;transform:none;width:auto;}
+  .featured-track{animation:none;transform:none;width:max-content;}
   .featured-window{overflow-x:auto;}
   .featured-group[aria-hidden="true"]{display:none;}
 }
-
-.home-family-grid {scrollbar-width:thin;scrollbar-color:#bfb7ad transparent;}
-.home-family-grid::-webkit-scrollbar {height:3px;}
-.home-family-grid::-webkit-scrollbar-track {background:transparent;}
-.home-family-grid::-webkit-scrollbar-thumb {background:#bfb7ad;}
 .home-promos {padding:3rem 0 4rem;border-top:1px solid #e8e5df;}
 .promo-grid {display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,280px),1fr));gap:2.5rem;margin-top:2rem;}
 .promo-item {display:flex;flex-direction:column;align-items:start;gap:1rem;}

@@ -1,0 +1,21 @@
+HTTP/1.1 200 OK
+Date: Thu, 05 Nov 2026 15:09:52 GMT
+Content-Type: application/json
+Transfer-Encoding: chunked
+Connection: keep-alive
+Cache-Control: no-cache, no-store, max-age=0, must-revalidate
+Content-Encoding: gzip
+expires: 0
+pragma: no-cache
+rndr-id: 9f84e8d6-9622-4ddb
+Server: cloudflare
+strict-transport-security: max-age=31536000 ; includeSubDomains
+vary: origin,access-control-request-method,access-control-request-headers,accept-encoding
+x-content-type-options: nosniff
+x-frame-options: DENY
+x-render-origin-server: Render
+x-xss-protection: 0
+cf-cache-status: DYNAMIC
+CF-RAY: a55cc834cde2cfd1-MAD
+alt-svc: h3=":443"; ma=86400
+

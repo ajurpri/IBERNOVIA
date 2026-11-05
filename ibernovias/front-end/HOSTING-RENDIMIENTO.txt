@@ -1,0 +1,48 @@
+PUBLICACION CON FILEZILLA
+
+1. Ejecutar npm.cmd run build desde ibernovias/front-end.
+2. Subir el contenido de dist a la carpeta publica actual, incluyendo .htaccess.
+   Subir primero assets e images y por ultimo index.html.
+   Mantener los assets anteriores durante el cambio para las sesiones abiertas.
+3. Las nuevas imagenes de portada tienen nombres nuevos para evitar una copia
+   antigua en cache. No se han cambiado las fotos originales del catalogo.
+4. La seleccion se mueve automaticamente en movil, con pausa automatica
+   fuera de pantalla. Si el dispositivo pide movimiento reducido, se desliza
+   manualmente. Colecciones se presenta en dos columnas en movil.
+
+IMPORTANTE
+FileZilla no puede activar opciones de nginx. La web publicada identifica
+nginx/Plesk y en la medicion los JS/CSS no tenian Content-Encoding ni una
+politica explicita de Cache-Control. El .htaccess ya contenia compresion:
+puede que nginx sirva esos archivos sin pasar por Apache, o que el hosting
+no aplique esos modulos. No afirmar que esta activado hasta comprobarlo.
+
+TEXTO PARA ENVIAR AL SOPORTE DEL HOSTING (NO ENVIADO)
+
+Hola. Necesito optimizar https://www.ibernovia.es para conexiones moviles.
+Solo tengo acceso FTP. El servidor responde nginx/Plesk y los recursos JS/CSS
+se entregan sin compresion, pese a las reglas de .htaccess.
+
+Por favor, revisad la configuracion efectiva del dominio y activad:
+- gzip (o Brotli con negociacion correcta) para HTML, CSS, JavaScript, JSON
+  y SVG, con Vary: Accept-Encoding. No recomprimir WebP/WOFF2.
+- Cache-Control: public, max-age=31536000, immutable exclusivamente para
+  archivos versionados con hash de Vite dentro de /assets/.
+- Cache-Control: public, max-age=2592000 para imagenes y fuentes estaticas.
+- Cache-Control: no-cache para HTML, incluido / e index.html, para que las
+  nuevas publicaciones se revaliden. Evitar cache permanente de index.html.
+- Mantener cabeceras de seguridad y rutas existentes. No aplicar cache
+  compartida a respuestas autenticadas ni a la API alojada en Render.
+
+Validar la configuracion de nginx antes de recargar y comprobar las respuestas
+publicas despues. Referencias oficiales:
+https://nginx.org/en/docs/http/ngx_http_gzip_module.html
+https://nginx.org/en/docs/http/ngx_http_headers_module.html
+
+COMPROBACION TRAS PUBLICAR Y ACTIVAR EN EL HOSTING
+
+Solicitar un JS/CSS real referenciado por index.html con Accept-Encoding: gzip.
+Debe devolver Content-Encoding: gzip (o br si se solicita Brotli), Vary:
+Accept-Encoding y una transferencia menor. Revisar Cache-Control en JS/CSS,
+imagenes y HTML. Repetir la auditoria movil de PageSpeed cuando este disponible.
+No confundir los tiempos de descarga con LCP o tiempo de carga visual.

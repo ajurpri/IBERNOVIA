@@ -1,0 +1,12 @@
+Adaptacion de campana para la portada de Ibernovia.
+Herramienta: image_gen integrada. Imagen comercial generada a partir del cartel;
+no sustituye las fotografias originales del catalogo ni las del administrador.
+Original para redes: ../redes/ibernovia-paola-novias-complementos-original.jpeg
+Maestros: campana-burdeos.png y campana-burdeos-movil.png.
+Versiones web: front-end/public/images/portada/campana-burdeos*.webp.
+
+PROMPT HORIZONTAL
+Edit this supplied Ibernovia campaign poster into a photorealistic website hero background, landscape 1536x1024. Remove ALL lettering, brand names, logos and typography. Preserve the actual design and appearance of the jewelry from the reference: the intricate golden floral hair comb with blush crystals, black outlined leaves and small white flowers, and the matching golden floral dangling earrings. Use these as the main pieces, arranged across the right half of the photograph on the same deep rich burgundy fabric. Do not redesign the products or invent extra pieces. Omit the two silver pearl earring pairs to simplify the composition. Keep the left 45 percent entirely clear dark burgundy fabric, with very subtle natural texture and soft shadow only, for real HTML heading and button placed later; this is one continuous photographic surface, NOT split panels. Keep the jewelry entirely within the right 50 percent and vertically within the middle 65 percent, so it remains usable in a mobile crop focused on the right. Real understated studio product photography, warm accurate gold, natural fine detail, restrained light, no artificial sparkle, no decorative props, no borders, no graphic elements. Full bleed background, opaque.
+
+PROMPT MOVIL
+Adapt this exact photographic composition to a PORTRAIT mobile website hero, 1024x1536. Preserve the same golden floral hair comb and matching earrings and the dark rich burgundy fabric, realistic natural studio lighting. Rearrange the jewelry entirely within the TOP 58 percent, with a little breathing room around it, without cropping any pieces. Bottom 42 percent must be empty dark burgundy fabric for live website heading and controls. One continuous photograph, no split panel or color blocks. Keep the recognizable intricate golden leaves, white flowers and blush crystals, do not introduce other products. Absolutely no text, logo, lettering, arrows, frames or graphic elements.

@@ -1,0 +1,290 @@
+[
+  {
+    "label": "home",
+    "url": "https://www.ibernovia.es/",
+    "status": 200,
+    "ttfb_s": 0.092836,
+    "total_s": 0.093479,
+    "wire_bytes": 3731,
+    "decoded_bytes": 3731,
+    "headers": {
+      "content-type": "text/html"
+    }
+  },
+  {
+    "label": "api",
+    "url": "https://ibernovia.onrender.com/api/productos",
+    "status": 200,
+    "ttfb_s": 0.26212,
+    "total_s": 0.265942,
+    "wire_bytes": 36998,
+    "decoded_bytes": 341952,
+    "headers": {
+      "content-type": "application/json",
+      "cache-control": "no-cache, no-store, max-age=0, must-revalidate",
+      "content-encoding": "gzip",
+      "expires": "0",
+      "vary": "origin,access-control-request-method,access-control-request-headers,accept-encoding"
+    }
+  },
+  {
+    "label": "home",
+    "url": "https://www.ibernovia.es/",
+    "status": 200,
+    "ttfb_s": 0.094956,
+    "total_s": 0.095659,
+    "wire_bytes": 3731,
+    "decoded_bytes": 3731,
+    "headers": {
+      "content-type": "text/html"
+    }
+  },
+  {
+    "label": "api",
+    "url": "https://ibernovia.onrender.com/api/productos",
+    "status": 200,
+    "ttfb_s": 0.232425,
+    "total_s": 0.237547,
+    "wire_bytes": 36998,
+    "decoded_bytes": 341952,
+    "headers": {
+      "content-type": "application/json",
+      "cache-control": "no-cache, no-store, max-age=0, must-revalidate",
+      "content-encoding": "gzip",
+      "expires": "0",
+      "vary": "origin,access-control-request-method,access-control-request-headers,accept-encoding"
+    }
+  },
+  {
+    "label": "home",
+    "url": "https://www.ibernovia.es/",
+    "status": 200,
+    "ttfb_s": 0.085963,
+    "total_s": 0.086801,
+    "wire_bytes": 3731,
+    "decoded_bytes": 3731,
+    "headers": {
+      "content-type": "text/html"
+    }
+  },
+  {
+    "label": "api",
+    "url": "https://ibernovia.onrender.com/api/productos",
+    "status": 200,
+    "ttfb_s": 0.203354,
+    "total_s": 0.206948,
+    "wire_bytes": 36998,
+    "decoded_bytes": 341952,
+    "headers": {
+      "content-type": "application/json",
+      "cache-control": "no-cache, no-store, max-age=0, must-revalidate",
+      "content-encoding": "gzip",
+      "expires": "0",
+      "vary": "origin,access-control-request-method,access-control-request-headers,accept-encoding"
+    }
+  },
+  {
+    "label": "/assets/index-BhxyUya-.js",
+    "url": "https://www.ibernovia.es/assets/index-BhxyUya-.js",
+    "status": 200,
+    "ttfb_s": 0.097555,
+    "total_s": 0.115069,
+    "wire_bytes": 42196,
+    "decoded_bytes": 42196,
+    "headers": {
+      "content-type": "application/javascript"
+    }
+  },
+  {
+    "label": "/assets/vue-core-CGl_IbPI.js",
+    "url": "https://www.ibernovia.es/assets/vue-core-CGl_IbPI.js",
+    "status": 200,
+    "ttfb_s": 0.101494,
+    "total_s": 0.136899,
+    "wire_bytes": 101915,
+    "decoded_bytes": 101915,
+    "headers": {
+      "content-type": "application/javascript"
+    }
+  },
+  {
+    "label": "/assets/axios-Dos3PyFQ.js",
+    "url": "https://www.ibernovia.es/assets/axios-Dos3PyFQ.js",
+    "status": 200,
+    "ttfb_s": 0.088624,
+    "total_s": 0.091829,
+    "wire_bytes": 35794,
+    "decoded_bytes": 35794,
+    "headers": {
+      "content-type": "application/javascript"
+    }
+  },
+  {
+    "label": "/assets/index-DUmAIVl4.css",
+    "url": "https://www.ibernovia.es/assets/index-DUmAIVl4.css",
+    "status": 200,
+    "ttfb_s": 0.082454,
+    "total_s": 0.099982,
+    "wire_bytes": 62007,
+    "decoded_bytes": 62007,
+    "headers": {
+      "content-type": "text/css"
+    }
+  },
+  {
+    "label": "/images/catalogo/novia/velos/17815-lentejuelas.webp",
+    "url": "https://www.ibernovia.es/images/catalogo/novia/velos/17815-lentejuelas.webp",
+    "status": 200,
+    "ttfb_s": 0.115151,
+    "total_s": 0.159744,
+    "wire_bytes": 225258,
+    "decoded_bytes": 225258,
+    "headers": {
+      "content-type": "image/webp"
+    }
+  },
+  {
+    "label": "product-/images/catalogo/arras/arras-matrimoniales/20-a-doradas.webp",
+    "url": "https://www.ibernovia.es/images/catalogo/arras/arras-matrimoniales/20-a-doradas.webp",
+    "status": 200,
+    "ttfb_s": 0.081592,
+    "total_s": 0.082415,
+    "wire_bytes": 30228,
+    "decoded_bytes": 30228,
+    "headers": {
+      "content-type": "image/webp"
+    }
+  },
+  {
+    "label": "product-/images/catalogo/arras/arras-matrimoniales/20-a-plateadas.webp",
+    "url": "https://www.ibernovia.es/images/catalogo/arras/arras-matrimoniales/20-a-plateadas.webp",
+    "status": 200,
+    "ttfb_s": 0.105807,
+    "total_s": 0.109626,
+    "wire_bytes": 25988,
+    "decoded_bytes": 25988,
+    "headers": {
+      "content-type": "image/webp"
+    }
+  },
+  {
+    "label": "product-/images/catalogo/arras/cestas-y-cojines/1388-ce.webp",
+    "url": "https://www.ibernovia.es/images/catalogo/arras/cestas-y-cojines/1388-ce.webp",
+    "status": 200,
+    "ttfb_s": 0.081966,
+    "total_s": 0.084009,
+    "wire_bytes": 15506,
+    "decoded_bytes": 15506,
+    "headers": {
+      "content-type": "image/webp"
+    }
+  },
+  {
+    "label": "product-/images/catalogo/arras/cestas-y-cojines/1388-coj.webp",
+    "url": "https://www.ibernovia.es/images/catalogo/arras/cestas-y-cojines/1388-coj.webp",
+    "status": 200,
+    "ttfb_s": 0.097633,
+    "total_s": 0.099734,
+    "wire_bytes": 16880,
+    "decoded_bytes": 16880,
+    "headers": {
+      "content-type": "image/webp"
+    }
+  },
+  {
+    "label": "product-/images/catalogo/arras/cestas-y-cojines/1390-ce.webp",
+    "url": "https://www.ibernovia.es/images/catalogo/arras/cestas-y-cojines/1390-ce.webp",
+    "status": 200,
+    "ttfb_s": 0.100248,
+    "total_s": 0.103088,
+    "wire_bytes": 25904,
+    "decoded_bytes": 25904,
+    "headers": {
+      "content-type": "image/webp"
+    }
+  },
+  {
+    "label": "product-/images/catalogo/arras/cestas-y-cojines/1390-coj.webp",
+    "url": "https://www.ibernovia.es/images/catalogo/arras/cestas-y-cojines/1390-coj.webp",
+    "status": 200,
+    "ttfb_s": 0.104546,
+    "total_s": 0.107724,
+    "wire_bytes": 32738,
+    "decoded_bytes": 32738,
+    "headers": {
+      "content-type": "image/webp"
+    }
+  },
+  {
+    "label": "product-/images/catalogo/comunion/adornos/3445-adorno.webp",
+    "url": "https://www.ibernovia.es/images/catalogo/comunion/adornos/3445-adorno.webp",
+    "status": 200,
+    "ttfb_s": 0.114101,
+    "total_s": 0.116528,
+    "wire_bytes": 22928,
+    "decoded_bytes": 22928,
+    "headers": {
+      "content-type": "image/webp"
+    }
+  },
+  {
+    "label": "product-/images/catalogo/comunion/adornos/3468-adorno.webp",
+    "url": "https://www.ibernovia.es/images/catalogo/comunion/adornos/3468-adorno.webp",
+    "status": 200,
+    "ttfb_s": 0.109258,
+    "total_s": 0.111038,
+    "wire_bytes": 30508,
+    "decoded_bytes": 30508,
+    "headers": {
+      "content-type": "image/webp"
+    }
+  },
+  {
+    "label": "product-/images/catalogo/comunion/adornos/3473-adorno.webp",
+    "url": "https://www.ibernovia.es/images/catalogo/comunion/adornos/3473-adorno.webp",
+    "status": 200,
+    "ttfb_s": 0.114977,
+    "total_s": 0.117961,
+    "wire_bytes": 30602,
+    "decoded_bytes": 30602,
+    "headers": {
+      "content-type": "image/webp"
+    }
+  },
+  {
+    "label": "product-/images/catalogo/comunion/adornos/3482-adorno.webp",
+    "url": "https://www.ibernovia.es/images/catalogo/comunion/adornos/3482-adorno.webp",
+    "status": 200,
+    "ttfb_s": 0.098041,
+    "total_s": 0.099292,
+    "wire_bytes": 25230,
+    "decoded_bytes": 25230,
+    "headers": {
+      "content-type": "image/webp"
+    }
+  },
+  {
+    "label": "product-/images/catalogo/comunion/adornos/3506-adorno.webp",
+    "url": "https://www.ibernovia.es/images/catalogo/comunion/adornos/3506-adorno.webp",
+    "status": 200,
+    "ttfb_s": 0.116223,
+    "total_s": 0.11682,
+    "wire_bytes": 18754,
+    "decoded_bytes": 18754,
+    "headers": {
+      "content-type": "image/webp"
+    }
+  },
+  {
+    "label": "product-/images/catalogo/comunion/adornos/3516-adorno.webp",
+    "url": "https://www.ibernovia.es/images/catalogo/comunion/adornos/3516-adorno.webp",
+    "status": 200,
+    "ttfb_s": 0.12105,
+    "total_s": 0.124646,
+    "wire_bytes": 23672,
+    "decoded_bytes": 23672,
+    "headers": {
+      "content-type": "image/webp"
+    }
+  }
+]

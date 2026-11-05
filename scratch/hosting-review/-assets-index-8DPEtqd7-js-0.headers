@@ -1,0 +1,12 @@
+HTTP/1.1 200 OK
+Server: nginx
+Date: Thu, 05 Nov 2026 14:50:29 GMT
+Content-Type: application/javascript
+Content-Length: 40965
+Last-Modified: Mon, 02 Nov 2026 12:04:16 GMT
+Connection: keep-alive
+ETag: "6ae87c40-a005"
+Strict-Transport-Security: max-age=15768000; includeSubDomains
+X-Powered-By: PleskLin
+Accept-Ranges: bytes
+

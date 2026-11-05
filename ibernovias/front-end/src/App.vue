@@ -8,6 +8,7 @@
     </main>
 
     <FooterSection />
+    <WhatsAppButton />
     <CookieBanner />
     <Toast ref="toastRef" />
   </div>
@@ -17,6 +18,7 @@
 import { ref, provide, onMounted } from 'vue'
 import NavBar from './components/NavBar.vue'
 import FooterSection from './components/FooterSection.vue'
+import WhatsAppButton from './components/WhatsAppButton.vue'
 import CookieBanner from './components/CookieBanner.vue'
 import Toast from './components/Toast.vue'
 import { useAuthStore } from './stores/auth'

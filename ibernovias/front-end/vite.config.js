@@ -6,6 +6,12 @@ import vue from '@vitejs/plugin-vue'
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [vue()],
+  // Keep the preview origin aligned with the backend's CORS allowlist.
+  preview: {
+    host: 'localhost',
+    port: 5174,
+    strictPort: true
+  },
   server: {
     port: 5174,
     strictPort: false,

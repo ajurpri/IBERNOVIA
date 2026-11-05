@@ -207,6 +207,7 @@
             v-for="(prod, index) in paginatedProducts"
             :key="prod.id"
             :producto="prod"
+            reference-only
             :priority="index < 4"
           />
         </div>

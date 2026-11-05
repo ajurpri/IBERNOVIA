@@ -22,11 +22,10 @@ const whatsappUrl = `https://wa.me/${phone}?text=${encodeURIComponent(message)}`
 </script>
 
 <style scoped>
-.whatsapp-float {position:relative;align-self:center;margin:0;width:max-content;display:flex;align-items:center;gap:.5rem;padding:.6rem 1rem;min-height:48px;color:#21643c;text-decoration:none;}
-.whatsapp-float:hover {background:#eff6f1;}
+.whatsapp-float.whatsapp-float {position:fixed;right:max(20px,env(safe-area-inset-right));bottom:calc(20px + env(safe-area-inset-bottom));z-index:40;width:max-content;display:flex;align-items:center;gap:.5rem;padding:.75rem 1rem;min-height:48px;color:#fff;background:#21643c;border-radius:999px;box-shadow:0 3px 12px #0002;text-decoration:none;}
+.whatsapp-float:hover {background:#174c2c;}
 .whatsapp-icon {width:26px;height:26px;display:inline-flex;}
 .whatsapp-icon svg {width:26px;height:26px;}
 .whatsapp-copy {font-size:14px;font-weight:600;}
-/* In normal flow on mobile, so it cannot cover products or cookie controls. */
-@media(max-width:640px){.whatsapp-float{position:relative;left:auto;bottom:auto;align-self:center;margin:0;}}
+@media(max-width:640px){.whatsapp-float.whatsapp-float{right:12px;bottom:calc(12px + env(safe-area-inset-bottom));padding:.75rem;}.whatsapp-copy{display:none;}}
 </style>

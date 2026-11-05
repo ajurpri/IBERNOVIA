@@ -1,0 +1,12 @@
+HTTP/1.1 200 OK
+Server: nginx
+Date: Thu, 05 Nov 2026 15:09:53 GMT
+Content-Type: image/webp
+Content-Length: 25904
+Last-Modified: Tue, 18 Aug 2026 09:12:43 GMT
+Connection: keep-alive
+ETag: "6a84220b-6530"
+Strict-Transport-Security: max-age=15768000; includeSubDomains
+X-Powered-By: PleskLin
+Accept-Ranges: bytes
+
