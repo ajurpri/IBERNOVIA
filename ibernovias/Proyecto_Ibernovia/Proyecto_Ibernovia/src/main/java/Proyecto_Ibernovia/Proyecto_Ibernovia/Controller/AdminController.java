@@ -17,6 +17,7 @@ import Proyecto_Ibernovia.Proyecto_Ibernovia.Repository.SolicitudPresupuestoRepo
 import Proyecto_Ibernovia.Proyecto_Ibernovia.Util.JwtUtil;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
@@ -38,14 +39,16 @@ public class AdminController {
     private final SolicitudPresupuestoRepository solicitudRepository;
     private final PromocionRepository promocionRepository;
     private final JwtUtil jwtUtil;
+    private final PasswordEncoder passwordEncoder;
 
     public AdminController(UsuarioRepository usuarioRepository, EventoRepository eventoRepository, 
-                          SolicitudPresupuestoRepository solicitudRepository, PromocionRepository promocionRepository, JwtUtil jwtUtil) {
+                          SolicitudPresupuestoRepository solicitudRepository, PromocionRepository promocionRepository, JwtUtil jwtUtil, PasswordEncoder passwordEncoder) {
         this.usuarioRepository = usuarioRepository;
         this.eventoRepository = eventoRepository;
         this.solicitudRepository = solicitudRepository;
         this.promocionRepository = promocionRepository;
         this.jwtUtil = jwtUtil;
+        this.passwordEncoder = passwordEncoder;
     }
 
     private Optional<Usuario> getAdminFromToken(String authHeader) {
@@ -128,6 +131,29 @@ public class AdminController {
         );
 
         return ResponseEntity.ok(response);
+    }
+
+    @PutMapping("/users/{id}/password")
+    public ResponseEntity<?> resetUserPassword(
+            @PathVariable Long id,
+            @RequestBody Map<String, String> request,
+            @RequestHeader(value = "Authorization", required = false) String authHeader) {
+        if (getAdminFromToken(authHeader).isEmpty()) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("No autorizado");
+        }
+        String password = request.get("password");
+        if (password == null || password.isBlank() || password.length() < 8
+                || password.getBytes(java.nio.charset.StandardCharsets.UTF_8).length > 72) {
+            return ResponseEntity.badRequest().body("La contraseña debe tener al menos 8 caracteres y un máximo de 72 bytes.");
+        }
+        Optional<Usuario> userOpt = usuarioRepository.findById(id);
+        if (userOpt.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+        Usuario user = userOpt.get();
+        user.setPassword(passwordEncoder.encode(password));
+        usuarioRepository.save(user);
+        return ResponseEntity.noContent().build();
     }
 
     // ===== EVENTOS =====

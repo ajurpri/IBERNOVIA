@@ -377,6 +377,13 @@
           </select>
         </div>
 
+        <AdminPasswordReset
+          v-if="passwordUser"
+          :key="passwordUser.id"
+          :user="passwordUser"
+          @close="passwordUser = null"
+          @busy="passwordBusy = $event"
+        />
         <div v-if="loadingUsers" class="py-10 text-center text-gray-500">Cargando usuarios...</div>
         <div v-else-if="filteredUsers.length === 0" class="py-10 text-center text-gray-500">Sin resultados.</div>
 
@@ -395,7 +402,12 @@
               <p class="text-xs text-gray-500">{{ user.email }}</p>
               <p class="text-xs text-gray-400">Unido: {{ new Date(user.createdAt || Date.now()).toLocaleDateString() }}</p>
             </div>
-            <div class="flex items-center gap-2">
+            <div class="flex flex-wrap items-center gap-2">
+              <button
+                class="admin-secondary-btn px-3 py-2 text-xs uppercase tracking-widest border transition rounded"
+                :disabled="passwordBusy"
+                @click="passwordUser = user"
+              >Nueva contraseña</button>
               <button
                 class="admin-secondary-btn px-3 py-2 text-xs uppercase tracking-widest border transition rounded"
                 :class="user.isBusiness ? 'border-amber-200 text-amber-600 hover:bg-amber-50' : 'border-gray-300 text-gray-700 hover:bg-gray-50'"
@@ -1059,6 +1071,7 @@
 
 <script setup>
 import { ref, computed, onMounted, inject, watch } from 'vue'
+import AdminPasswordReset from '../components/AdminPasswordReset.vue'
 import { apiClient, getImageUrl, invalidateProductsCache } from '../lib/api'
 import { useAuthStore } from '../stores/auth'
 
@@ -1091,6 +1104,9 @@ const pendingSecondaryImage = ref(null)
 const optimizingImages = ref({ primary: false, secondary: false })
 
 const users = ref([])
+const passwordUser = ref(null)
+const passwordBusy = ref(false)
+watch(activeTab, () => { passwordUser.value = null })
 const loadingUsers = ref(false)
 const userSearch = ref('')
 const userFilter = ref('all')
@@ -1477,6 +1493,7 @@ const resetForm = (keepMessage = false) => {
 }
 
 const changeTab = (tabId) => {
+  if (passwordBusy.value) return
   activeTab.value = tabId
   if (tabId === 'users') {
     loadUsers()
